@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Plan·Fit</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@700&display=swap" rel="stylesheet"/>
+  <style>
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: #F4F8F6;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Poppins', sans-serif;
+    }
+    .splash {
+      text-align: center;
+      animation: fadeIn .5s ease;
+    }
+    @keyframes fadeIn { from { opacity:0; transform: scale(.95) } to { opacity:1; transform: scale(1) } }
+    .logo-wrap { display: inline-flex; align-items: center; gap: 12px; margin-bottom: 8px; }
+    .logo-text { font-weight: 700; font-size: 28px; color: #13212B; }
+    .logo-text span { color: #15B86E; }
+    .subtitle { font-size: 14px; color: #5B6B78; margin-bottom: 24px; font-family: Inter, sans-serif; font-weight: 400; }
+    .loader {
+      width: 40px; height: 40px;
+      border: 3px solid #E7F6EE;
+      border-top-color: #15B86E;
+      border-radius: 50%;
+      animation: spin .8s linear infinite;
+      margin: 0 auto;
+    }
+    @keyframes spin { to { transform: rotate(360deg) } }
+  </style>
+</head>
+<body>
+  <div class="splash">
+    <div class="logo-wrap">
+      <svg width="44" height="44" viewBox="0 0 32 32" fill="none">
+        <rect width="32" height="32" rx="8" fill="#15B86E"/>
+        <polyline points="3,16 7,16 10,9.5 13,22.5 15.5,12 18,19 21,16 29,16"
+          stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+      </svg>
+      <span class="logo-text">Plan·<span>Fit</span></span>
+    </div>
+    <p class="subtitle">Tu salud es el mejor proyecto.</p>
+    <div class="loader"></div>
+  </div>
+  <script>
+    // Redirect to login after brief splash
+    setTimeout(() => { window.location.href = 'login.html'; }, 1000);
+  </script>
+</body>
+</html>

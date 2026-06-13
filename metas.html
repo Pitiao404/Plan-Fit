@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Plan·Fit — Metas</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+  <link rel="stylesheet" href="assets/css/styles.css"/>
+</head>
+<body data-page="metas">
+
+<div id="sidebar-container"></div>
+
+<div class="content-area">
+  <header class="mobile-header" id="mobile-header"></header>
+
+  <main class="main-content fade-in">
+
+    <!-- Page header -->
+    <div style="margin-bottom:28px">
+      <p class="kicker" style="margin-bottom:4px">METAS PERSONALIZADAS · RF-09</p>
+      <h1 style="font-family:'Poppins',sans-serif;font-weight:700;font-size:clamp(26px,3vw,36px);color:var(--carbon);margin-bottom:6px">
+        Define tu <span style="color:var(--verde-vital)">Destino</span>
+      </h1>
+      <p style="font-size:14px;color:var(--gris-piedra);max-width:520px">
+        Personaliza tu enfoque. Cada cambio recalcula instantáneamente tu ruta hacia el éxito personal.
+      </p>
+    </div>
+
+    <!-- ── Main grid ──────────────────────────── -->
+    <div style="display:grid;grid-template-columns:1fr 300px;gap:24px" id="goals-grid">
+
+      <!-- Left column -->
+      <div style="display:flex;flex-direction:column;gap:20px">
+
+        <!-- Goal type selector -->
+        <div class="card">
+          <h3 style="font-family:'Poppins',sans-serif;font-weight:700;font-size:17px;color:var(--carbon);margin-bottom:16px">
+            <span class="material-symbols-outlined" style="font-size:20px;vertical-align:middle;color:var(--verde-vital);font-variation-settings:'FILL' 1;margin-right:6px">target</span>
+            ¿Cuál es tu enfoque principal?
+          </h3>
+          <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px" id="goal-buttons">
+            <button class="goal-btn selected" id="btn-Salud" onclick="selectGoal('Salud')" style="padding:20px 12px">
+              <div style="width:48px;height:48px;border-radius:14px;background:rgba(21,184,110,0.12);display:flex;align-items:center;justify-content:center;margin:0 auto 10px">
+                <span class="material-symbols-outlined" style="font-size:26px;color:var(--verde-vital);font-variation-settings:'FILL' 1">favorite</span>
+              </div>
+              <p style="font-family:'Poppins',sans-serif;font-weight:700;font-size:14px;color:var(--carbon);margin-bottom:4px">Salud</p>
+              <p style="font-size:11px;color:var(--gris-piedra);line-height:1.4">Longevidad y bienestar general</p>
+            </button>
+            <button class="goal-btn" id="btn-Estética" onclick="selectGoal('Estética')" style="padding:20px 12px">
+              <div style="width:48px;height:48px;border-radius:14px;background:rgba(21,184,110,0.08);display:flex;align-items:center;justify-content:center;margin:0 auto 10px">
+                <span class="material-symbols-outlined" style="font-size:26px;color:var(--gris-piedra)">self_improvement</span>
+              </div>
+              <p style="font-family:'Poppins',sans-serif;font-weight:700;font-size:14px;color:var(--carbon);margin-bottom:4px">Estética</p>
+              <p style="font-size:11px;color:var(--gris-piedra);line-height:1.4">Composición corporal y tonificación</p>
+            </button>
+            <button class="goal-btn" id="btn-Rendimiento" onclick="selectGoal('Rendimiento')" style="padding:20px 12px">
+              <div style="width:48px;height:48px;border-radius:14px;background:rgba(255,107,53,0.08);display:flex;align-items:center;justify-content:center;margin:0 auto 10px">
+                <span class="material-symbols-outlined" style="font-size:26px;color:var(--gris-piedra)">bolt</span>
+              </div>
+              <p style="font-family:'Poppins',sans-serif;font-weight:700;font-size:14px;color:var(--carbon);margin-bottom:4px">Rendimiento</p>
+              <p style="font-size:11px;color:var(--gris-piedra);line-height:1.4">Fuerza, velocidad y resistencia</p>
+            </button>
+          </div>
+        </div>
+
+        <!-- Plan horizon -->
+        <div class="card">
+          <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:18px">
+            <h3 style="font-family:'Poppins',sans-serif;font-weight:700;font-size:17px;color:var(--carbon);display:flex;align-items:center;gap:8px">
+              <span class="material-symbols-outlined" style="font-size:20px;color:var(--coral);font-variation-settings:'FILL' 1">event</span>
+              Horizonte del Plan
+            </h3>
+            <div style="display:flex;gap:8px">
+              <button class="horizon-btn" id="h-4"  onclick="selectHorizon(4)"  >4 Sem</button>
+              <button class="horizon-btn selected" id="h-12" onclick="selectHorizon(12)">12 Sem</button>
+              <button class="horizon-btn" id="h-24" onclick="selectHorizon(24)">24 Sem</button>
+            </div>
+          </div>
+
+          <!-- Timeline progress bar -->
+          <div style="position:relative;margin-bottom:8px">
+            <div style="height:8px;background:#E5EAE7;border-radius:4px;overflow:hidden">
+              <div id="horizon-bar" style="height:100%;background:var(--verde-vital);border-radius:4px;width:33%;transition:width .5s"></div>
+            </div>
+            <div style="display:flex;justify-content:space-between;margin-top:6px">
+              <span style="font-size:11px;font-weight:600;color:var(--verde-vital)">INICIO</span>
+              <span style="font-size:11px;color:var(--gris-piedra)">FASE 1: INTENSIDAD BASE</span>
+              <span style="font-size:11px;color:var(--gris-piedra)">META FINAL</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- AI tip banner -->
+        <div style="background:var(--verde-bruma);border-radius:20px;padding:20px;display:flex;gap:16px;align-items:flex-start">
+          <div style="flex:1">
+            <span class="chip chip-green" style="font-size:10px;margin-bottom:10px;display:inline-flex">
+              <span class="material-symbols-outlined" style="font-size:12px;font-variation-settings:'FILL' 1">auto_awesome</span>
+              CONSEJO IA
+            </span>
+            <h4 id="tip-title" style="font-family:'Poppins',sans-serif;font-weight:700;font-size:16px;color:var(--carbon);margin-bottom:6px">
+              Mantén la consistencia
+            </h4>
+            <p id="tip-body" style="font-size:13px;color:var(--gris-piedra);line-height:1.6">
+              El 80% del éxito en objetivos de <strong>Salud</strong> proviene de la adherencia a largo plazo, no de la intensidad de una sola semana.
+            </p>
+          </div>
+          <!-- Food image placeholder -->
+          <div style="width:100px;height:80px;border-radius:14px;background:linear-gradient(135deg,#15B86E,#0B3B2E);display:flex;align-items:center;justify-content:center;flex-shrink:0" aria-hidden="true">
+            <span class="material-symbols-outlined" style="font-size:40px;color:rgba(255,255,255,.8);font-variation-settings:'FILL' 1">restaurant</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right column: Plan panel (dark) -->
+      <div id="plan-panel" class="card-dark" style="display:flex;flex-direction:column;gap:0;position:sticky;top:20px;align-self:flex-start">
+        <!-- Recalculating indicator -->
+        <div style="display:flex;align-items:center;gap:6px;margin-bottom:16px;opacity:.75">
+          <span class="material-symbols-outlined" style="font-size:16px;color:#15B86E">sync</span>
+          <span style="font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#15B86E" id="panel-label">PLAN ACTUAL</span>
+        </div>
+
+        <!-- Daily intake -->
+        <div style="margin-bottom:20px">
+          <p style="font-size:11px;opacity:.65;margin-bottom:4px">Ingesta Diaria Recomendada</p>
+          <div style="display:flex;align-items:baseline;gap:4px;margin-bottom:12px">
+            <span id="p-kcal" style="font-family:'Poppins',sans-serif;font-size:40px;font-weight:700;color:#15B86E">2,150</span>
+            <span style="font-size:16px;opacity:.8">kcal</span>
+          </div>
+          <!-- Macro bars -->
+          <div style="display:flex;gap:6px;align-items:flex-end;height:28px;margin-bottom:8px">
+            <div id="macro-bar-p" style="background:#15B86E;width:40%;border-radius:4px 4px 0 0;height:100%;transition:all .5s" title="Proteínas"></div>
+            <div id="macro-bar-c" style="background:#2BB3E0;width:45%;border-radius:4px 4px 0 0;height:80%;transition:all .5s" title="Carbohidratos"></div>
+            <div id="macro-bar-g" style="background:#FF6B35;width:25%;border-radius:4px 4px 0 0;height:50%;transition:all .5s" title="Grasas"></div>
+          </div>
+          <div style="display:flex;gap:10px;font-size:12px;opacity:.8" id="macro-labels">
+            <span>P: <strong id="p-prot">160g</strong></span>
+            <span>C: <strong id="p-carb">220g</strong></span>
+            <span>G: <strong id="p-fat">70g</strong></span>
+          </div>
+        </div>
+
+        <div style="height:1px;background:rgba(255,255,255,.1);margin-bottom:16px"></div>
+
+        <!-- Activity focus -->
+        <div style="margin-bottom:16px">
+          <p style="font-size:11px;opacity:.65;margin-bottom:8px">Enfoque de Actividad</p>
+          <div style="display:flex;align-items:center;gap:10px">
+            <div style="width:40px;height:40px;border-radius:12px;background:rgba(255,107,53,0.2);display:flex;align-items:center;justify-content:center;flex-shrink:0">
+              <span class="material-symbols-outlined" style="font-size:22px;color:var(--coral);font-variation-settings:'FILL' 1" id="p-act-icon">directions_run</span>
+            </div>
+            <div>
+              <p style="font-weight:700;font-size:14px;color:white;margin-bottom:2px" id="p-act-name">Cardio Moderado</p>
+              <p style="font-size:12px;opacity:.7" id="p-act-sessions">3 sesiones / semana</p>
+            </div>
+          </div>
+        </div>
+
+        <div style="height:1px;background:rgba(255,255,255,.1);margin-bottom:16px"></div>
+
+        <!-- Projected impact -->
+        <div style="margin-bottom:20px">
+          <p style="font-size:11px;opacity:.65;margin-bottom:8px">Impacto Proyectado</p>
+          <div style="background:rgba(21,184,110,0.15);border-radius:12px;padding:12px;border-left:3px solid #15B86E">
+            <p id="p-impact" style="font-size:12px;color:rgba(255,255,255,.85);line-height:1.6;font-style:italic">
+              "Basado en tu objetivo de Salud a 12 semanas, estimamos una mejora del 15% en tu capacidad aeróbica."
+            </p>
+          </div>
+        </div>
+
+        <!-- Confirm button -->
+        <button onclick="confirmPlan()" class="btn-primary" style="width:100%;justify-content:center;padding:14px;font-size:14px">
+          Confirmar Nuevo Plan
+        </button>
+      </div>
+
+    </div>
+
+  </main>
+</div>
+
+<style>
+  @media (max-width: 900px) {
+    #goals-grid { grid-template-columns: 1fr !important; }
+    #plan-panel { position: static !important; }
+  }
+  @media (max-width: 480px) {
+    #goal-buttons { grid-template-columns: 1fr !important; }
+  }
+</style>
+
+<script src="assets/js/data.js?v=3"></script>
+<script src="assets/js/profiles.js?v=3"></script>
+<script src="assets/js/app.js?v=3"></script>
+<script>
+  let currentGoal = 'Salud';
+  let currentHorizon = 12;
+
+  document.addEventListener('DOMContentLoaded', () => {
+    if (!getCurrentUser()?.registered) { window.location.href = 'registro.html'; return; }
+    const st = getState();
+    const u  = getDisplayUser();
+    currentGoal    = st.activeGoal    || u?.objective || 'Salud';
+    currentHorizon = st.goalHorizon   || 12;
+
+    selectGoal(currentGoal, false);
+    selectHorizon(currentHorizon, false);
+  });
+
+  function selectGoal(goal, animate = true) {
+    currentGoal = goal;
+
+    // Update button styles
+    ['Salud','Estética','Rendimiento'].forEach(g => {
+      const btn = document.getElementById('btn-' + g);
+      if (!btn) return;
+      const selected = g === goal;
+      btn.classList.toggle('selected', selected);
+
+      // Update icon color in the button
+      const ico = btn.querySelector('.material-symbols-outlined');
+      if (ico) {
+        if (selected) {
+          ico.style.color = g === 'Rendimiento' ? 'var(--coral)' : 'var(--verde-vital)';
+          ico.style.fontVariationSettings = "'FILL' 1";
+        } else {
+          ico.style.color = 'var(--gris-piedra)';
+          ico.style.fontVariationSettings = "'FILL' 0";
+        }
+      }
+    });
+
+    updatePanel(animate);
+    updateTip();
+  }
+
+  function selectHorizon(h, animate = true) {
+    currentHorizon = h;
+    [4, 12, 24].forEach(v => {
+      document.getElementById('h-' + v)?.classList.toggle('selected', v === h);
+    });
+    const pct = { 4: 15, 12: 50, 24: 85 };
+    document.getElementById('horizon-bar').style.width = (pct[h] || 50) + '%';
+    if (animate) updatePanel(true);
+  }
+
+  function updatePanel(animate) {
+    const data = PLANFIT.goals.plans[currentGoal];
+    if (!data) return;
+
+    const labelEl = document.getElementById('panel-label');
+    if (labelEl) {
+      labelEl.textContent = 'RECALCULANDO...';
+      if (animate) {
+        setTimeout(() => { labelEl.textContent = 'PLAN RECALCULADO'; }, 400);
+      } else {
+        labelEl.textContent = 'PLAN ACTUAL';
+      }
+    }
+
+    // KCal
+    document.getElementById('p-kcal').textContent = data.kcal.toLocaleString('es-ES');
+
+    // Macros
+    const { p, c, g } = data.macros;
+    const total = p + c + g;
+    document.getElementById('p-prot').textContent = p + 'g';
+    document.getElementById('p-carb').textContent = c + 'g';
+    document.getElementById('p-fat').textContent  = g + 'g';
+    document.getElementById('macro-bar-p').style.width = Math.round(p / total * 100) + '%';
+    document.getElementById('macro-bar-c').style.width = Math.round(c / total * 100) + '%';
+    document.getElementById('macro-bar-g').style.width = Math.round(g / total * 100) + '%';
+
+    // Activity
+    document.getElementById('p-act-icon').textContent    = data.activityIcon;
+    document.getElementById('p-act-name').textContent    = data.activity;
+    document.getElementById('p-act-sessions').textContent = data.sessions;
+
+    // Impact
+    const impact = data.impact[currentHorizon] || data.impact[12];
+    document.getElementById('p-impact').innerHTML = `"Basado en tu objetivo de <strong style="color:#15B86E">${currentGoal}</strong> a ${currentHorizon} semanas, ${impact}"`;
+  }
+
+  function updateTip() {
+    const tips = {
+      Salud:       { title: 'Mantén la consistencia', body: `El 80% del éxito en objetivos de <strong>Salud</strong> proviene de la adherencia a largo plazo, no de la intensidad de una sola semana.` },
+      Estética:    { title: 'El déficit, tu mejor aliado', body: `Para objetivos de <strong>Estética</strong>, un déficit calórico moderado de 300–400 kcal/día maximiza la pérdida de grasa preservando músculo.` },
+      Rendimiento: { title: 'La periodización es clave', body: `Para <strong>Rendimiento</strong>, alterna semanas de alta intensidad con semanas de descarga para maximizar las adaptaciones neuromusculares.` },
+    };
+    const t = tips[currentGoal];
+    if (!t) return;
+    document.getElementById('tip-title').textContent = t.title;
+    document.getElementById('tip-body').innerHTML    = t.body;
+  }
+
+  function confirmPlan() {
+    // Confirm dialog
+    const confirmed = confirm(`¿Confirmar nuevo plan?\n\nObjetivo: ${currentGoal}\nHorizonte: ${currentHorizon} semanas\nIngesta: ${PLANFIT.goals.plans[currentGoal].kcal.toLocaleString('es-ES')} kcal/día\n\nTus recomendaciones se actualizarán inmediatamente.`);
+    if (!confirmed) return;
+
+    setState({ activeGoal: currentGoal, goalHorizon: currentHorizon });
+    showToast(`¡Plan de ${currentGoal} confirmado para ${currentHorizon} semanas! 🎯`, 'success', 4000);
+
+    // Flash effect on panel
+    const panel = document.getElementById('plan-panel');
+    panel.style.outline = '2px solid #15B86E';
+    setTimeout(() => { panel.style.outline = 'none'; }, 1500);
+  }
+</script>
+</body>
+</html>

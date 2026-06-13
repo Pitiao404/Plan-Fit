@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Plan·Fit — Hidratación</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+  <link rel="stylesheet" href="assets/css/styles.css"/>
+</head>
+<body data-page="hidratacion">
+
+<div id="sidebar-container"></div>
+
+<div class="content-area">
+  <header class="mobile-header" id="mobile-header"></header>
+
+  <main class="main-content fade-in">
+
+    <!-- Page header -->
+    <div style="margin-bottom:24px">
+      <p class="kicker kicker-blue" style="margin-bottom:4px">HIDRATACIÓN · RF-06</p>
+      <h1 style="font-family:'Poppins',sans-serif;font-weight:700;font-size:clamp(26px,3vw,34px);color:var(--carbon);margin-bottom:4px">
+        Mantente Hidratado
+      </h1>
+      <p style="font-size:14px;color:var(--gris-piedra)">Monitorea tu ingesta de agua durante el día para mantener tu rendimiento óptimo.</p>
+    </div>
+
+    <!-- ── Main row ──────────────────────────── -->
+    <div style="display:grid;grid-template-columns:1fr 300px;gap:20px;margin-bottom:20px" id="hydration-grid">
+
+      <!-- Left: Ring card -->
+      <div class="card" style="display:flex;flex-direction:column;align-items:center;padding:32px 24px">
+        <h2 style="font-family:'Poppins',sans-serif;font-weight:700;font-size:18px;color:var(--carbon);margin-bottom:24px">
+          Nivel de Hidratación
+        </h2>
+
+        <!-- Progress ring -->
+        <div style="position:relative;width:200px;height:200px;margin-bottom:20px">
+          <svg id="water-ring" width="200" height="200" viewBox="0 0 128 128" aria-label="Nivel de hidratación" role="img"></svg>
+          <div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px">
+            <span class="material-symbols-outlined" style="font-size:28px;color:var(--azul-hidro);font-variation-settings:'FILL' 1">water_drop</span>
+            <div style="display:flex;align-items:baseline;gap:3px">
+              <span id="water-ml" style="font-family:'Poppins',sans-serif;font-weight:700;font-size:32px;color:var(--carbon)">1,850</span>
+            </div>
+            <span id="water-goal-ml-label" style="font-size:13px;color:var(--gris-piedra)">/ 2,500 ml</span>
+            <span id="water-pct" style="font-size:13px;font-weight:600;color:var(--azul-hidro)">74% de la meta</span>
+          </div>
+        </div>
+
+        <!-- Action buttons -->
+        <div style="display:flex;gap:12px;flex-wrap:wrap;justify-content:center">
+          <button onclick="addWater(250)" class="btn-primary" style="background:var(--azul-hidro);gap:6px"
+            onmouseover="this.style.background='#23a0cc'" onmouseout="this.style.background='var(--azul-hidro)'">
+            <span class="material-symbols-outlined" style="font-size:18px">add</span>
+            Añadir 250ml
+          </button>
+          <button onclick="showHistory()" class="btn-ghost" style="gap:6px">
+            <span class="material-symbols-outlined" style="font-size:16px">history</span>
+            Historial
+          </button>
+        </div>
+
+        <!-- Quick add buttons -->
+        <div style="display:flex;gap:8px;margin-top:14px;flex-wrap:wrap;justify-content:center">
+          <button onclick="addWater(100)" style="background:rgba(43,179,224,0.1);border:1.5px solid rgba(43,179,224,0.25);color:var(--azul-hidro);border-radius:50px;padding:6px 14px;font-size:12px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif">+100 ml</button>
+          <button onclick="addWater(200)" style="background:rgba(43,179,224,0.1);border:1.5px solid rgba(43,179,224,0.25);color:var(--azul-hidro);border-radius:50px;padding:6px 14px;font-size:12px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif">+200 ml</button>
+          <button onclick="addWater(500)" style="background:rgba(43,179,224,0.1);border:1.5px solid rgba(43,179,224,0.25);color:var(--azul-hidro);border-radius:50px;padding:6px 14px;font-size:12px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif">+500 ml</button>
+        </div>
+      </div>
+
+      <!-- Right column -->
+      <div style="display:flex;flex-direction:column;gap:16px">
+
+        <!-- Reminders card (RF-07) -->
+        <div class="card">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
+            <div style="display:flex;align-items:center;gap:8px">
+              <span class="material-symbols-outlined" style="font-size:22px;color:var(--verde-vital);font-variation-settings:'FILL' 1">notifications</span>
+              <h3 style="font-family:'Poppins',sans-serif;font-weight:700;font-size:15px;color:var(--carbon)">Recordatorios</h3>
+            </div>
+            <label class="toggle-wrap" aria-label="Activar recordatorios de hidratación">
+              <input type="checkbox" id="reminder-toggle" onchange="toggleReminders(this.checked)" checked/>
+              <span class="toggle-track"></span>
+            </label>
+          </div>
+          <p id="reminder-desc" style="font-size:12px;color:var(--gris-piedra);margin-bottom:12px;line-height:1.5">
+            Recibe alertas cada <span id="interval-display">60</span> minutos para mantener tu hidratación óptima.
+          </p>
+          <div style="border-top:1px solid #F4F8F6;padding-top:12px">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+              <span style="font-size:12px;color:var(--gris-piedra)">Próxima alerta</span>
+              <span id="next-alert" style="font-size:13px;font-weight:700;color:var(--carbon)">14:30</span>
+            </div>
+            <div style="display:flex;justify-content:space-between;align-items:center">
+              <span style="font-size:12px;color:var(--gris-piedra)">Intervalo</span>
+              <div style="display:flex;align-items:center;gap:8px">
+                <button onclick="changeInterval(-15)" style="width:28px;height:28px;border-radius:8px;border:1.5px solid #E5EAE7;background:white;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--carbon)" aria-label="Reducir intervalo">
+                  <span class="material-symbols-outlined" style="font-size:16px">remove</span>
+                </button>
+                <span id="interval-val" style="font-size:13px;font-weight:700;color:var(--carbon);width:28px;text-align:center">1h</span>
+                <button onclick="changeInterval(15)" style="width:28px;height:28px;border-radius:8px;border:1.5px solid #E5EAE7;background:white;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--carbon)" aria-label="Aumentar intervalo">
+                  <span class="material-symbols-outlined" style="font-size:16px">add</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tip card (dark) -->
+        <div class="card-dark" style="position:relative;overflow:hidden">
+          <div style="position:absolute;bottom:-20px;right:-20px;width:80px;height:80px;border-radius:50%;background:rgba(43,179,224,0.15)"></div>
+          <p class="kicker kicker-white" style="margin-bottom:8px">CONSEJO SALUDABLE</p>
+          <h4 style="font-family:'Poppins',sans-serif;font-weight:700;font-size:15px;color:white;margin-bottom:8px">Tip Saludable</h4>
+          <p style="font-size:12px;opacity:.8;line-height:1.6;margin-bottom:12px" id="hydration-tip">
+            Beber agua antes de las comidas puede ayudar a mejorar tu metabolismo hasta en un 24%.
+          </p>
+          <div style="height:3px;background:rgba(255,255,255,.15);border-radius:2px;overflow:hidden">
+            <div style="height:100%;background:var(--azul-hidro);width:60%;border-radius:2px"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── Desglose del día ────────────────────── -->
+    <div class="card">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px">
+        <h3 style="font-family:'Poppins',sans-serif;font-weight:700;font-size:16px;color:var(--carbon)">Desglose del día</h3>
+        <a href="reportes.html" style="font-size:13px;font-weight:600;color:var(--verde-vital);display:flex;align-items:center;gap:2px">
+          Ver reporte semanal <span class="material-symbols-outlined" style="font-size:16px">chevron_right</span>
+        </a>
+      </div>
+      <div id="hydration-records" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px"></div>
+    </div>
+
+  </main>
+</div>
+
+<button class="fab no-print" onclick="addWater(250)" aria-label="Añadir 250 ml" title="Añadir 250 ml">
+  <span class="material-symbols-outlined" style="font-size:22px;font-variation-settings:'FILL' 1">water_drop</span>
+</button>
+
+<style>
+  @media (max-width: 768px) {
+    #hydration-grid { grid-template-columns: 1fr !important; }
+  }
+</style>
+
+<script src="assets/js/data.js?v=3"></script>
+<script src="assets/js/profiles.js?v=3"></script>
+<script src="assets/js/app.js?v=3"></script>
+<script>
+  let waterMl  = 1850;
+  let waterGoal = 2500;
+  let intervalMin = 60;
+
+  document.addEventListener('DOMContentLoaded', () => {
+    if (!getCurrentUser()?.registered) { window.location.href = 'registro.html'; return; }
+    const st = getState();
+    const hyd = PLANFIT.hydration;
+    waterGoal = hyd.goalMl || 2500;
+    waterMl   = st.waterMl != null ? st.waterMl : (hyd.currentMl || 1850);
+
+    // Hydration tip from profile
+    const tipEl = document.getElementById('hydration-tip');
+    if (tipEl && hyd.tip) tipEl.textContent = hyd.tip;
+
+    // Goal label
+    const goalLbl = document.getElementById('water-goal-ml-label');
+    if (goalLbl) goalLbl.textContent = `/ ${waterGoal.toLocaleString('es-ES')} ml`;
+
+    initHydrationPage();
+  });
+
+  function initHydrationPage() {
+    updateRing();
+    renderRecords();
+  }
+
+  /* ── Ring ── */
+  function updateRing() {
+    const pct = Math.min(100, (waterMl / waterGoal) * 100);
+    setRing(document.getElementById('water-ring'), pct, '#2BB3E0', 52, 12);
+
+    document.getElementById('water-ml').textContent  = waterMl.toLocaleString('es-ES');
+    document.getElementById('water-pct').textContent = `${Math.round(pct)}% de la meta`;
+  }
+
+  /* ── Add water ── */
+  function addWater(ml) {
+    if (waterMl >= 4000) { showToast('¡Has superado el límite seguro de 4L!', 'warning'); return; }
+    waterMl = Math.min(waterMl + ml, 4000);
+    setState({ waterMl });
+    updateRing();
+
+    // Add record entry
+    const now = new Date();
+    const timeStr = `${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
+    PLANFIT.hydration.records.push({ icon: 'water_full', label: 'Vaso de agua', time: timeStr, ml });
+    renderRecords();
+
+    const pct = Math.round(waterMl / waterGoal * 100);
+    showToast(`+${ml} ml añadidos · ${waterMl.toLocaleString('es-ES')} ml hoy (${pct}%)`, 'info');
+
+    if (waterMl >= waterGoal) {
+      setTimeout(() => showToast('¡Meta de hidratación alcanzada! 🎉', 'success'), 500);
+    }
+  }
+
+  /* ── Reminders ── */
+  function toggleReminders(on) {
+    const desc = document.getElementById('reminder-desc');
+    if (on) {
+      desc.style.opacity = '1';
+      showToast('Recordatorios de hidratación activados', 'success');
+    } else {
+      desc.style.opacity = '0.45';
+      showToast('Recordatorios desactivados', 'info');
+    }
+    setState({ notifHydration: on });
+  }
+
+  function changeInterval(delta) {
+    intervalMin = Math.max(15, Math.min(240, intervalMin + delta));
+    const h = Math.floor(intervalMin / 60);
+    const m = intervalMin % 60;
+    let label = h > 0 ? `${h}h` : '';
+    if (m > 0) label += `${m}m`;
+    document.getElementById('interval-display').textContent = intervalMin;
+    document.getElementById('interval-val').textContent     = label;
+
+    // Recalc next alert
+    const now = new Date();
+    now.setMinutes(now.getMinutes() + intervalMin);
+    document.getElementById('next-alert').textContent =
+      `${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
+  }
+
+  /* ── History ── */
+  function showHistory() {
+    showToast('Historial disponible en el Reporte Mensual', 'info');
+  }
+
+  /* ── Records ── */
+  function renderRecords() {
+    const el = document.getElementById('hydration-records');
+    const iconColors = {
+      coffee: '#A16207', water_full: '#2BB3E0',
+      sports_score: '#FF6B35', restaurant: '#15B86E',
+      water_drop: '#2BB3E0'
+    };
+
+    el.innerHTML = PLANFIT.hydration.records.slice(-8).map(r => `
+      <div style="background:var(--bruma);border-radius:14px;padding:14px;display:flex;align-items:center;gap:10px">
+        <div style="width:36px;height:36px;border-radius:10px;background:rgba(43,179,224,0.12);display:flex;align-items:center;justify-content:center;flex-shrink:0">
+          <span class="material-symbols-outlined" style="font-size:18px;color:${iconColors[r.icon]||'#2BB3E0'};font-variation-settings:'FILL' 1">${r.icon}</span>
+        </div>
+        <div style="min-width:0">
+          <p style="font-size:13px;font-weight:600;color:var(--carbon);margin-bottom:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${r.label}</p>
+          <p style="font-size:11px;color:var(--gris-piedra)">${r.time} · ${r.ml} ml</p>
+        </div>
+      </div>`).join('');
+  }
+</script>
+</body>
+</html>

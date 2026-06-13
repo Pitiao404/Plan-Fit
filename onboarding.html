@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Plan·Fit — Configurar Perfil</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+  <link rel="stylesheet" href="assets/css/styles.css"/>
+</head>
+<body class="onboarding-body">
+
+  <!-- Logo -->
+  <div style="text-align:center;margin-bottom:24px">
+    <div style="display:inline-flex;align-items:center;gap:10px;margin-bottom:6px">
+      <svg width="36" height="36" viewBox="0 0 32 32" fill="none" aria-hidden="true">
+        <rect width="32" height="32" rx="8" fill="#15B86E"/>
+        <polyline points="3,16 7,16 10,9.5 13,22.5 15.5,12 18,19 21,16 29,16"
+          stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+      </svg>
+      <span style="font-family:'Poppins',sans-serif;font-weight:700;font-size:22px;color:var(--carbon)">
+        Plan·<span style="color:var(--verde-vital)">Fit</span>
+      </span>
+    </div>
+    <p id="onboarding-subtitle" style="font-size:13px;color:var(--gris-piedra)">Personalizando tu camino hacia el bienestar</p>
+  </div>
+
+  <!-- Progress bar -->
+  <div style="width:100%;max-width:520px;margin-bottom:20px;position:relative;z-index:1">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+      <div style="height:5px;flex:1;background:#E5EAE7;border-radius:3px;overflow:hidden;margin-right:16px">
+        <div id="progress-fill" style="height:100%;background:var(--verde-vital);border-radius:3px;transition:width .4s ease;width:25%"></div>
+      </div>
+      <span id="step-label" style="font-size:12px;font-weight:600;color:var(--verde-vital);white-space:nowrap">Paso 1 de 4</span>
+    </div>
+    <!-- Step dots -->
+    <div style="display:flex;justify-content:center;gap:8px">
+      <div class="step-dot active" id="dot-1"></div>
+      <div class="step-dot" id="dot-2"></div>
+      <div class="step-dot" id="dot-3"></div>
+      <div class="step-dot" id="dot-4"></div>
+    </div>
+  </div>
+
+  <!-- Card -->
+  <div class="onboarding-card fade-in" id="onboarding-card">
+
+    <!-- ── Step 1: Datos básicos ── -->
+    <div id="step-1">
+      <h2 style="font-family:'Poppins',sans-serif;font-weight:700;font-size:20px;color:var(--carbon);margin-bottom:6px">
+        Cuéntanos sobre ti
+      </h2>
+      <p style="font-size:13px;color:var(--gris-piedra);margin-bottom:24px">Estos datos nos ayudan a calcular tu metabolismo base.</p>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:24px">
+        <!-- Edad -->
+        <div>
+          <label style="display:block;font-size:11px;font-weight:600;color:var(--gris-piedra);text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px">Edad</label>
+          <input id="o-age" type="number" min="15" max="90" value="25" class="form-input" style="padding-left:16px;width:100%"/>
+        </div>
+        <!-- Género -->
+        <div>
+          <label style="display:block;font-size:11px;font-weight:600;color:var(--gris-piedra);text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px">Género</label>
+          <div style="display:flex;gap:8px">
+            <button class="goal-btn selected" id="btn-masc" onclick="selectGender('Masculino')" style="padding:11px 8px;font-size:14px;font-family:'Inter',sans-serif">Masculino</button>
+            <button class="goal-btn" id="btn-fem" onclick="selectGender('Femenino')" style="padding:11px 8px;font-size:14px;font-family:'Inter',sans-serif">Femenino</button>
+          </div>
+        </div>
+      </div>
+      <button onclick="goStep(2)" class="btn-primary" style="width:100%;justify-content:center">Continuar</button>
+    </div>
+
+    <!-- ── Step 2: Datos físicos ── -->
+    <div id="step-2" style="display:none">
+      <h2 style="font-family:'Poppins',sans-serif;font-weight:700;font-size:20px;color:var(--carbon);margin-bottom:6px">
+        Datos físicos
+      </h2>
+      <p style="font-size:13px;color:var(--gris-piedra);margin-bottom:24px">Para calcular tu gasto energético diario preciso.</p>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:20px">
+        <div>
+          <label style="display:block;font-size:11px;font-weight:600;color:var(--gris-piedra);text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px">Peso (kg)</label>
+          <input id="o-weight" type="number" min="30" max="250" value="70" class="form-input" style="padding-left:16px;width:100%"/>
+        </div>
+        <div>
+          <label style="display:block;font-size:11px;font-weight:600;color:var(--gris-piedra);text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px">Estatura (cm)</label>
+          <input id="o-height" type="number" min="100" max="250" value="170" class="form-input" style="padding-left:16px;width:100%"/>
+        </div>
+      </div>
+
+      <div style="margin-bottom:24px">
+        <label style="display:block;font-size:11px;font-weight:600;color:var(--gris-piedra);text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px">Nivel de actividad</label>
+        <div style="display:flex;flex-direction:column;gap:8px">
+          <button class="goal-btn selected" id="act-sed"     onclick="selectActivity('sed')"   style="text-align:left;padding:12px 16px">
+            <span style="font-weight:600;font-size:14px;font-family:'Inter',sans-serif">Sedentario</span>
+            <span style="display:block;font-size:12px;color:var(--gris-piedra)">Poco o ningún ejercicio</span>
+          </button>
+          <button class="goal-btn" id="act-light"   onclick="selectActivity('light')" style="text-align:left;padding:12px 16px">
+            <span style="font-weight:600;font-size:14px;font-family:'Inter',sans-serif">Ligeramente activo</span>
+            <span style="display:block;font-size:12px;color:var(--gris-piedra)">Ejercicio 1–3 días/sem.</span>
+          </button>
+          <button class="goal-btn" id="act-mod"     onclick="selectActivity('mod')"   style="text-align:left;padding:12px 16px">
+            <span style="font-weight:600;font-size:14px;font-family:'Inter',sans-serif">Moderadamente activo</span>
+            <span style="display:block;font-size:12px;color:var(--gris-piedra)">Ejercicio 3–5 días/sem.</span>
+          </button>
+          <button class="goal-btn" id="act-high"    onclick="selectActivity('high')"  style="text-align:left;padding:12px 16px">
+            <span style="font-weight:600;font-size:14px;font-family:'Inter',sans-serif">Muy activo</span>
+            <span style="display:block;font-size:12px;color:var(--gris-piedra)">Ejercicio intenso 6–7 días/sem.</span>
+          </button>
+        </div>
+      </div>
+
+      <div style="display:flex;gap:12px">
+        <button onclick="goStep(1)" class="btn-ghost" style="flex:1;justify-content:center">
+          <span class="material-symbols-outlined" style="font-size:16px">arrow_back</span> Atrás
+        </button>
+        <button onclick="goStep(3)" class="btn-primary" style="flex:2;justify-content:center">Continuar</button>
+      </div>
+    </div>
+
+    <!-- ── Step 3: Objetivo ── -->
+    <div id="step-3" style="display:none">
+      <h2 style="font-family:'Poppins',sans-serif;font-weight:700;font-size:20px;color:var(--carbon);margin-bottom:6px">
+        ¿Cuál es tu objetivo?
+      </h2>
+      <p style="font-size:13px;color:var(--gris-piedra);margin-bottom:24px">Tu plan se adaptará completamente a esta meta.</p>
+
+      <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:24px">
+        <button class="goal-btn selected" id="obj-salud" onclick="selectObjective('Salud')" style="text-align:left;padding:16px">
+          <div style="display:flex;align-items:center;gap:12px">
+            <span class="material-symbols-outlined" style="color:var(--verde-vital);font-size:28px;font-variation-settings:'FILL' 1">favorite</span>
+            <div>
+              <div style="font-weight:700;font-size:15px;font-family:'Poppins',sans-serif;color:var(--carbon)">Salud</div>
+              <div style="font-size:12px;color:var(--gris-piedra)">Longevidad, energía y bienestar general</div>
+            </div>
+          </div>
+        </button>
+        <button class="goal-btn" id="obj-est" onclick="selectObjective('Estética')" style="text-align:left;padding:16px">
+          <div style="display:flex;align-items:center;gap:12px">
+            <span class="material-symbols-outlined" style="color:var(--verde-vital);font-size:28px">self_improvement</span>
+            <div>
+              <div style="font-weight:700;font-size:15px;font-family:'Poppins',sans-serif;color:var(--carbon)">Estética</div>
+              <div style="font-size:12px;color:var(--gris-piedra)">Composición corporal y tonificación</div>
+            </div>
+          </div>
+        </button>
+        <button class="goal-btn" id="obj-rend" onclick="selectObjective('Rendimiento')" style="text-align:left;padding:16px">
+          <div style="display:flex;align-items:center;gap:12px">
+            <span class="material-symbols-outlined" style="color:var(--coral);font-size:28px;font-variation-settings:'FILL' 1">bolt</span>
+            <div>
+              <div style="font-weight:700;font-size:15px;font-family:'Poppins',sans-serif;color:var(--carbon)">Rendimiento</div>
+              <div style="font-size:12px;color:var(--gris-piedra)">Fuerza, velocidad y resistencia atlética</div>
+            </div>
+          </div>
+        </button>
+      </div>
+
+      <div style="display:flex;gap:12px">
+        <button onclick="goStep(2)" class="btn-ghost" style="flex:1;justify-content:center">
+          <span class="material-symbols-outlined" style="font-size:16px">arrow_back</span> Atrás
+        </button>
+        <button onclick="calcAndGoStep4()" class="btn-primary" style="flex:2;justify-content:center">Ver mi plan</button>
+      </div>
+    </div>
+
+    <!-- ── Step 4: Confirmación + cálculo calórico ── -->
+    <div id="step-4" style="display:none">
+      <div style="text-align:center;margin-bottom:28px">
+        <div style="width:64px;height:64px;border-radius:50%;background:var(--verde-bruma);display:flex;align-items:center;justify-content:center;margin:0 auto 16px">
+          <span class="material-symbols-outlined" style="font-size:36px;color:var(--verde-vital);font-variation-settings:'FILL' 1">check_circle</span>
+        </div>
+        <h2 style="font-family:'Poppins',sans-serif;font-weight:700;font-size:22px;color:var(--carbon);margin-bottom:6px">
+          ¡Tu plan está listo!
+        </h2>
+        <p style="font-size:13px;color:var(--gris-piedra)">Basado en tus datos, estimamos lo siguiente:</p>
+      </div>
+
+      <!-- Caloric result -->
+      <div style="background:var(--verde-pino);border-radius:20px;padding:24px;color:white;margin-bottom:20px">
+        <div style="font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,0.65);margin-bottom:8px">
+          Requerimiento calórico diario estimado
+        </div>
+        <div style="display:flex;align-items:baseline;gap:6px;margin-bottom:16px">
+          <span id="result-kcal" style="font-family:'Poppins',sans-serif;font-size:48px;font-weight:700;color:#15B86E">2,150</span>
+          <span style="font-size:18px;opacity:.8">kcal</span>
+        </div>
+        <div id="result-macros" style="display:flex;gap:16px">
+          <div style="text-align:center">
+            <div style="font-size:20px;font-weight:700;font-family:'Poppins',sans-serif;color:#15B86E" id="r-prot">160</div>
+            <div style="font-size:11px;opacity:.75">Proteína (g)</div>
+          </div>
+          <div style="width:1px;background:rgba(255,255,255,.15);align-self:stretch"></div>
+          <div style="text-align:center">
+            <div style="font-size:20px;font-weight:700;font-family:'Poppins',sans-serif;color:#2BB3E0" id="r-carb">220</div>
+            <div style="font-size:11px;opacity:.75">Carbohidratos (g)</div>
+          </div>
+          <div style="width:1px;background:rgba(255,255,255,.15);align-self:stretch"></div>
+          <div style="text-align:center">
+            <div style="font-size:20px;font-weight:700;font-family:'Poppins',sans-serif;color:#FF6B35" id="r-fat">70</div>
+            <div style="font-size:11px;opacity:.75">Grasas (g)</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Summary pills -->
+      <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:24px" id="result-summary">
+        <span class="chip chip-green" id="r-obj"><span class="material-symbols-outlined" style="font-size:14px;font-variation-settings:'FILL' 1">favorite</span> Salud</span>
+        <span class="chip chip-green" id="r-act"><span class="material-symbols-outlined" style="font-size:14px">directions_run</span> Cardio Moderado · 3 ses/sem</span>
+        <span class="chip chip-green"><span class="material-symbols-outlined" style="font-size:14px">event_available</span> Inicio inmediato</span>
+      </div>
+
+      <p style="font-size:12px;color:var(--gris-piedra);text-align:center;margin-bottom:20px">
+        * Calculado con la fórmula Mifflin-St Jeor. Ajusta según tu progreso mensual.
+      </p>
+
+      <button onclick="finishOnboarding()" class="btn-primary" style="width:100%;justify-content:center;padding:16px">
+        Comenzar mi Plan-Fit
+        <span class="material-symbols-outlined" style="font-size:20px">arrow_forward</span>
+      </button>
+    </div>
+
+  </div>
+
+  <!-- Footer -->
+  <p style="margin-top:20px;font-size:11px;color:var(--gris-piedra);text-align:center;position:relative;z-index:1">
+    © 2025 Plan·Fit · Los datos se almacenan de forma segura siguiendo protocolos de salud.
+  </p>
+
+<style>
+  .step-dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: #E5EAE7;
+    transition: background .3s, transform .3s;
+  }
+  .step-dot.active {
+    background: var(--verde-vital);
+    transform: scale(1.3);
+  }
+  .step-dot.done {
+    background: var(--verde-vital);
+    opacity: .5;
+  }
+</style>
+
+<script>
+  // Onboarding state
+  const OB = {
+    step: 1,
+    age: 25,
+    gender: 'Masculino',
+    weight: 70,
+    height: 170,
+    activity: 'sed',
+    objective: 'Salud',
+  };
+
+  const actMultipliers = { sed: 1.2, light: 1.375, mod: 1.55, high: 1.725 };
+
+  function selectGender(g) {
+    OB.gender = g;
+    document.getElementById('btn-masc').classList.toggle('selected', g === 'Masculino');
+    document.getElementById('btn-fem').classList.toggle('selected', g === 'Femenino');
+  }
+
+  function selectActivity(a) {
+    OB.activity = a;
+    ['sed','light','mod','high'].forEach(id => {
+      document.getElementById('act-' + id).classList.toggle('selected', id === a);
+    });
+  }
+
+  function selectObjective(o) {
+    OB.objective = o;
+    ['salud','est','rend'].forEach(id => {
+      document.getElementById('obj-' + id).classList.remove('selected');
+    });
+    const map = { Salud:'salud', Estética:'est', Rendimiento:'rend' };
+    document.getElementById('obj-' + map[o]).classList.add('selected');
+  }
+
+  function goStep(n) {
+    if (n === 2) {
+      OB.age    = parseInt(document.getElementById('o-age').value) || 25;
+    }
+    if (n === 3) {
+      OB.weight = parseFloat(document.getElementById('o-weight').value) || 70;
+      OB.height = parseFloat(document.getElementById('o-height').value) || 170;
+    }
+
+    document.getElementById('step-' + OB.step).style.display = 'none';
+    OB.step = n;
+    const el = document.getElementById('step-' + n);
+    el.style.display = 'block';
+    el.classList.remove('fade-in');
+    void el.offsetWidth;
+    el.classList.add('fade-in');
+
+    updateProgress(n);
+  }
+
+  function updateProgress(n) {
+    document.getElementById('progress-fill').style.width = (n / 4 * 100) + '%';
+    document.getElementById('step-label').textContent = `Paso ${n} de 4`;
+    for (let i = 1; i <= 4; i++) {
+      const dot = document.getElementById('dot-' + i);
+      dot.className = 'step-dot' + (i < n ? ' done' : i === n ? ' active' : '');
+    }
+  }
+
+  function calcAndGoStep4() {
+    OB.objective = document.querySelector('[id^="obj-"].selected')?.id.replace('obj-', '') || 'Salud';
+    // Map id back to label
+    const map = { salud:'Salud', est:'Estética', rend:'Rendimiento' };
+    OB.objective = map[OB.objective] || 'Salud';
+    calcCalories();
+    goStep(4);
+  }
+
+  // Mifflin-St Jeor
+  function calcCalories() {
+    const { age, gender, weight, height, activity, objective } = OB;
+    let bmr;
+    if (gender === 'Femenino') {
+      bmr = 10 * weight + 6.25 * height - 5 * age - 161;
+    } else {
+      bmr = 10 * weight + 6.25 * height - 5 * age + 5;
+    }
+    const tdee = Math.round(bmr * actMultipliers[activity]);
+
+    // Adjust TDEE per objective
+    const adjMap = { Salud: 0, Estética: -300, Rendimiento: +300 };
+    const finalKcal = tdee + (adjMap[objective] || 0);
+
+    // Macros split (rough heuristic)
+    const prot = Math.round(weight * (objective === 'Rendimiento' ? 2.2 : objective === 'Estética' ? 2.5 : 2.0));
+    const fat  = Math.round(finalKcal * 0.27 / 9);
+    const carb = Math.round((finalKcal - prot * 4 - fat * 9) / 4);
+
+    document.getElementById('result-kcal').textContent = finalKcal.toLocaleString('es-ES');
+    document.getElementById('r-prot').textContent = prot;
+    document.getElementById('r-carb').textContent = carb;
+    document.getElementById('r-fat').textContent  = fat;
+
+    const actLabels = { Salud:'Cardio Moderado · 3 ses/sem', Estética:'HIIT & Cardio · 4 ses/sem', Rendimiento:'Fuerza + HIIT · 5 ses/sem' };
+    const objIcons  = { Salud:'favorite', Estética:'self_improvement', Rendimiento:'bolt' };
+    document.getElementById('r-obj').innerHTML = `<span class="material-symbols-outlined" style="font-size:14px;font-variation-settings:'FILL' 1">${objIcons[objective]||'favorite'}</span> ${objective}`;
+    document.getElementById('r-act').innerHTML = `<span class="material-symbols-outlined" style="font-size:14px">directions_run</span> ${actLabels[objective] || ''}`;
+
+    // Persist to state for later use
+    try { localStorage.setItem('pf_onboarding', JSON.stringify({ ...OB, tdee, finalKcal, prot, carb, fat })); } catch(_) {}
+  }
+
+  function finishOnboarding() {
+    // Persist all onboarding data back into pf_user
+    try {
+      const existing = JSON.parse(localStorage.getItem('pf_user') || '{}');
+      const updated  = {
+        ...existing,
+        age:           OB.age,
+        gender:        OB.gender,
+        weight:        OB.weight,
+        height:        OB.height,
+        activityLevel: OB.activity,
+        objective:     OB.objective,
+        onboardingDone: true,
+      };
+      // Recalculate and persist calories
+      const kcalEl = document.getElementById('result-kcal');
+      if (kcalEl) updated.kcal = parseInt(kcalEl.textContent.replace(/\D/g,'')) || null;
+      localStorage.setItem('pf_user', JSON.stringify(updated));
+    } catch (_) {}
+    window.location.href = 'dashboard.html';
+  }
+
+  /* Greet user by first name on load */
+  document.addEventListener('DOMContentLoaded', () => {
+    try {
+      const u = JSON.parse(localStorage.getItem('pf_user') || 'null');
+      if (u && u.firstName) {
+        const el = document.getElementById('onboarding-subtitle');
+        if (el) el.textContent = `Hola, ${u.firstName}. Configuremos tu plan personalizado.`;
+        // Pre-fill gender if already set
+        if (u.gender) selectGender(u.gender);
+      }
+      // If user has no account, redirect to registro
+      if (!u || !u.registered) window.location.href = 'registro.html';
+    } catch (_) {}
+  });
+</script>
+</body>
+</html>

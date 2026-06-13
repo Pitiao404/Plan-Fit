@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Plan·Fit — Perfil</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+  <link rel="stylesheet" href="assets/css/styles.css"/>
+</head>
+<body data-page="perfil">
+
+<div id="sidebar-container"></div>
+
+<div class="content-area">
+  <header class="mobile-header" id="mobile-header"></header>
+
+  <main class="main-content fade-in">
+
+    <!-- ── Main grid ──────────────────────────── -->
+    <div style="display:grid;grid-template-columns:1fr 280px;gap:24px" id="profile-grid">
+
+      <!-- Left column -->
+      <div style="display:flex;flex-direction:column;gap:20px">
+
+        <!-- Profile card header -->
+        <div class="card" style="padding:0;overflow:hidden">
+          <!-- Cover banner -->
+          <div style="height:100px;background:linear-gradient(135deg,#15B86E,#0B3B2E);position:relative" aria-hidden="true">
+            <div style="position:absolute;bottom:-40px;left:24px">
+              <!-- Avatar -->
+              <div style="width:80px;height:80px;border-radius:50%;background:var(--verde-vital);border:4px solid white;display:flex;align-items:center;justify-content:center;overflow:hidden;flex-shrink:0">
+                <span style="font-family:'Poppins',sans-serif;font-weight:700;font-size:26px;color:white;line-height:1" id="prof-initials">?</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Profile info -->
+          <div style="padding:48px 24px 24px;display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:12px">
+            <div>
+              <h2 style="font-family:'Poppins',sans-serif;font-weight:700;font-size:22px;color:var(--carbon);margin-bottom:2px" id="prof-name">
+                —
+              </h2>
+              <p style="font-size:13px;color:var(--gris-piedra)" id="prof-subtitle">Miembro Plan-Fit</p>
+            </div>
+            <button class="btn-ghost" style="gap:6px" onclick="shareProfile()">
+              <span class="material-symbols-outlined" style="font-size:16px">share</span>
+              Compartir Perfil
+            </button>
+          </div>
+        </div>
+
+        <!-- Personal data card -->
+        <div class="card">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px">
+            <h3 style="font-family:'Poppins',sans-serif;font-weight:700;font-size:16px;color:var(--carbon);display:flex;align-items:center;gap:8px">
+              <span class="material-symbols-outlined" style="font-size:20px;color:var(--verde-vital);font-variation-settings:'FILL' 1">person</span>
+              Datos Personales
+            </h3>
+            <button onclick="editData()" class="btn-ghost" style="font-size:12px;padding:6px 14px">
+              <span class="material-symbols-outlined" style="font-size:14px">edit</span>
+              Actualizar
+            </button>
+          </div>
+          <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:14px" id="data-cards">
+            <!-- Filled dynamically by initProfile() -->
+          </div>
+        </div>
+
+        <!-- Devices card (RF-04) -->
+        <div class="card">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px">
+            <h3 style="font-family:'Poppins',sans-serif;font-weight:700;font-size:16px;color:var(--carbon);display:flex;align-items:center;gap:8px">
+              <span class="material-symbols-outlined" style="font-size:20px;color:var(--azul-hidro);font-variation-settings:'FILL' 1">watch</span>
+              Dispositivos Vinculados
+            </h3>
+            <button onclick="addDevice()" class="btn-ghost" style="gap:6px;font-size:12px;padding:6px 14px">
+              <span class="material-symbols-outlined" style="font-size:14px">add</span>
+              Nuevo Dispositivo
+            </button>
+          </div>
+
+          <!-- Apple Watch -->
+          <div style="border:1.5px solid rgba(43,179,224,0.25);border-radius:14px;padding:16px;margin-bottom:12px;background:rgba(43,179,224,0.04)">
+            <div style="display:flex;align-items:center;justify-content:space-between">
+              <div style="display:flex;align-items:center;gap:12px">
+                <div style="width:44px;height:44px;border-radius:12px;background:rgba(43,179,224,0.12);display:flex;align-items:center;justify-content:center">
+                  <span class="material-symbols-outlined" style="font-size:24px;color:var(--azul-hidro);font-variation-settings:'FILL' 1">watch</span>
+                </div>
+                <div>
+                  <p style="font-weight:700;font-size:14px;color:var(--carbon);margin-bottom:2px">Apple Watch Series 8</p>
+                  <div style="display:flex;align-items:center;gap:5px">
+                    <span style="width:7px;height:7px;border-radius:50%;background:var(--verde-vital);display:inline-block"></span>
+                    <p style="font-size:12px;color:var(--verde-vital);font-weight:600">Sincronizado hace 3 min</p>
+                  </div>
+                </div>
+              </div>
+              <div style="display:flex;gap:8px">
+                <button onclick="syncDevice('Apple Watch')" style="background:none;border:none;cursor:pointer;color:var(--azul-hidro);display:flex;align-items:center" title="Sincronizar">
+                  <span class="material-symbols-outlined" style="font-size:20px">sync</span>
+                </button>
+                <button onclick="configDevice('Apple Watch')" style="background:none;border:none;cursor:pointer;color:var(--gris-piedra);display:flex;align-items:center" title="Configurar">
+                  <span class="material-symbols-outlined" style="font-size:20px">settings</span>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Smart Scale (disconnected) -->
+          <div style="border:1.5px solid #E5EAE7;border-radius:14px;padding:16px;opacity:0.7">
+            <div style="display:flex;align-items:center;justify-content:space-between">
+              <div style="display:flex;align-items:center;gap:12px">
+                <div style="width:44px;height:44px;border-radius:12px;background:#F4F8F6;display:flex;align-items:center;justify-content:center">
+                  <span class="material-symbols-outlined" style="font-size:24px;color:var(--gris-piedra)">monitor_weight</span>
+                </div>
+                <div>
+                  <p style="font-weight:700;font-size:14px;color:var(--carbon);margin-bottom:2px">Smart Scale Pro</p>
+                  <div style="display:flex;align-items:center;gap:5px">
+                    <span style="width:7px;height:7px;border-radius:50%;background:#CBD5E1;display:inline-block"></span>
+                    <p style="font-size:12px;color:var(--gris-piedra)">Desconectada · hace 5 días</p>
+                  </div>
+                </div>
+              </div>
+              <button onclick="reconnectDevice('Smart Scale')" class="btn-ghost" style="font-size:12px;padding:6px 12px">Reconectar</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Notification preferences (RF-07) -->
+        <div class="card">
+          <h3 style="font-family:'Poppins',sans-serif;font-weight:700;font-size:16px;color:var(--carbon);display:flex;align-items:center;gap:8px;margin-bottom:18px">
+            <span class="material-symbols-outlined" style="font-size:20px;color:var(--verde-vital);font-variation-settings:'FILL' 1">notifications</span>
+            Preferencias de Notificación
+          </h3>
+
+          <div style="display:flex;flex-direction:column;gap:16px">
+            <!-- Hydration reminders -->
+            <div style="display:flex;align-items:center;justify-content:space-between">
+              <div style="flex:1;margin-right:16px">
+                <p style="font-size:14px;font-weight:600;color:var(--carbon);margin-bottom:2px">Recordatorios de Hidratación</p>
+                <p style="font-size:12px;color:var(--gris-piedra)">Avisos cada 2 horas para tomar agua.</p>
+              </div>
+              <label class="toggle-wrap" aria-label="Recordatorios de hidratación">
+                <input type="checkbox" checked onchange="toggleNotif('hydration', this.checked)"/>
+                <span class="toggle-track"></span>
+              </label>
+            </div>
+
+            <div style="height:1px;background:#F4F8F6"></div>
+
+            <!-- Daily summary -->
+            <div style="display:flex;align-items:center;justify-content:space-between">
+              <div style="flex:1;margin-right:16px">
+                <p style="font-size:14px;font-weight:600;color:var(--carbon);margin-bottom:2px">Resumen de Actividad Diaria</p>
+                <p style="font-size:12px;color:var(--gris-piedra)">Recibe el resumen al final de tu jornada.</p>
+              </div>
+              <label class="toggle-wrap" aria-label="Resumen de actividad diaria">
+                <input type="checkbox" checked onchange="toggleNotif('summary', this.checked)"/>
+                <span class="toggle-track"></span>
+              </label>
+            </div>
+
+            <div style="height:1px;background:#F4F8F6"></div>
+
+            <!-- Sedentary alerts -->
+            <div style="display:flex;align-items:center;justify-content:space-between">
+              <div style="flex:1;margin-right:16px">
+                <p style="font-size:14px;font-weight:600;color:var(--carbon);margin-bottom:2px">Alertas de Sedentarismo</p>
+                <p style="font-size:12px;color:var(--gris-piedra)">Aviso si llevas más de 1 hora sin moverte.</p>
+              </div>
+              <label class="toggle-wrap" aria-label="Alertas de sedentarismo">
+                <input type="checkbox" onchange="toggleNotif('sedentary', this.checked)"/>
+                <span class="toggle-track"></span>
+              </label>
+            </div>
+          </div>
+        </div>
+
+        <!-- Profile type selector (shows 3 user profiles) -->
+        <div class="card" style="background:var(--verde-bruma)">
+          <h3 style="font-family:'Poppins',sans-serif;font-weight:700;font-size:15px;color:var(--carbon);margin-bottom:12px">
+            <span class="material-symbols-outlined" style="font-size:18px;vertical-align:middle;color:var(--verde-vital)">supervisor_account</span>
+            Demo: Cambiar perfil de usuario
+          </h3>
+          <div style="display:flex;gap:10px;flex-wrap:wrap">
+            <button onclick="switchProfile('principiante')" id="p-principiante" class="btn-ghost" style="font-size:12px;padding:7px 14px">
+              <span class="material-symbols-outlined" style="font-size:14px">school</span> Principiante
+            </button>
+            <button onclick="switchProfile('activo')" id="p-activo" class="btn-primary" style="font-size:12px;padding:7px 14px">
+              <span class="material-symbols-outlined" style="font-size:14px">fitness_center</span> Activo ✓
+            </button>
+            <button onclick="switchProfile('admin')" id="p-admin" class="btn-ghost" style="font-size:12px;padding:7px 14px">
+              <span class="material-symbols-outlined" style="font-size:14px">admin_panel_settings</span> Administrador
+            </button>
+          </div>
+          <p id="profile-hint" style="font-size:12px;color:var(--gris-piedra);margin-top:10px">
+            Perfil actual: <strong style="color:var(--verde-vital)">Activo</strong> — Optimiza rendimiento, sincroniza wearables.
+          </p>
+        </div>
+
+      </div>
+
+      <!-- Right column -->
+      <div style="display:flex;flex-direction:column;gap:16px">
+
+        <!-- Plan status -->
+        <div class="card-dark" style="padding:22px">
+          <p class="kicker kicker-white" style="margin-bottom:8px">ESTADO DEL PLAN</p>
+          <h3 style="font-family:'Poppins',sans-serif;font-weight:700;font-size:18px;color:white;margin-bottom:4px" id="plan-name">Básico</h3>
+          <p style="font-size:12px;opacity:.7;margin-bottom:16px" id="plan-detail">Plan gratuito activo</p>
+          <button class="btn-primary" style="width:100%;justify-content:center;padding:11px;font-size:13px" onclick="managePlan()">
+            Gestionar Suscripción
+          </button>
+        </div>
+
+        <!-- Settings links -->
+        <div class="card" style="padding:8px">
+          <div style="display:flex;flex-direction:column">
+            <a href="#" onclick="showSection('Privacidad y Seguridad')" style="display:flex;align-items:center;justify-content:space-between;padding:14px 16px;border-radius:12px;color:var(--carbon);transition:background .15s"
+              onmouseover="this.style.background='var(--verde-bruma)'" onmouseout="this.style.background='transparent'">
+              <div style="display:flex;align-items:center;gap:10px">
+                <span class="material-symbols-outlined" style="font-size:20px;color:var(--gris-piedra)">security</span>
+                <span style="font-size:14px">Privacidad y Seguridad</span>
+              </div>
+              <span class="material-symbols-outlined" style="font-size:18px;color:var(--gris-piedra)">chevron_right</span>
+            </a>
+            <a href="#" onclick="showSection('Idioma')" style="display:flex;align-items:center;justify-content:space-between;padding:14px 16px;border-radius:12px;color:var(--carbon);transition:background .15s"
+              onmouseover="this.style.background='var(--verde-bruma)'" onmouseout="this.style.background='transparent'">
+              <div style="display:flex;align-items:center;gap:10px">
+                <span class="material-symbols-outlined" style="font-size:20px;color:var(--gris-piedra)">language</span>
+                <span style="font-size:14px">Idioma (Español)</span>
+              </div>
+              <span class="material-symbols-outlined" style="font-size:18px;color:var(--gris-piedra)">chevron_right</span>
+            </a>
+            <a href="#" onclick="showSection('Centro de Ayuda')" style="display:flex;align-items:center;justify-content:space-between;padding:14px 16px;border-radius:12px;color:var(--carbon);transition:background .15s"
+              onmouseover="this.style.background='var(--verde-bruma)'" onmouseout="this.style.background='transparent'">
+              <div style="display:flex;align-items:center;gap:10px">
+                <span class="material-symbols-outlined" style="font-size:20px;color:var(--gris-piedra)">help</span>
+                <span style="font-size:14px">Centro de Ayuda</span>
+              </div>
+              <span class="material-symbols-outlined" style="font-size:18px;color:var(--gris-piedra)">chevron_right</span>
+            </a>
+            <div style="height:1px;background:#F4F8F6;margin:4px 16px"></div>
+            <a href="login.html" style="display:flex;align-items:center;justify-content:space-between;padding:14px 16px;border-radius:12px;color:#EF4444;transition:background .15s"
+              onmouseover="this.style.background='#FEF2F2'" onmouseout="this.style.background='transparent'">
+              <div style="display:flex;align-items:center;gap:10px">
+                <span class="material-symbols-outlined" style="font-size:20px;color:#EF4444">logout</span>
+                <span style="font-size:14px;font-weight:600">Cerrar Sesión</span>
+              </div>
+              <span class="material-symbols-outlined" style="font-size:18px;color:#EF4444">chevron_right</span>
+            </a>
+          </div>
+        </div>
+
+        <!-- Invite banner -->
+        <div style="background:var(--verde-bruma);border-radius:20px;padding:20px;text-align:center">
+          <div style="width:52px;height:52px;border-radius:50%;background:white;display:flex;align-items:center;justify-content:center;margin:0 auto 12px">
+            <span class="material-symbols-outlined" style="font-size:28px;color:var(--verde-vital);font-variation-settings:'FILL' 1">group_add</span>
+          </div>
+          <h4 style="font-family:'Poppins',sans-serif;font-weight:700;font-size:14px;color:var(--carbon);margin-bottom:4px">¡Invita a un amigo!</h4>
+          <p style="font-size:12px;color:var(--gris-piedra);margin-bottom:14px;line-height:1.4">Gana 1 mes gratis de Premium por cada referido.</p>
+          <button onclick="invite()" class="btn-primary" style="width:100%;justify-content:center;padding:10px;font-size:13px">
+            Referir ahora
+          </button>
+        </div>
+
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<style>
+  @media (max-width: 900px) {
+    #profile-grid { grid-template-columns: 1fr !important; }
+  }
+  @media (max-width: 480px) {
+    .data-grid { grid-template-columns: repeat(2,1fr) !important; }
+  }
+</style>
+
+<script src="assets/js/data.js?v=3"></script>
+<script src="assets/js/profiles.js?v=3"></script>
+<script src="assets/js/app.js?v=3"></script>
+<script>
+  /* ── Init profile with real user data ── */
+  document.addEventListener('DOMContentLoaded', () => {
+    if (!getCurrentUser()?.registered) { window.location.href = 'registro.html'; return; }
+    initProfile(getDisplayUser()); // display user: real user or demo persona
+    initDemoButtons();
+  });
+
+  function initProfile(u) {
+    // Initials & name
+    document.getElementById('prof-initials').textContent = u.initials || '?';
+    document.getElementById('prof-name').textContent     = u.name     || '—';
+    document.getElementById('prof-subtitle').textContent =
+      `${u.objective ? 'Objetivo: ' + u.objective + ' · ' : ''}Miembro desde ${u.memberSince || '2025'}`;
+
+    // Email in edit section
+    const emailEl = document.getElementById('prof-email');
+    if (emailEl) emailEl.textContent = u.email || '';
+
+    // Personal data cards
+    const dc = document.getElementById('data-cards');
+    if (dc) {
+      const items = [
+        { val: u.age    || '—', unit: 'años',       label: 'EDAD'        },
+        { val: u.height || '—', unit: 'cm',          label: 'ALTURA'      },
+        { val: u.weight || '—', unit: 'kg',          label: 'PESO ACTUAL' },
+        { val: u.gender ? (u.gender === 'Femenino' ? 'Fem.' : 'Masc.') : '—', unit: 'biológico', label: 'GÉNERO' },
+      ];
+      dc.innerHTML = items.map(i => `
+        <div style="background:var(--bruma);border-radius:14px;padding:14px;text-align:center">
+          <p style="font-family:'Poppins',sans-serif;font-weight:700;font-size:22px;color:var(--carbon);margin-bottom:2px">${i.val}</p>
+          <p style="font-size:11px;color:var(--gris-piedra)">${i.unit}</p>
+          <p style="font-size:10px;font-weight:600;color:var(--verde-vital);text-transform:uppercase;letter-spacing:.04em;margin-top:3px">${i.label}</p>
+        </div>`).join('');
+    }
+
+    // Plan
+    const planName = u.plan || 'Básico';
+    document.getElementById('plan-name').textContent   = planName;
+    document.getElementById('plan-detail').textContent =
+      planName.toLowerCase().includes('premium') ? 'Próxima renovación: 16 de enero, 2026' : 'Plan gratuito activo';
+  }
+
+  function editData() {
+    showToast('Formulario de edición próximamente', 'info');
+  }
+
+  function shareProfile() {
+    showToast('Enlace de perfil copiado al portapapeles', 'success');
+  }
+
+  function addDevice() {
+    showToast('Buscando nuevos dispositivos Bluetooth…', 'info', 2500);
+    setTimeout(() => showToast('No se encontraron nuevos dispositivos. Verifica el Bluetooth.', 'warning'), 3000);
+  }
+
+  function syncDevice(name) {
+    showToast(`Sincronizando ${name}…`, 'info', 2000);
+    setTimeout(() => showToast(`${name} sincronizado correctamente`, 'success'), 2200);
+  }
+
+  function configDevice(name) {
+    showToast(`Configuración de ${name} próximamente`, 'info');
+  }
+
+  function reconnectDevice(name) {
+    showToast(`Intentando reconectar ${name}…`, 'info', 2500);
+    setTimeout(() => showToast('No se pudo conectar. Asegúrate de que el dispositivo esté encendido.', 'warning'), 3000);
+  }
+
+  function toggleNotif(type, on) {
+    const names = { hydration: 'Recordatorios de hidratación', summary: 'Resumen diario', sedentary: 'Alertas de sedentarismo' };
+    showToast(`${names[type] || type} ${on ? 'activados' : 'desactivados'}`, 'success');
+    setState({ ['notif_' + type]: on });
+  }
+
+  function managePlan() {
+    showToast('Portal de suscripción próximamente', 'info');
+  }
+
+  function showSection(name) {
+    event.preventDefault();
+    showToast(`${name}: próximamente`, 'info');
+  }
+
+  function invite() {
+    showToast('Enlace de referido copiado: planfit.app/invite/EM2025', 'success', 4000);
+  }
+
+  const _profileMeta = {
+    principiante: { label: 'Principiante', desc: 'Orientación guiada, rutinas simples y recordatorios frecuentes para empezar.' },
+    activo:       { label: 'Activo',        desc: 'Métricas avanzadas, sincronización de wearables y metas de rendimiento.' },
+    admin:        { label: 'Administrador', desc: 'Panel de gestión — usuarios, rutinas y estadísticas del sistema.' },
+  };
+
+  function initDemoButtons() {
+    const active = localStorage.getItem('pf_active_demo') || 'activo';
+    ['principiante','activo','admin'].forEach(p => {
+      const btn = document.getElementById('p-' + p);
+      if (!btn) return;
+      btn.className = p === active ? 'btn-primary' : 'btn-ghost';
+      btn.style.fontSize = '12px'; btn.style.padding = '7px 14px';
+    });
+    const m = _profileMeta[active];
+    if (m) {
+      document.getElementById('profile-hint').innerHTML =
+        `Perfil activo: <strong style="color:var(--verde-vital)">${m.label}</strong> — ${m.desc}`;
+    }
+  }
+
+  function switchProfile(type) {
+    const m = _profileMeta[type];
+    if (!m) return;
+    showToast(`Cambiando a perfil ${m.label}…`, 'info', 1000);
+    setTimeout(() => switchDemoProfile(type), 800);
+  }
+</script>
+</body>
+</html>

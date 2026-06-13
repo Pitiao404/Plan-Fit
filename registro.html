@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Plan·Fit — Crear cuenta</title>
+  <script src="https://cdn.tailwindcss.com?plugins=forms"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+  <link rel="stylesheet" href="assets/css/styles.css"/>
+</head>
+<body style="font-family:'Inter',sans-serif;background:var(--bruma);min-height:100vh;margin:0">
+
+<main style="display:flex;flex-direction:column;min-height:100vh" id="main-layout">
+
+  <!-- Left panel (Verde Pino) -->
+  <section class="login-left" style="width:100%;display:flex;flex-direction:column;justify-content:space-between;padding:36px 40px;min-height:240px;color:white;position:relative;z-index:1">
+    <!-- Logo -->
+    <a href="login.html" style="display:flex;align-items:center;gap:12px;position:relative;z-index:2;text-decoration:none">
+      <svg width="36" height="36" viewBox="0 0 32 32" fill="none" aria-hidden="true">
+        <rect width="32" height="32" rx="8" fill="rgba(21,184,110,0.6)"/>
+        <polyline points="3,16 7,16 10,9.5 13,22.5 15.5,12 18,19 21,16 29,16"
+          stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+      </svg>
+      <span style="font-family:'Poppins',sans-serif;font-weight:700;font-size:20px">
+        Plan·<span style="color:#15B86E">Fit</span>
+      </span>
+    </a>
+
+    <div style="position:relative;z-index:2;padding:32px 0 24px">
+      <h1 style="font-family:'Poppins',sans-serif;font-weight:700;font-size:clamp(26px,3.5vw,38px);line-height:1.2;margin-bottom:16px">
+        Empieza hoy.<br/>Sin excusas.
+      </h1>
+      <p style="font-size:14px;opacity:0.85;max-width:300px;line-height:1.6">
+        Crea tu cuenta gratis y obtén un plan personalizado de ejercicio, hidratación y nutrición en menos de 2 minutos.
+      </p>
+    </div>
+
+    <!-- Steps preview -->
+    <div style="position:relative;z-index:2;display:none" id="steps-preview" class="md-show">
+      <div style="display:flex;flex-direction:column;gap:10px">
+        <div style="display:flex;align-items:center;gap:10px;opacity:.9">
+          <div style="width:28px;height:28px;border-radius:50%;background:rgba(21,184,110,0.4);display:flex;align-items:center;justify-content:center;flex-shrink:0">
+            <span style="font-size:13px;font-weight:700">1</span>
+          </div>
+          <span style="font-size:13px">Crea tu cuenta con nombre y correo</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:10px;opacity:.75">
+          <div style="width:28px;height:28px;border-radius:50%;background:rgba(255,255,255,0.15);display:flex;align-items:center;justify-content:center;flex-shrink:0">
+            <span style="font-size:13px;font-weight:700">2</span>
+          </div>
+          <span style="font-size:13px">Ingresa tus datos físicos y objetivo</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:10px;opacity:.75">
+          <div style="width:28px;height:28px;border-radius:50%;background:rgba(255,255,255,0.15);display:flex;align-items:center;justify-content:center;flex-shrink:0">
+            <span style="font-size:13px;font-weight:700">3</span>
+          </div>
+          <span style="font-size:13px">¡Accede a tu plan personalizado!</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Right panel -->
+  <section style="width:100%;background:var(--bruma);display:flex;align-items:center;justify-content:center;padding:32px 24px">
+    <div style="width:100%;max-width:460px">
+      <div style="background:white;border-radius:24px;padding:36px;box-shadow:0 2px 20px rgba(0,0,0,0.07)">
+
+        <div style="margin-bottom:24px">
+          <h2 style="font-family:'Poppins',sans-serif;font-weight:700;font-size:22px;color:var(--carbon);margin-bottom:6px">
+            Crea tu cuenta
+          </h2>
+          <p style="font-size:13px;color:var(--gris-piedra)">Solo tomará un momento. Todos los campos son requeridos.</p>
+        </div>
+
+        <form id="reg-form" onsubmit="handleRegister(event)" novalidate>
+
+          <!-- Nombre completo -->
+          <div style="margin-bottom:16px">
+            <label for="reg-name" style="display:block;font-size:11px;font-weight:600;color:var(--gris-piedra);text-transform:uppercase;letter-spacing:.04em;margin-bottom:6px">
+              Nombre completo
+            </label>
+            <div style="position:relative">
+              <span class="material-symbols-outlined" style="position:absolute;left:14px;top:50%;transform:translateY(-50%);font-size:18px;color:var(--gris-piedra)">badge</span>
+              <input class="form-input" id="reg-name" type="text" placeholder="Ej: María García"
+                style="padding-left:44px" required autocomplete="name" autofocus/>
+            </div>
+            <p class="field-error" id="err-name" style="font-size:11px;color:#EF4444;margin-top:4px;display:none"></p>
+          </div>
+
+          <!-- Correo -->
+          <div style="margin-bottom:16px">
+            <label for="reg-email" style="display:block;font-size:11px;font-weight:600;color:var(--gris-piedra);text-transform:uppercase;letter-spacing:.04em;margin-bottom:6px">
+              Correo electrónico
+            </label>
+            <div style="position:relative">
+              <span class="material-symbols-outlined" style="position:absolute;left:14px;top:50%;transform:translateY(-50%);font-size:18px;color:var(--gris-piedra)">mail</span>
+              <input class="form-input" id="reg-email" type="email" placeholder="ejemplo@correo.com"
+                style="padding-left:44px" required autocomplete="email"/>
+            </div>
+            <p class="field-error" id="err-email" style="font-size:11px;color:#EF4444;margin-top:4px;display:none"></p>
+          </div>
+
+          <!-- Contraseña -->
+          <div style="margin-bottom:12px">
+            <label for="reg-pass" style="display:block;font-size:11px;font-weight:600;color:var(--gris-piedra);text-transform:uppercase;letter-spacing:.04em;margin-bottom:6px">
+              Contraseña
+            </label>
+            <div style="position:relative">
+              <span class="material-symbols-outlined" style="position:absolute;left:14px;top:50%;transform:translateY(-50%);font-size:18px;color:var(--gris-piedra)">lock</span>
+              <input class="form-input" id="reg-pass" type="password" placeholder="Mínimo 8 caracteres"
+                style="padding-left:44px;padding-right:48px" oninput="checkStrength(this.value)" required autocomplete="new-password"/>
+              <button type="button" onclick="togglePass('reg-pass','icon-pass')"
+                style="position:absolute;right:14px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:var(--gris-piedra);display:flex;align-items:center"
+                aria-label="Mostrar contraseña">
+                <span class="material-symbols-outlined" id="icon-pass" style="font-size:20px">visibility</span>
+              </button>
+            </div>
+            <!-- Strength -->
+            <div style="margin-top:8px">
+              <div class="strength-bar">
+                <div class="strength-fill" id="strength-fill" style="width:0%;background:var(--gris-piedra)"></div>
+              </div>
+              <span id="strength-text" style="font-size:11px;color:var(--gris-piedra);margin-top:4px;display:block">Contraseña necesaria</span>
+            </div>
+          </div>
+
+          <!-- Confirmar contraseña -->
+          <div style="margin-bottom:20px">
+            <label for="reg-pass2" style="display:block;font-size:11px;font-weight:600;color:var(--gris-piedra);text-transform:uppercase;letter-spacing:.04em;margin-bottom:6px">
+              Confirmar contraseña
+            </label>
+            <div style="position:relative">
+              <span class="material-symbols-outlined" style="position:absolute;left:14px;top:50%;transform:translateY(-50%);font-size:18px;color:var(--gris-piedra)">lock_reset</span>
+              <input class="form-input" id="reg-pass2" type="password" placeholder="Repite tu contraseña"
+                style="padding-left:44px;padding-right:48px" required autocomplete="new-password"/>
+              <button type="button" onclick="togglePass('reg-pass2','icon-pass2')"
+                style="position:absolute;right:14px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:var(--gris-piedra);display:flex;align-items:center"
+                aria-label="Mostrar confirmación">
+                <span class="material-symbols-outlined" id="icon-pass2" style="font-size:20px">visibility</span>
+              </button>
+            </div>
+            <p class="field-error" id="err-pass" style="font-size:11px;color:#EF4444;margin-top:4px;display:none"></p>
+          </div>
+
+          <!-- Terms -->
+          <div style="margin-bottom:22px">
+            <label style="display:flex;align-items:flex-start;gap:10px;cursor:pointer">
+              <input type="checkbox" id="reg-terms"
+                style="width:16px;height:16px;accent-color:var(--verde-vital);cursor:pointer;flex-shrink:0;margin-top:2px"/>
+              <span style="font-size:13px;color:var(--gris-piedra);line-height:1.4">
+                Acepto los <a href="#" style="color:var(--verde-vital);font-weight:600">Términos de servicio</a>
+                y la <a href="#" style="color:var(--verde-vital);font-weight:600">Política de privacidad</a>
+              </span>
+            </label>
+            <p class="field-error" id="err-terms" style="font-size:11px;color:#EF4444;margin-top:4px;display:none"></p>
+          </div>
+
+          <!-- Submit -->
+          <button type="submit" class="btn-primary" style="width:100%;justify-content:center;font-size:15px;padding:15px;margin-bottom:20px">
+            Crear mi cuenta
+            <span class="material-symbols-outlined" style="font-size:20px">arrow_forward</span>
+          </button>
+
+          <p style="text-align:center;font-size:13px;color:var(--gris-piedra)">
+            ¿Ya tienes cuenta?
+            <a href="login.html" style="color:var(--verde-vital);font-weight:700">Iniciar sesión</a>
+          </p>
+
+        </form>
+      </div>
+    </div>
+  </section>
+</main>
+
+<style>
+  .form-input.invalid { border-color: #EF4444; }
+  .form-input.valid   { border-color: #15B86E; }
+  @media (min-width: 768px) {
+    #main-layout { flex-direction: row !important; }
+    #main-layout > section:first-child  { width: 42%; min-height: 100vh; }
+    #main-layout > section:last-child   { width: 58%; min-height: 100vh; }
+    #steps-preview { display: flex !important; flex-direction: column !important; }
+  }
+</style>
+
+<script>
+  /* ── Password toggle ── */
+  function togglePass(inputId, iconId) {
+    const inp = document.getElementById(inputId);
+    const ico = document.getElementById(iconId);
+    const show = inp.type === 'password';
+    inp.type = show ? 'text' : 'password';
+    ico.textContent = show ? 'visibility_off' : 'visibility';
+  }
+
+  /* ── Strength meter ── */
+  function checkStrength(val) {
+    const fill = document.getElementById('strength-fill');
+    const txt  = document.getElementById('strength-text');
+    if (!val) { fill.style.width = '0%'; txt.textContent = 'Contraseña necesaria'; return; }
+
+    let score = 0;
+    if (val.length >= 8)          score++;
+    if (/[A-Z]/.test(val))        score++;
+    if (/[0-9]/.test(val))        score++;
+    if (/[^A-Za-z0-9]/.test(val)) score++;
+
+    const levels = [
+      { l:'Muy débil',  c:'#EF4444', w:'20%' },
+      { l:'Débil',      c:'#F59E0B', w:'40%' },
+      { l:'Moderada',   c:'#F59E0B', w:'60%' },
+      { l:'Fuerte',     c:'#15B86E', w:'85%' },
+      { l:'Muy fuerte', c:'#15B86E', w:'100%' },
+    ];
+    const lv = levels[Math.min(score, 4)];
+    fill.style.width      = lv.w;
+    fill.style.background = lv.c;
+    txt.textContent       = lv.l;
+  }
+
+  /* ── Show / clear error ── */
+  function showErr(id, msg) {
+    const el = document.getElementById(id);
+    if (!el) return;
+    el.textContent = msg;
+    el.style.display = msg ? 'block' : 'none';
+  }
+  function clearErr(id) { showErr(id, ''); }
+
+  /* ── Validation ── */
+  function validate() {
+    let ok = true;
+
+    const name  = document.getElementById('reg-name').value.trim();
+    const email = document.getElementById('reg-email').value.trim();
+    const pass  = document.getElementById('reg-pass').value;
+    const pass2 = document.getElementById('reg-pass2').value;
+    const terms = document.getElementById('reg-terms').checked;
+
+    clearErr('err-name'); clearErr('err-email'); clearErr('err-pass'); clearErr('err-terms');
+
+    if (!name || name.length < 2) {
+      showErr('err-name', 'Ingresa tu nombre completo (mínimo 2 caracteres).'); ok = false;
+    }
+    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      showErr('err-email', 'Ingresa un correo electrónico válido.'); ok = false;
+    }
+    if (pass.length < 8) {
+      showErr('err-pass', 'La contraseña debe tener al menos 8 caracteres.'); ok = false;
+    } else if (pass !== pass2) {
+      showErr('err-pass', 'Las contraseñas no coinciden.'); ok = false;
+    }
+    if (!terms) {
+      showErr('err-terms', 'Debes aceptar los términos para continuar.'); ok = false;
+    }
+
+    return ok ? { name, email, pass } : null;
+  }
+
+  /* ── Submit ── */
+  function handleRegister(e) {
+    e.preventDefault();
+    const data = validate();
+    if (!data) return;
+
+    // Build initials from name
+    const parts    = data.name.trim().split(/\s+/);
+    const initials = parts.length >= 2
+      ? (parts[0][0] + parts[parts.length - 1][0]).toUpperCase()
+      : parts[0].slice(0, 2).toUpperCase();
+
+    // Save user to localStorage
+    const now     = new Date();
+    const months  = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
+    const userData = {
+      name:        data.name,
+      firstName:   parts[0],
+      lastName:    parts.slice(1).join(' '),
+      initials:    initials,
+      email:       data.email,
+      plan:        'Básico',
+      memberSince: `${months[now.getMonth()]} ${now.getFullYear()}`,
+      registered:  true,
+      // Physical data filled in onboarding:
+      age: null, gender: null, weight: null, height: null,
+      activityLevel: null, objective: null, kcal: null,
+    };
+
+    try {
+      localStorage.setItem('pf_user', JSON.stringify(userData));
+      // Always start a new session as the 'activo' (own) profile
+      localStorage.setItem('pf_active_demo', 'activo');
+    } catch (_) {
+      alert('No se pudo guardar. Tu navegador puede tener el almacenamiento bloqueado.');
+      return;
+    }
+
+    // Redirect to onboarding
+    window.location.href = 'onboarding.html';
+  }
+</script>
+</body>
+</html>

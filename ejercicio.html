@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Plan·Fit — Ejercicio</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+  <link rel="stylesheet" href="assets/css/styles.css"/>
+</head>
+<body data-page="ejercicio">
+
+<div id="sidebar-container"></div>
+
+<div class="content-area">
+  <header class="mobile-header" id="mobile-header"></header>
+
+  <main class="main-content fade-in">
+
+    <!-- ── Recovery analysis banner (RF-10 → RF-02) ── -->
+    <div style="background:var(--verde-bruma);border:1.5px solid rgba(21,184,110,0.2);border-radius:20px;padding:20px 24px;margin-bottom:24px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px">
+      <div style="flex:1;min-width:220px">
+        <p class="kicker" style="margin-bottom:6px">ANÁLISIS DE RECUPERACIÓN</p>
+        <h2 style="font-family:'Poppins',sans-serif;font-weight:700;font-size:22px;color:var(--carbon);margin-bottom:8px">
+          Intensidad Sugerida: <span id="intensity-label" style="color:var(--verde-vital)">Alta (85%)</span>
+        </h2>
+        <p id="recovery-text" style="font-size:13px;color:var(--gris-piedra);line-height:1.6;max-width:480px">
+          Dormiste 7h 40m con sueño profundo óptimo. Tus niveles de energía están al máximo para una rutina de fuerza intensa hoy.
+        </p>
+      </div>
+      <!-- Score circles -->
+      <div style="display:flex;gap:20px;flex-shrink:0">
+        <div style="text-align:center">
+          <div style="position:relative;width:80px;height:80px">
+            <svg id="sleep-ring-ex" width="80" height="80" viewBox="0 0 128 128"></svg>
+            <div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center">
+              <span id="sleep-score-num" style="font-family:'Poppins',sans-serif;font-weight:700;font-size:22px;color:var(--carbon)">88</span>
+            </div>
+          </div>
+          <p style="font-size:11px;font-weight:600;color:var(--gris-piedra);margin-top:4px">Puntaje de Sueño</p>
+        </div>
+        <div style="text-align:center">
+          <div style="position:relative;width:80px;height:80px">
+            <svg id="recov-ring-ex" width="80" height="80" viewBox="0 0 128 128"></svg>
+            <div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center">
+              <span id="recov-score-num" style="font-family:'Poppins',sans-serif;font-weight:700;font-size:22px;color:var(--azul-hidro)">92</span>
+            </div>
+          </div>
+          <p style="font-size:11px;font-weight:600;color:var(--gris-piedra);margin-top:4px">Recuperación</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── Routine header + session button ─────── -->
+    <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:20px">
+      <div>
+        <h3 style="font-family:'Poppins',sans-serif;font-weight:700;font-size:18px;color:var(--carbon);margin-bottom:4px">
+          Rutina: <span id="routine-name" style="color:var(--verde-vital)">Power Builder A</span>
+        </h3>
+        <p id="routine-detail" style="font-size:13px;color:var(--gris-piedra)">
+          <span class="chip chip-coral" style="font-size:11px">Fuerza</span>&nbsp;
+          Pecho, Hombros y Tríceps · 55 min estim.
+        </p>
+      </div>
+
+      <!-- Session control -->
+      <div style="display:flex;align-items:center;gap:12px">
+        <span id="timer-display" style="font-family:'Poppins',sans-serif;font-size:20px;font-weight:700;color:var(--coral);display:none" aria-live="polite">00:00</span>
+        <button id="session-btn" onclick="toggleSession()" class="btn-coral" style="gap:8px">
+          <span class="material-symbols-outlined" style="font-size:18px;font-variation-settings:'FILL' 1" id="session-icon">play_arrow</span>
+          <span id="session-text">Iniciar Sesión</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- ── Exercise cards ──────────────────────── -->
+    <div id="exercises-container" style="display:flex;flex-direction:column;gap:16px"></div>
+
+    <!-- ── Completion summary (hidden until session done) ── -->
+    <div id="session-summary" style="display:none;background:var(--verde-bruma);border:2px solid var(--verde-vital);border-radius:20px;padding:24px;text-align:center;margin-top:20px">
+      <span class="material-symbols-outlined" style="font-size:48px;color:var(--verde-vital);font-variation-settings:'FILL' 1">emoji_events</span>
+      <h3 style="font-family:'Poppins',sans-serif;font-weight:700;font-size:20px;color:var(--carbon);margin:8px 0 4px">¡Sesión completada!</h3>
+      <p id="summary-text" style="font-size:14px;color:var(--gris-piedra);margin-bottom:16px"></p>
+      <button onclick="resetSession()" class="btn-primary" style="padding:10px 24px;font-size:14px">Nueva sesión</button>
+    </div>
+
+  </main>
+</div>
+
+<button class="fab no-print" onclick="location.href='hidratacion.html'" aria-label="Hidratación" title="Ir a Hidratación">
+  <span class="material-symbols-outlined" style="font-size:22px">water_drop</span>
+</button>
+
+<script src="assets/js/data.js?v=3"></script>
+<script src="assets/js/profiles.js?v=3"></script>
+<script src="assets/js/app.js?v=3"></script>
+<script>
+  let sessionActive = false;
+  let timerInterval = null;
+  let elapsedSecs = 0;
+  const completedSeries = {};
+
+  document.addEventListener('DOMContentLoaded', () => {
+    if (!getCurrentUser()?.registered) { window.location.href = 'registro.html'; return; }
+    initExercisePage();
+  });
+
+  function sleepRingColor(s) { return s >= 75 ? '#15B86E' : s >= 50 ? '#FF6B35' : '#EF4444'; }
+
+  function initExercisePage() {
+    const td      = PLANFIT.today;
+    const routine = PLANFIT.routine;
+    const sleep   = td.sleepScore;
+    const recov   = td.recoveryScore;
+
+    setRing(document.getElementById('sleep-ring-ex'), sleep, sleepRingColor(sleep), 40, 7);
+    setRing(document.getElementById('recov-ring-ex'), recov, '#2BB3E0', 40, 7);
+
+    const $ = id => document.getElementById(id);
+    if ($('sleep-score-num')) $('sleep-score-num').textContent = sleep;
+    if ($('recov-score-num')) $('recov-score-num').textContent = recov;
+    if ($('intensity-label')) {
+      $('intensity-label').textContent = routine.intensityLabel || 'Media (60%)';
+      $('intensity-label').style.color = sleep >= 75 ? 'var(--verde-vital)' : 'var(--coral)';
+    }
+    if ($('recovery-text')) $('recovery-text').textContent = routine.recoveryMsg || '';
+    if ($('routine-name'))  $('routine-name').textContent  = routine.name || 'Rutina';
+    if ($('routine-detail'))$('routine-detail').innerHTML  =
+      `<span class="chip chip-coral" style="font-size:11px">${routine.focus || 'General'}</span>&nbsp;${routine.muscles || ''} · ${routine.duration || ''}`;
+
+    renderExercises();
+  }
+
+  /* ── Render exercise cards ── */
+  function renderExercises() {
+    const container = document.getElementById('exercises-container');
+    container.innerHTML = PLANFIT.exercises.map(ex => buildExerciseCard(ex)).join('');
+
+    // Attach input validation
+    container.querySelectorAll('.series-input').forEach(inp => {
+      inp.addEventListener('input', () => validateInput(inp));
+      inp.addEventListener('blur',  () => validateInput(inp));
+    });
+  }
+
+  function buildExerciseCard(ex) {
+    const seriesRows = ex.series.map((s, si) => {
+      const key = `${ex.id}-${si}`;
+      const isDone = !!completedSeries[key];
+      const weightVal = s.bw ? 'PC' : s.weight;
+      return `
+        <tr class="series-row" id="row-${key}">
+          <td style="padding:8px 0;color:var(--gris-piedra);font-size:14px;font-weight:600;width:40px">${s.num}</td>
+          <td style="padding:8px 12px 8px 0">
+            <input class="series-input" type="number" value="${s.reps}" min="1" max="100"
+              data-key="${key}" data-field="reps" aria-label="Repeticiones serie ${s.num}"/>
+          </td>
+          <td style="padding:8px 12px 8px 0">
+            <input class="series-input" type="${s.bw ? 'text' : 'number'}" value="${weightVal}" min="0" max="500" step="0.5"
+              data-key="${key}" data-field="weight" aria-label="Peso serie ${s.num}" ${s.bw ? 'readonly style="width:60px;background:#F4F8F6"' : ''}/>
+          </td>
+          <td style="padding:8px 0;text-align:right">
+            <button class="series-check ${isDone ? 'done' : ''}" id="chk-${key}"
+              onclick="toggleSeries('${key}', this)" role="checkbox" aria-checked="${isDone}"
+              aria-label="Serie ${s.num} completada" title="Marcar como completada"></button>
+          </td>
+        </tr>`;
+    }).join('');
+
+    return `
+      <div class="card" style="padding:0;overflow:hidden">
+        <!-- Exercise header -->
+        <div style="display:flex;align-items:center;justify-content:space-between;padding:18px 20px;border-bottom:1px solid #F4F8F6">
+          <div style="display:flex;align-items:center;gap:14px">
+            <div style="width:48px;height:48px;border-radius:14px;background:rgba(255,107,53,0.12);display:flex;align-items:center;justify-content:center;flex-shrink:0">
+              <span class="material-symbols-outlined" style="font-size:24px;color:var(--coral);font-variation-settings:'FILL' 1">${ex.icon}</span>
+            </div>
+            <div>
+              <h4 style="font-family:'Poppins',sans-serif;font-weight:700;font-size:16px;color:var(--carbon);margin-bottom:2px">${ex.name}</h4>
+              <p style="font-size:12px;color:var(--gris-piedra)">${ex.technique}</p>
+            </div>
+          </div>
+          <span class="chip chip-green" style="font-size:11px">
+            <span class="material-symbols-outlined" style="font-size:12px">history</span>
+            Anterior: ${ex.previousRecord}
+          </span>
+        </div>
+
+        <!-- Series table -->
+        <div style="padding:16px 20px">
+          <table class="series-table" style="width:100%">
+            <thead>
+              <tr>
+                <th style="width:40px">SERIE</th>
+                <th>REPS</th>
+                <th>PESO (KG)</th>
+                <th style="text-align:right">COMPLETADO</th>
+              </tr>
+            </thead>
+            <tbody>${seriesRows}</tbody>
+          </table>
+        </div>
+      </div>`;
+  }
+
+  /* ── Input validation ── */
+  function validateInput(inp) {
+    const val = parseFloat(inp.value);
+    const isText = inp.type === 'text';
+    if (isText) return;
+
+    const max = parseFloat(inp.max) || 9999;
+    const min = parseFloat(inp.min) || 0;
+    const valid = !isNaN(val) && val >= min && val <= max;
+
+    inp.classList.toggle('error', !valid);
+    if (!valid) {
+      inp.title = `Valor inválido. Rango: ${min}–${max}`;
+    } else {
+      inp.title = '';
+    }
+    return valid;
+  }
+
+  /* ── Series toggle ── */
+  function toggleSeries(key, btn) {
+    const isDone = !completedSeries[key];
+    completedSeries[key] = isDone;
+    btn.classList.toggle('done', isDone);
+    btn.setAttribute('aria-checked', isDone);
+
+    const row = document.getElementById('row-' + key);
+    if (row) {
+      row.style.opacity = isDone ? '0.55' : '1';
+    }
+
+    updateSessionProgress();
+  }
+
+  function updateSessionProgress() {
+    const total = PLANFIT.exercises.reduce((acc, ex) => acc + ex.series.length, 0);
+    const done  = Object.values(completedSeries).filter(Boolean).length;
+    if (done === total && total > 0) {
+      showToast(`¡Todas las series completadas! Puedes terminar la sesión.`, 'success');
+    }
+  }
+
+  /* ── Session timer ── */
+  function toggleSession() {
+    const btn   = document.getElementById('session-btn');
+    const icon  = document.getElementById('session-icon');
+    const txt   = document.getElementById('session-text');
+    const timer = document.getElementById('timer-display');
+
+    sessionActive = !sessionActive;
+
+    if (sessionActive) {
+      // Start
+      elapsedSecs = 0;
+      timer.style.display = 'block';
+      icon.textContent = 'stop';
+      txt.textContent  = 'Terminar Sesión';
+      btn.style.background = '#0B3B2E';
+      btn.style.borderColor = '#0B3B2E';
+      timerInterval = setInterval(() => {
+        elapsedSecs++;
+        timer.textContent = fmtSecs(elapsedSecs);
+      }, 1000);
+      showToast('¡Sesión iniciada! Mucho ánimo 💪', 'success');
+    } else {
+      // Stop
+      clearInterval(timerInterval);
+      timer.style.display = 'none';
+      icon.textContent = 'play_arrow';
+      txt.textContent  = 'Iniciar Sesión';
+      btn.style.background = '';
+      btn.style.borderColor = '';
+      finishSession();
+    }
+  }
+
+  function finishSession() {
+    const done  = Object.values(completedSeries).filter(Boolean).length;
+    const total = PLANFIT.exercises.reduce((acc, ex) => acc + ex.series.length, 0);
+    const mins  = Math.floor(elapsedSecs / 60);
+    const secs  = elapsedSecs % 60;
+    const timeStr = `${mins}:${String(secs).padStart(2,'0')}`;
+
+    const summary = document.getElementById('session-summary');
+    document.getElementById('summary-text').textContent =
+      `${done} de ${total} series completadas · Duración: ${timeStr} · ${PLANFIT.exercises.length} ejercicios`;
+    summary.style.display = 'block';
+    summary.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    showToast('¡Sesión guardada en tu historial!', 'success', 4000);
+
+    // Save to state
+    setState({ exerciseActive: false, lastSession: { date: new Date().toISOString(), done, total, secs: elapsedSecs } });
+  }
+
+  function resetSession() {
+    Object.keys(completedSeries).forEach(k => delete completedSeries[k]);
+    elapsedSecs = 0;
+    document.getElementById('session-summary').style.display = 'none';
+    renderExercises();
+    document.querySelector('.main-content').scrollTop = 0;
+  }
+</script>
+</body>
+</html>

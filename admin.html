@@ -1,0 +1,823 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Plan·Fit — Panel Admin</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+  <link rel="stylesheet" href="assets/css/styles.css"/>
+  <style>
+    :root {
+      --admin-sidebar-bg: #0B2E24;
+      --admin-nav-active: rgba(21,184,110,0.18);
+    }
+    .admin-layout { display: flex; min-height: 100vh; }
+
+    /* ── Admin Sidebar ── */
+    .admin-sidebar {
+      width: 240px;
+      background: var(--admin-sidebar-bg);
+      display: flex;
+      flex-direction: column;
+      position: fixed;
+      top: 0; left: 0; bottom: 0;
+      z-index: 100;
+      overflow-y: auto;
+    }
+    .admin-logo {
+      display: flex; align-items: center; gap: 10px;
+      padding: 24px 20px 20px;
+      border-bottom: 1px solid rgba(255,255,255,.08);
+    }
+    .admin-logo-text {
+      font-family: 'Poppins', sans-serif;
+      font-weight: 700; font-size: 17px; color: white;
+    }
+    .admin-logo-text span { color: var(--verde-vital); }
+    .admin-badge {
+      margin-left: auto;
+      background: var(--coral); color: white;
+      font-size: 9px; font-weight: 700;
+      letter-spacing: .06em; text-transform: uppercase;
+      border-radius: 50px; padding: 2px 8px;
+    }
+    .admin-nav { padding: 12px 12px; flex: 1; }
+    .admin-nav-item {
+      display: flex; align-items: center; gap: 10px;
+      padding: 11px 14px; border-radius: 12px;
+      color: rgba(255,255,255,.65);
+      font-family: 'Inter', sans-serif; font-size: 14px; font-weight: 500;
+      text-decoration: none; margin-bottom: 2px;
+      transition: background .15s, color .15s;
+      cursor: pointer; border: none; background: none; width: 100%; text-align: left;
+    }
+    .admin-nav-item:hover { background: rgba(255,255,255,.07); color: white; }
+    .admin-nav-item.active { background: var(--admin-nav-active); color: var(--verde-vital); }
+    .admin-nav-item .nav-icon { font-size: 20px; }
+    .admin-footer {
+      padding: 16px;
+      border-top: 1px solid rgba(255,255,255,.08);
+    }
+    .admin-exit-btn {
+      display: flex; align-items: center; gap: 8px;
+      width: 100%; padding: 10px 14px;
+      background: rgba(255,107,53,.15); border: 1.5px solid rgba(255,107,53,.3);
+      color: var(--coral); border-radius: 12px;
+      font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 600;
+      cursor: pointer; transition: background .15s;
+    }
+    .admin-exit-btn:hover { background: rgba(255,107,53,.25); }
+
+    /* ── Admin Content ── */
+    .admin-content {
+      margin-left: 240px;
+      flex: 1;
+      background: #F4F8F6;
+      min-height: 100vh;
+      padding: 32px;
+    }
+    @media (max-width: 768px) {
+      .admin-sidebar { width: 100%; position: relative; height: auto; }
+      .admin-layout  { flex-direction: column; }
+      .admin-content { margin-left: 0; padding: 16px; }
+    }
+
+    /* ── Admin stat cards ── */
+    .stat-card {
+      background: white; border-radius: 16px;
+      padding: 20px 22px;
+      box-shadow: 0 1px 6px rgba(0,0,0,.06);
+    }
+    .stat-card .stat-label {
+      font-size: 11px; font-weight: 700; letter-spacing: .08em;
+      text-transform: uppercase; color: var(--gris-piedra);
+      margin-bottom: 6px;
+    }
+    .stat-card .stat-val {
+      font-family: 'Poppins', sans-serif; font-weight: 700;
+      font-size: 32px; color: var(--carbon); line-height: 1;
+    }
+    .stat-card .stat-change {
+      font-size: 12px; font-weight: 600; margin-top: 4px;
+    }
+
+    /* ── User table ── */
+    .user-table { width: 100%; border-collapse: collapse; }
+    .user-table th {
+      font-size: 11px; font-weight: 700; letter-spacing: .06em;
+      text-transform: uppercase; color: var(--gris-piedra);
+      padding: 0 16px 12px; text-align: left;
+    }
+    .user-table td { padding: 12px 16px; font-size: 14px; border-top: 1px solid #F4F8F6; }
+    .user-table tr:hover td { background: #FAFCFA; }
+    .status-dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; margin-right: 5px; }
+    .plan-tag {
+      display: inline-block; border-radius: 50px; padding: 2px 10px;
+      font-size: 11px; font-weight: 700;
+    }
+    .plan-premium { background: rgba(21,184,110,.12); color: var(--verde-vital); }
+    .plan-basico  { background: rgba(91,107,120,.1); color: var(--gris-piedra); }
+
+    /* ── Health metric rows ── */
+    .health-row {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 12px 0; border-bottom: 1px solid #F4F8F6;
+    }
+    .health-row:last-child { border-bottom: none; }
+
+    /* ── Mini bar chart ── */
+    .mini-bar-wrap { display: flex; align-items: flex-end; gap: 5px; height: 48px; }
+    .mini-bar-wrap .bar {
+      flex: 1; border-radius: 4px 4px 0 0;
+      transition: height .4s;
+    }
+  </style>
+</head>
+<body>
+
+<div class="admin-layout">
+
+  <!-- ══ Admin Sidebar ══════════════════════════════ -->
+  <aside class="admin-sidebar" aria-label="Navegación de administración">
+
+    <div class="admin-logo">
+      <!-- Logo SVG -->
+      <svg width="28" height="28" viewBox="0 0 32 32" fill="none" aria-hidden="true">
+        <rect width="32" height="32" rx="8" fill="#15B86E"/>
+        <polyline points="3,16 7,16 10,9.5 13,22.5 15.5,12 18,19 21,16 29,16"
+          stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+      </svg>
+      <span class="admin-logo-text">Plan·<span>Fit</span></span>
+      <span class="admin-badge">Admin</span>
+    </div>
+
+    <nav class="admin-nav">
+      <button class="admin-nav-item active" onclick="showSection('overview')">
+        <span class="material-symbols-outlined nav-icon">dashboard</span>
+        Panel Admin
+      </button>
+      <button class="admin-nav-item" onclick="showSection('users')">
+        <span class="material-symbols-outlined nav-icon">group</span>
+        Usuarios
+      </button>
+      <button class="admin-nav-item" onclick="showSection('routines')">
+        <span class="material-symbols-outlined nav-icon">fitness_center</span>
+        Rutinas
+      </button>
+      <button class="admin-nav-item" onclick="showSection('plans')">
+        <span class="material-symbols-outlined nav-icon">workspace_premium</span>
+        Planes
+      </button>
+      <div style="height:1px;background:rgba(255,255,255,.07);margin:8px 0"></div>
+      <button class="admin-nav-item" onclick="showSection('stats')">
+        <span class="material-symbols-outlined nav-icon">bar_chart</span>
+        Estadísticas
+      </button>
+      <button class="admin-nav-item" onclick="showSection('config')">
+        <span class="material-symbols-outlined nav-icon">settings</span>
+        Configuración
+      </button>
+    </nav>
+
+    <div class="admin-footer">
+      <div style="display:flex;align-items:center;gap:10px;padding:0 4px;margin-bottom:12px">
+        <div style="width:34px;height:34px;border-radius:50%;background:var(--verde-vital);display:flex;align-items:center;justify-content:center;flex-shrink:0">
+          <span id="admin-initials" style="font-family:'Poppins',sans-serif;font-weight:700;font-size:13px;color:white">?</span>
+        </div>
+        <div style="min-width:0">
+          <p id="admin-username" style="font-size:13px;font-weight:700;color:white;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">—</p>
+          <p style="font-size:11px;color:rgba(255,255,255,.5)">Administrador</p>
+        </div>
+      </div>
+      <button class="admin-exit-btn" onclick="exitAdminMode()">
+        <span class="material-symbols-outlined" style="font-size:18px">exit_to_app</span>
+        Volver a Vista Usuario
+      </button>
+    </div>
+  </aside>
+
+  <!-- ══ Main content ═════════════════════════════════ -->
+  <main class="admin-content fade-in">
+
+    <!-- ─── Overview section ─────────────────────── -->
+    <div id="section-overview">
+
+      <!-- Header -->
+      <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:28px">
+        <div>
+          <p style="font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--verde-vital);margin-bottom:4px">
+            PANEL DE ADMINISTRACIÓN
+          </p>
+          <h1 style="font-family:'Poppins',sans-serif;font-weight:700;font-size:clamp(24px,2.5vw,32px);color:var(--carbon);margin:0">
+            Resumen del Sistema
+          </h1>
+          <p style="font-size:13px;color:var(--gris-piedra);margin-top:4px">Jueves, 12 Jun 2025 · Datos en tiempo real</p>
+        </div>
+        <div style="display:flex;gap:10px">
+          <button onclick="adminToast('Exportando datos…','info')" class="btn-ghost" style="gap:6px">
+            <span class="material-symbols-outlined" style="font-size:16px">download</span>
+            Exportar CSV
+          </button>
+          <button onclick="adminToast('Configuración del sistema','info')" class="btn-primary" style="gap:6px">
+            <span class="material-symbols-outlined" style="font-size:16px">settings</span>
+            Configuración
+          </button>
+        </div>
+      </div>
+
+      <!-- ─── KPI Cards ── -->
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px;margin-bottom:24px">
+
+        <div class="stat-card" style="border-left:4px solid var(--verde-vital)">
+          <p class="stat-label">Total Usuarios</p>
+          <p class="stat-val" id="kpi-total">1,247</p>
+          <p class="stat-change" style="color:var(--verde-vital)">
+            <span class="material-symbols-outlined" style="font-size:13px;vertical-align:middle">trending_up</span>+34 esta semana
+          </p>
+        </div>
+
+        <div class="stat-card" style="border-left:4px solid var(--azul-hidro)">
+          <p class="stat-label">Activos Hoy</p>
+          <p class="stat-val" id="kpi-active">83</p>
+          <p class="stat-change" style="color:var(--azul-hidro)">6.7% del total</p>
+        </div>
+
+        <div class="stat-card" style="border-left:4px solid var(--coral)">
+          <p class="stat-label">Nuevos Esta Semana</p>
+          <p class="stat-val">34</p>
+          <p class="stat-change" style="color:var(--coral)">
+            <span class="material-symbols-outlined" style="font-size:13px;vertical-align:middle">trending_up</span>+12% vs semana anterior
+          </p>
+        </div>
+
+        <div class="stat-card" style="border-left:4px solid #A78BFA">
+          <p class="stat-label">Ingresos del Mes</p>
+          <p class="stat-val" style="font-size:26px">$4,890</p>
+          <p class="stat-change" style="color:#7C3AED">400 suscriptores Premium</p>
+        </div>
+
+      </div>
+
+      <!-- ─── Second row: User table + Chart + Health ── -->
+      <div style="display:grid;grid-template-columns:1fr 300px;gap:20px;margin-bottom:20px" id="admin-grid">
+
+        <!-- User table -->
+        <div style="background:white;border-radius:16px;box-shadow:0 1px 6px rgba(0,0,0,.06);overflow:hidden">
+          <div style="display:flex;align-items:center;justify-content:space-between;padding:20px 20px 0">
+            <h3 style="font-family:'Poppins',sans-serif;font-weight:700;font-size:16px;color:var(--carbon)">
+              Usuarios Recientes
+            </h3>
+            <button onclick="showSection('users')" style="background:none;border:none;cursor:pointer;color:var(--verde-vital);font-size:13px;font-weight:600;display:flex;align-items:center;gap:2px">
+              Ver todos <span class="material-symbols-outlined" style="font-size:16px">chevron_right</span>
+            </button>
+          </div>
+
+          <div style="overflow-x:auto">
+            <table class="user-table" style="margin-top:12px">
+              <thead>
+                <tr>
+                  <th>Usuario</th>
+                  <th>Plan</th>
+                  <th>Objetivo</th>
+                  <th>Última Actividad</th>
+                  <th>Estado</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody id="users-tbody">
+                <!-- Filled by JS -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Right column: chart + system health -->
+        <div style="display:flex;flex-direction:column;gap:16px">
+
+          <!-- Plan distribution -->
+          <div style="background:white;border-radius:16px;padding:20px;box-shadow:0 1px 6px rgba(0,0,0,.06)">
+            <h4 style="font-family:'Poppins',sans-serif;font-weight:700;font-size:14px;color:var(--carbon);margin-bottom:16px">
+              Distribución de Planes
+            </h4>
+
+            <!-- Ring -->
+            <div style="position:relative;width:120px;height:120px;margin:0 auto 16px">
+              <svg id="plan-ring" width="120" height="120" viewBox="0 0 128 128"></svg>
+              <div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center">
+                <span style="font-family:'Poppins',sans-serif;font-weight:700;font-size:22px;color:var(--carbon)">32%</span>
+                <span style="font-size:10px;color:var(--gris-piedra)">Premium</span>
+              </div>
+            </div>
+
+            <div style="display:flex;flex-direction:column;gap:8px">
+              <div style="display:flex;align-items:center;justify-content:space-between">
+                <div style="display:flex;align-items:center;gap:6px">
+                  <span style="width:10px;height:10px;border-radius:50%;background:var(--verde-vital);display:inline-block"></span>
+                  <span style="font-size:13px;color:var(--carbon)">Premium</span>
+                </div>
+                <span style="font-size:13px;font-weight:700;color:var(--carbon)">400</span>
+              </div>
+              <div style="display:flex;align-items:center;justify-content:space-between">
+                <div style="display:flex;align-items:center;gap:6px">
+                  <span style="width:10px;height:10px;border-radius:50%;background:#CBD5E1;display:inline-block"></span>
+                  <span style="font-size:13px;color:var(--carbon)">Básico</span>
+                </div>
+                <span style="font-size:13px;font-weight:700;color:var(--carbon)">847</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- System health -->
+          <div style="background:white;border-radius:16px;padding:20px;box-shadow:0 1px 6px rgba(0,0,0,.06)">
+            <h4 style="font-family:'Poppins',sans-serif;font-weight:700;font-size:14px;color:var(--carbon);margin-bottom:14px;display:flex;align-items:center;gap:6px">
+              <span class="material-symbols-outlined" style="font-size:18px;color:var(--verde-vital);font-variation-settings:'FILL' 1">health_and_safety</span>
+              Salud del Sistema
+            </h4>
+            <div class="health-row">
+              <span style="font-size:13px;color:var(--gris-piedra)">API Uptime</span>
+              <span style="font-size:13px;font-weight:700;color:var(--verde-vital)">99.9%</span>
+            </div>
+            <div class="health-row">
+              <span style="font-size:13px;color:var(--gris-piedra)">Respuesta BD</span>
+              <span style="font-size:13px;font-weight:700;color:var(--carbon)">45 ms</span>
+            </div>
+            <div class="health-row">
+              <span style="font-size:13px;color:var(--gris-piedra)">Sesiones Activas</span>
+              <span style="font-size:13px;font-weight:700;color:var(--azul-hidro)">23</span>
+            </div>
+            <div class="health-row">
+              <span style="font-size:13px;color:var(--gris-piedra)">Último Backup</span>
+              <span style="font-size:13px;font-weight:700;color:var(--carbon)">Hace 2h</span>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- ─── Weekly registrations chart ── -->
+      <div style="background:white;border-radius:16px;padding:24px;box-shadow:0 1px 6px rgba(0,0,0,.06)">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px">
+          <h3 style="font-family:'Poppins',sans-serif;font-weight:700;font-size:16px;color:var(--carbon)">Registros de las Últimas 4 Semanas</h3>
+          <span class="chip chip-green" style="font-size:11px">+22% vs mes anterior</span>
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:20px;align-items:end">
+          <div style="text-align:center">
+            <div class="mini-bar-wrap" id="reg-bars"></div>
+            <div style="display:flex;gap:4px;margin-top:6px" id="reg-labels"></div>
+          </div>
+        </div>
+        <svg id="reg-chart" style="width:100%;height:80px" viewBox="0 0 400 80" aria-label="Registros semanales"></svg>
+        <div style="display:flex;gap:24px;margin-top:12px;flex-wrap:wrap" id="reg-week-labels"></div>
+      </div>
+
+    </div><!-- /section-overview -->
+
+    <!-- ─── Users section (hidden by default) ── -->
+    <div id="section-users" style="display:none">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;flex-wrap:wrap;gap:12px">
+        <div>
+          <p style="font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--verde-vital);margin-bottom:4px">GESTIÓN</p>
+          <h1 style="font-family:'Poppins',sans-serif;font-weight:700;font-size:28px;color:var(--carbon);margin:0">Usuarios</h1>
+        </div>
+        <button onclick="adminToast('Función próximamente disponible','info')" class="btn-primary" style="gap:6px">
+          <span class="material-symbols-outlined" style="font-size:16px">person_add</span>
+          Nuevo Usuario
+        </button>
+      </div>
+
+      <div style="background:white;border-radius:16px;box-shadow:0 1px 6px rgba(0,0,0,.06);overflow:hidden">
+        <div style="padding:16px 20px;border-bottom:1px solid #F4F8F6;display:flex;align-items:center;gap:10px">
+          <span class="material-symbols-outlined" style="font-size:18px;color:var(--gris-piedra)">search</span>
+          <input type="text" placeholder="Buscar por nombre o email…" oninput="filterUsers(this.value)"
+            style="border:none;outline:none;font-family:'Inter',sans-serif;font-size:14px;color:var(--carbon);flex:1"/>
+        </div>
+        <div style="overflow-x:auto">
+          <table class="user-table">
+            <thead>
+              <tr>
+                <th>Usuario</th>
+                <th>Email</th>
+                <th>Plan</th>
+                <th>Objetivo</th>
+                <th>Miembro Desde</th>
+                <th>Última Actividad</th>
+                <th>Estado</th>
+                <th>Acciones</th>
+              </tr>
+            </thead>
+            <tbody id="users-full-tbody"><!-- Filled by JS --></tbody>
+          </table>
+        </div>
+      </div>
+    </div><!-- /section-users -->
+
+    <!-- ─── Other sections placeholder ── -->
+    <div id="section-routines" style="display:none">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:24px">
+        <div>
+          <p style="font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--verde-vital);margin-bottom:4px">GESTIÓN</p>
+          <h1 style="font-family:'Poppins',sans-serif;font-weight:700;font-size:28px;color:var(--carbon);margin:0">Rutinas</h1>
+        </div>
+        <button onclick="adminToast('Nueva rutina próximamente','info')" class="btn-primary" style="gap:6px">
+          <span class="material-symbols-outlined" style="font-size:16px">add</span>
+          Nueva Rutina
+        </button>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:16px" id="routines-grid">
+        <!-- Filled by JS -->
+      </div>
+    </div>
+
+    <div id="section-plans" style="display:none">
+      <div style="margin-bottom:24px">
+        <p style="font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--verde-vital);margin-bottom:4px">GESTIÓN</p>
+        <h1 style="font-family:'Poppins',sans-serif;font-weight:700;font-size:28px;color:var(--carbon);margin:0">Planes de Suscripción</h1>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px" id="plans-grid">
+        <!-- Filled by JS -->
+      </div>
+    </div>
+
+    <div id="section-stats" style="display:none">
+      <div style="margin-bottom:24px">
+        <p style="font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--verde-vital);margin-bottom:4px">ANALÍTICA</p>
+        <h1 style="font-family:'Poppins',sans-serif;font-weight:700;font-size:28px;color:var(--carbon);margin:0">Estadísticas Globales</h1>
+      </div>
+      <div id="stats-grid" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:20px">
+        <!-- Filled by JS -->
+      </div>
+    </div>
+
+    <div id="section-config" style="display:none">
+      <div style="margin-bottom:24px">
+        <p style="font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--verde-vital);margin-bottom:4px">SISTEMA</p>
+        <h1 style="font-family:'Poppins',sans-serif;font-weight:700;font-size:28px;color:var(--carbon);margin:0">Configuración</h1>
+      </div>
+      <div style="background:white;border-radius:16px;padding:28px;box-shadow:0 1px 6px rgba(0,0,0,.06);max-width:560px" id="config-content">
+        <!-- Filled by JS -->
+      </div>
+    </div>
+
+  </main>
+
+</div>
+
+<!-- Toast container -->
+<div id="admin-toast-container"></div>
+
+<script src="assets/js/data.js"></script>
+<script>
+  /* ─── Mock data ─── */
+  const ADMIN_USERS = [
+    { name:'Elena Martínez',  email:'elena.m@email.com',   plan:'Premium', obj:'Rendimiento', since:'Ene 2024', last:'Hace 5 min',  status:'active',   initials:'EM' },
+    { name:'Carlos Mendoza',  email:'carlos.m@email.com',  plan:'Básico',  obj:'Salud',       since:'Abr 2025', last:'Hace 2 hrs',  status:'active',   initials:'CM' },
+    { name:'Sofía Ramírez',   email:'sofia.r@email.com',   plan:'Premium', obj:'Definición',  since:'Mar 2024', last:'Hace 1 día',  status:'active',   initials:'SR' },
+    { name:'Miguel Torres',   email:'miguel.t@email.com',  plan:'Básico',  obj:'Salud',       since:'Feb 2025', last:'Hace 3 días', status:'inactive', initials:'MT' },
+    { name:'Ana García',      email:'ana.g@email.com',     plan:'Premium', obj:'Rendimiento', since:'Nov 2023', last:'Hace 5 hrs',  status:'active',   initials:'AG' },
+    { name:'Luis Peñaloza',   email:'luis.p@email.com',    plan:'Básico',  obj:'Peso',        since:'May 2025', last:'Hace 6 días', status:'inactive', initials:'LP' },
+  ];
+
+  const ADMIN_ROUTINES = [
+    { name:'Power Builder A', level:'Avanzado', exercises:6, users:148, focus:'Fuerza', icon:'fitness_center', color:'#FF6B35' },
+    { name:'Cardio Boost',    level:'Intermedio', exercises:4, users:203, focus:'Cardio', icon:'directions_run', color:'#2BB3E0' },
+    { name:'Primeros Pasos',  level:'Principiante', exercises:3, users:312, focus:'Cardio Suave', icon:'directions_walk', color:'#15B86E' },
+    { name:'Core & Flex',     level:'Intermedio', exercises:5, users:97,  focus:'Core', icon:'self_improvement', color:'#A78BFA' },
+  ];
+
+  const WEEKLY_REGS = [
+    { week: 'Sem 1',  regs: 22 },
+    { week: 'Sem 2',  regs: 18 },
+    { week: 'Sem 3',  regs: 27 },
+    { week: 'Sem 4',  regs: 34 },
+  ];
+
+  /* ─── Init ─── */
+  document.addEventListener('DOMContentLoaded', () => {
+    // Show real registered user in admin sidebar footer
+    try {
+      const raw = localStorage.getItem('pf_user');
+      const u   = raw ? JSON.parse(raw) : null;
+      if (u && u.name) {
+        const parts    = u.name.trim().split(/\s+/);
+        const initials = parts.length >= 2
+          ? (parts[0][0] + parts[parts.length - 1][0]).toUpperCase()
+          : parts[0].slice(0, 2).toUpperCase();
+        const el = id => document.getElementById(id);
+        if (el('admin-initials'))  el('admin-initials').textContent  = u.initials || initials;
+        if (el('admin-username'))  el('admin-username').textContent  = u.name;
+      }
+    } catch (_) {}
+
+    renderUserTable('users-tbody', ADMIN_USERS.slice(0, 5), false);
+    renderUserTable('users-full-tbody', ADMIN_USERS, true);
+    renderRoutinesGrid();
+    renderPlansSection();
+    renderStatsSection();
+    renderConfigSection();
+    drawRegChart();
+    drawPlanRing();
+    animateKPIs();
+  });
+
+  /* ─── Section switching ─── */
+  const SECTIONS = ['overview','users','routines','plans','stats','config'];
+
+  function showSection(name) {
+    SECTIONS.forEach(s => {
+      const el = document.getElementById('section-' + s);
+      if (el) el.style.display = s === name ? '' : 'none';
+    });
+    document.querySelectorAll('.admin-nav-item').forEach(btn => {
+      btn.classList.remove('active');
+    });
+    event.currentTarget.classList.add('active');
+  }
+
+  /* ─── User table renderer ─── */
+  function renderUserTable(tbodyId, users, fullView) {
+    const tbody = document.getElementById(tbodyId);
+    if (!tbody) return;
+    tbody.innerHTML = users.map(u => {
+      const statusHtml = u.status === 'active'
+        ? `<span class="status-dot" style="background:var(--verde-vital)"></span><span style="color:var(--verde-vital);font-weight:600">Activo</span>`
+        : `<span class="status-dot" style="background:#CBD5E1"></span><span style="color:var(--gris-piedra)">Inactivo</span>`;
+      const planHtml = `<span class="plan-tag ${u.plan === 'Premium' ? 'plan-premium' : 'plan-basico'}">${u.plan}</span>`;
+      const avatarHtml = `
+        <div style="display:flex;align-items:center;gap:10px">
+          <div style="width:34px;height:34px;border-radius:50%;background:var(--verde-vital);display:flex;align-items:center;justify-content:center;flex-shrink:0">
+            <span style="font-size:12px;font-weight:700;color:white">${u.initials}</span>
+          </div>
+          <span style="font-weight:600;color:var(--carbon)">${u.name}</span>
+        </div>`;
+      const actions = `
+        <div style="display:flex;gap:4px">
+          <button onclick="adminToast('Viendo perfil de ${u.name}','info')" style="background:none;border:none;cursor:pointer;color:var(--azul-hidro);padding:4px" title="Ver perfil">
+            <span class="material-symbols-outlined" style="font-size:18px">visibility</span>
+          </button>
+          <button onclick="adminToast('Editar ${u.name}','info')" style="background:none;border:none;cursor:pointer;color:var(--gris-piedra);padding:4px" title="Editar">
+            <span class="material-symbols-outlined" style="font-size:18px">edit</span>
+          </button>
+          <button onclick="adminToast('Acción registrada','warning')" style="background:none;border:none;cursor:pointer;color:#EF4444;padding:4px" title="Bloquear">
+            <span class="material-symbols-outlined" style="font-size:18px">block</span>
+          </button>
+        </div>`;
+
+      if (fullView) {
+        return `<tr>
+          <td>${avatarHtml}</td>
+          <td style="color:var(--gris-piedra)">${u.email}</td>
+          <td>${planHtml}</td>
+          <td style="color:var(--carbon)">${u.obj}</td>
+          <td style="color:var(--gris-piedra)">${u.since}</td>
+          <td style="color:var(--gris-piedra)">${u.last}</td>
+          <td>${statusHtml}</td>
+          <td>${actions}</td>
+        </tr>`;
+      } else {
+        return `<tr>
+          <td>${avatarHtml}</td>
+          <td>${planHtml}</td>
+          <td style="color:var(--carbon)">${u.obj}</td>
+          <td style="color:var(--gris-piedra)">${u.last}</td>
+          <td>${statusHtml}</td>
+          <td>${actions}</td>
+        </tr>`;
+      }
+    }).join('');
+  }
+
+  function filterUsers(query) {
+    const q = query.toLowerCase();
+    const filtered = ADMIN_USERS.filter(u =>
+      u.name.toLowerCase().includes(q) || u.email.toLowerCase().includes(q)
+    );
+    renderUserTable('users-full-tbody', filtered, true);
+  }
+
+  /* ─── Routines grid ─── */
+  function renderRoutinesGrid() {
+    const el = document.getElementById('routines-grid');
+    if (!el) return;
+    el.innerHTML = ADMIN_ROUTINES.map(r => `
+      <div style="background:white;border-radius:16px;padding:20px;box-shadow:0 1px 6px rgba(0,0,0,.06)">
+        <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:14px">
+          <div style="width:44px;height:44px;border-radius:12px;background:${r.color}18;display:flex;align-items:center;justify-content:center">
+            <span class="material-symbols-outlined" style="font-size:24px;color:${r.color};font-variation-settings:'FILL' 1">${r.icon}</span>
+          </div>
+          <span style="font-size:11px;font-weight:700;background:${r.color}18;color:${r.color};border-radius:50px;padding:3px 10px">${r.level}</span>
+        </div>
+        <h4 style="font-family:'Poppins',sans-serif;font-weight:700;font-size:16px;color:var(--carbon);margin-bottom:4px">${r.name}</h4>
+        <p style="font-size:12px;color:var(--gris-piedra);margin-bottom:14px">${r.focus} · ${r.exercises} ejercicios</p>
+        <div style="display:flex;align-items:center;justify-content:space-between">
+          <span style="font-size:13px;color:var(--gris-piedra)">
+            <strong style="color:var(--carbon)">${r.users}</strong> usuarios activos
+          </span>
+          <div style="display:flex;gap:6px">
+            <button onclick="adminToast('Editando ${r.name}','info')" style="background:none;border:none;cursor:pointer;color:var(--gris-piedra)">
+              <span class="material-symbols-outlined" style="font-size:18px">edit</span>
+            </button>
+            <button onclick="adminToast('Vista previa de ${r.name}','info')" style="background:none;border:none;cursor:pointer;color:var(--azul-hidro)">
+              <span class="material-symbols-outlined" style="font-size:18px">visibility</span>
+            </button>
+          </div>
+        </div>
+      </div>`).join('');
+  }
+
+  /* ─── Plans section ─── */
+  function renderPlansSection() {
+    const el = document.getElementById('plans-grid');
+    if (!el) return;
+    el.innerHTML = `
+      <div style="background:white;border-radius:16px;padding:28px;box-shadow:0 1px 6px rgba(0,0,0,.06)">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:18px">
+          <span class="material-symbols-outlined" style="font-size:28px;color:var(--gris-piedra);font-variation-settings:'FILL' 1">person</span>
+          <div>
+            <h3 style="font-family:'Poppins',sans-serif;font-weight:700;font-size:18px;color:var(--carbon)">Plan Básico</h3>
+            <p style="font-size:13px;color:var(--gris-piedra)">Gratuito</p>
+          </div>
+        </div>
+        <p style="font-size:28px;font-family:'Poppins';font-weight:700;color:var(--carbon);margin-bottom:16px">$0 <span style="font-size:14px;font-weight:400;color:var(--gris-piedra)">/mes</span></p>
+        <div style="margin-bottom:20px">
+          ${['3 rutinas predefinidas','Seguimiento de pasos','Hidratación básica','Metas de salud'].map(f =>
+            `<div style="display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid #F4F8F6">
+              <span class="material-symbols-outlined" style="font-size:16px;color:var(--verde-vital)">check_circle</span>
+              <span style="font-size:13px;color:var(--carbon)">${f}</span>
+            </div>`).join('')}
+        </div>
+        <div style="background:var(--bruma);border-radius:12px;padding:14px;display:flex;justify-content:space-between">
+          <span style="font-size:13px;color:var(--gris-piedra)">Usuarios activos</span>
+          <strong style="font-size:13px;color:var(--carbon)">847</strong>
+        </div>
+        <button onclick="adminToast('Editando Plan Básico','info')" style="width:100%;margin-top:16px" class="btn-ghost">Editar Plan</button>
+      </div>
+
+      <div style="background:var(--verde-pino);border-radius:16px;padding:28px;box-shadow:0 4px 16px rgba(11,59,46,.3);position:relative;overflow:hidden">
+        <div style="position:absolute;top:-20px;right:-20px;width:120px;height:120px;border-radius:50%;background:rgba(255,255,255,.05)"></div>
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:18px">
+          <span class="material-symbols-outlined" style="font-size:28px;color:var(--verde-vital);font-variation-settings:'FILL' 1">workspace_premium</span>
+          <div>
+            <h3 style="font-family:'Poppins',sans-serif;font-weight:700;font-size:18px;color:white">Plan Premium</h3>
+            <p style="font-size:13px;color:rgba(255,255,255,.6)">Recomendado</p>
+          </div>
+        </div>
+        <p style="font-size:28px;font-family:'Poppins';font-weight:700;color:white;margin-bottom:16px">$12.99 <span style="font-size:14px;font-weight:400;opacity:.7">/mes</span></p>
+        <div style="margin-bottom:20px">
+          ${['Todo el Plan Básico','Wearables ilimitados','Análisis de sueño avanzado','IA de recomendación','Exportar reportes PDF','Soporte prioritario'].map(f =>
+            `<div style="display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid rgba(255,255,255,.08)">
+              <span class="material-symbols-outlined" style="font-size:16px;color:var(--verde-vital)">check_circle</span>
+              <span style="font-size:13px;color:rgba(255,255,255,.9)">${f}</span>
+            </div>`).join('')}
+        </div>
+        <div style="background:rgba(255,255,255,.08);border-radius:12px;padding:14px;display:flex;justify-content:space-between">
+          <span style="font-size:13px;color:rgba(255,255,255,.6)">Usuarios activos</span>
+          <strong style="font-size:13px;color:white">400</strong>
+        </div>
+        <button onclick="adminToast('Editando Plan Premium','info')" style="width:100%;margin-top:16px;background:var(--verde-vital);border-color:var(--verde-vital)" class="btn-primary">Editar Plan</button>
+      </div>`;
+  }
+
+  /* ─── Stats section ─── */
+  function renderStatsSection() {
+    const el = document.getElementById('stats-grid');
+    if (!el) return;
+    const stats = [
+      { label:'Objetivo más popular', val:'Salud',       sub:'48% de usuarios',             icon:'flag',           color:'#15B86E' },
+      { label:'Ejercicio más usado',  val:'Sentadillas', sub:'Aparece en 78% de rutinas',   icon:'fitness_center', color:'#FF6B35' },
+      { label:'Promedio de pasos',    val:'7,240',       sub:'Diario por usuario activo',   icon:'directions_walk', color:'#2BB3E0' },
+      { label:'Retención a 30 días',  val:'72%',         sub:'+4% vs mes anterior',         icon:'repeat',         color:'#A78BFA' },
+    ];
+    el.innerHTML = stats.map(s => `
+      <div style="background:white;border-radius:16px;padding:22px;box-shadow:0 1px 6px rgba(0,0,0,.06);display:flex;align-items:center;gap:16px">
+        <div style="width:52px;height:52px;border-radius:14px;background:${s.color}18;display:flex;align-items:center;justify-content:center;flex-shrink:0">
+          <span class="material-symbols-outlined" style="font-size:26px;color:${s.color};font-variation-settings:'FILL' 1">${s.icon}</span>
+        </div>
+        <div>
+          <p style="font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--gris-piedra);margin-bottom:4px">${s.label}</p>
+          <p style="font-family:'Poppins',sans-serif;font-weight:700;font-size:22px;color:var(--carbon);margin-bottom:2px">${s.val}</p>
+          <p style="font-size:12px;color:var(--gris-piedra)">${s.sub}</p>
+        </div>
+      </div>`).join('');
+  }
+
+  /* ─── Config section ─── */
+  function renderConfigSection() {
+    const el = document.getElementById('config-content');
+    if (!el) return;
+    const items = [
+      { label:'Correo del sistema',   val:'admin@planfit.app',   icon:'mail' },
+      { label:'Zona horaria',         val:'America/Mexico_City', icon:'schedule' },
+      { label:'Idioma de la plataforma', val:'Español (es-MX)',  icon:'language' },
+      { label:'Versión de la app',    val:'v1.4.2',              icon:'info' },
+    ];
+    el.innerHTML = `
+      <h3 style="font-family:'Poppins',sans-serif;font-weight:700;font-size:17px;color:var(--carbon);margin-bottom:20px">Ajustes Generales</h3>
+      ${items.map(i => `
+        <div style="display:flex;align-items:center;justify-content:space-between;padding:14px 0;border-bottom:1px solid #F4F8F6">
+          <div style="display:flex;align-items:center;gap:10px">
+            <span class="material-symbols-outlined" style="font-size:20px;color:var(--gris-piedra)">${i.icon}</span>
+            <span style="font-size:14px;color:var(--carbon)">${i.label}</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:8px">
+            <span style="font-size:13px;font-weight:600;color:var(--gris-piedra)">${i.val}</span>
+            <button onclick="adminToast('Editando ${i.label}','info')" style="background:none;border:none;cursor:pointer;color:var(--azul-hidro)">
+              <span class="material-symbols-outlined" style="font-size:16px">edit</span>
+            </button>
+          </div>
+        </div>`).join('')}
+      <button onclick="adminToast('Configuración guardada','success')" class="btn-primary" style="margin-top:20px;width:100%;justify-content:center">
+        Guardar Cambios
+      </button>`;
+  }
+
+  /* ─── Registration chart ─── */
+  function drawRegChart() {
+    const svg = document.getElementById('reg-chart');
+    if (!svg) return;
+    const data  = WEEKLY_REGS.map(w => w.regs);
+    const max   = Math.max(...data);
+    const W = 400, H = 80, bw = 64, gap = (W - data.length * bw) / (data.length + 1);
+    const labelsEl = document.getElementById('reg-week-labels');
+
+    svg.innerHTML = data.map((v, i) => {
+      const bh = Math.max(4, (v / max) * (H - 10));
+      const x  = gap + i * (bw + gap);
+      return `
+        <rect x="${x}" y="${H - bh}" width="${bw}" height="${bh}" rx="6"
+          fill="${i === data.length - 1 ? 'var(--verde-vital)' : '#E7F6EE'}"/>
+        <text x="${x + bw / 2}" y="${H - bh - 5}" text-anchor="middle"
+          font-family="Inter,sans-serif" font-size="11" font-weight="700"
+          fill="${i === data.length - 1 ? 'var(--verde-vital)' : 'var(--gris-piedra)'}">${v}</text>`;
+    }).join('');
+
+    if (labelsEl) {
+      labelsEl.innerHTML = WEEKLY_REGS.map((w, i) => `
+        <span style="font-size:12px;color:${i === WEEKLY_REGS.length-1 ? 'var(--verde-vital)' : 'var(--gris-piedra)'};
+          font-weight:${i === WEEKLY_REGS.length-1 ? '700' : '400'};flex:1;text-align:center">${w.week}</span>`
+      ).join('');
+    }
+  }
+
+  /* ─── Plan donut ring ─── */
+  function drawPlanRing() {
+    const svg = document.getElementById('plan-ring');
+    if (!svg) return;
+
+    const r = 52, sw = 12, cx = 64, cy = 64;
+    const circ = 2 * Math.PI * r;
+    const pct  = 32 / 100;
+    const off  = circ * (1 - pct);
+
+    svg.innerHTML = `
+      <circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="#CBD5E1" stroke-width="${sw}"/>
+      <circle cx="${cx}" cy="${cy}" r="${r}" fill="none"
+        stroke="var(--verde-vital)" stroke-width="${sw}"
+        stroke-dasharray="${circ.toFixed(2)}" stroke-dashoffset="${off.toFixed(2)}"
+        stroke-linecap="round" transform="rotate(-90 ${cx} ${cy})"/>`;
+  }
+
+  /* ─── KPI counter animation ─── */
+  function animateKPIs() {
+    [{ id:'kpi-total', target:1247 }, { id:'kpi-active', target:83 }].forEach(({ id, target }) => {
+      const el = document.getElementById(id);
+      if (!el) return;
+      let n = 0;
+      const step = Math.ceil(target / 40);
+      const iv = setInterval(() => {
+        n = Math.min(n + step, target);
+        el.textContent = n.toLocaleString('es-ES');
+        if (n >= target) clearInterval(iv);
+      }, 30);
+    });
+  }
+
+  /* ─── Toast (standalone, no app.js dependency) ─── */
+  function adminToast(msg, type) {
+    const colors = { success:'#15B86E', error:'#EF4444', info:'#2BB3E0', warning:'#FF6B35' };
+    const icons  = { success:'check_circle', info:'info', warning:'warning', error:'error' };
+
+    document.querySelector('.planfit-toast')?.remove();
+    const t = document.createElement('div');
+    t.className = 'planfit-toast';
+    t.style.background = colors[type] || colors.info;
+    t.innerHTML = `<span class="material-symbols-outlined" style="font-size:18px">${icons[type]||'info'}</span>${msg}`;
+    document.body.appendChild(t);
+    setTimeout(() => {
+      t.style.transition = 'opacity .3s,transform .3s';
+      t.style.opacity = '0';
+      t.style.transform = 'translateX(-50%) translateY(16px)';
+      setTimeout(() => t.remove(), 320);
+    }, 3000);
+  }
+
+  /* ─── Exit admin mode ─── */
+  function exitAdminMode() {
+    try { localStorage.setItem('pf_active_demo', 'activo'); } catch (_) {}
+    window.location.href = 'dashboard.html';
+  }
+
+</script>
+</body>
+</html>
