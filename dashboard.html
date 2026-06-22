@@ -22,7 +22,7 @@
     <!-- ── Page header ────────────────────────── -->
     <div style="display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:28px">
       <div>
-        <p class="kicker" style="margin-bottom:4px">INSTANTÁNEA DE HOY · Jueves, 12 Jun 2025</p>
+        <p class="kicker" style="margin-bottom:4px" id="dash-today-label">INSTANTÁNEA DE HOY</p>
         <h1 style="font-family:'Poppins',sans-serif;font-weight:700;font-size:clamp(26px,3vw,36px);color:var(--carbon);margin:0 0 4px" id="dash-greeting">
           Hola 👋
         </h1>
@@ -198,6 +198,15 @@
       greet.textContent = demoType === 'principiante'
         ? `¡Empecemos, ${u.firstName}! 💪`
         : `Hola, ${u.firstName || u.name} 👋`;
+    }
+
+    /* Dynamic date label */
+    const todayLabelEl = document.getElementById('dash-today-label');
+    if (todayLabelEl) {
+      const d = new Date();
+      const dias   = ['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'];
+      const meses  = ['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
+      todayLabelEl.textContent = `INSTANTÁNEA DE HOY · ${dias[d.getDay()]}, ${d.getDate()} ${meses[d.getMonth()]} ${d.getFullYear()}`;
     }
 
     initDashboard();

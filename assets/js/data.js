@@ -17,7 +17,7 @@ const PLANFIT = {
   },
 
   today: {
-    label: 'Jueves, 12 de junio de 2025',
+    label: 'Hoy',
     steps: 8432,
     stepsGoal: 10000,
     stepsChangePct: 12,
@@ -211,3 +211,12 @@ const PLANFIT = {
     body: 'Tan solo 10 minutos de meditación después de tu entrenamiento puede duplicar tu recuperación muscular y reducir el cortisol en un 35%.',
   },
 };
+
+/* Dynamic today label — runs at load time, independent of app.js */
+(function () {
+  const d = new Date();
+  const dias  = ['Domingo','Lunes','Martes','Miércoles','Jueves','Viernes','Sábado'];
+  const meses = ['enero','febrero','marzo','abril','mayo','junio','julio',
+                 'agosto','septiembre','octubre','noviembre','diciembre'];
+  PLANFIT.today.label = `${dias[d.getDay()]}, ${d.getDate()} de ${meses[d.getMonth()]} de ${d.getFullYear()}`;
+})();

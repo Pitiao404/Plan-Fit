@@ -259,10 +259,86 @@ function renderMobileHeader(title) {
   `;
 }
 
+/* ─── Demo / Feria mode ─────────────────────────── */
+
+/* Set up a demo user and redirect to dashboard, bypassing registration */
+function enterDemoMode(type) {
+  type = type || 'activo';
+  localStorage.clear();
+  const profiles = {
+    activo: {
+      name: 'Elena Martínez', firstName: 'Elena', lastName: 'Martínez',
+      email: 'elena@planfit.app', initials: 'EM',
+      plan: 'Premium Anual', memberSince: 'Enero 2024',
+      registered: true, onboardingDone: true,
+      age: 28, height: 172, weight: 64, gender: 'Femenino',
+      objective: 'Salud', activityLevel: 'mod', kcal: 2150,
+    },
+    principiante: {
+      name: 'Carlos Mendoza', firstName: 'Carlos', lastName: 'Mendoza',
+      email: 'carlos@planfit.app', initials: 'CM',
+      plan: 'Básico', memberSince: 'Abril 2025',
+      registered: true, onboardingDone: true,
+      age: 35, height: 178, weight: 92, gender: 'Masculino',
+      objective: 'Salud', activityLevel: 'sed', kcal: 2100,
+    },
+  };
+  const user = profiles[type] || profiles.activo;
+  localStorage.setItem('pf_user', JSON.stringify(user));
+  localStorage.setItem('pf_active_demo', type === 'principiante' ? 'principiante' : 'activo');
+  window.location.href = 'dashboard.html';
+}
+
+/* Clear demo state and return to login for next visitor */
+function resetDemo() {
+  if (!confirm('¿Reiniciar la demo para el próximo visitante?\n\nSe borrarán todos los datos de esta sesión.')) return;
+  localStorage.clear();
+  window.location.href = 'login.html';
+}
+
+/* Render a fixed bottom banner indicating demo/feria mode */
+function renderDemoBanner() {
+  const page = getActivePage();
+  if (['login', 'registro', 'onboarding'].includes(page)) return;
+  if (!getCurrentUser()?.registered) return;
+
+  const banner = document.createElement('div');
+  banner.className = 'demo-banner no-print';
+  banner.setAttribute('role', 'status');
+  banner.innerHTML = `
+    <div class="demo-banner-label">
+      <span class="material-symbols-outlined" style="font-size:16px;color:var(--verde-vital);font-variation-settings:'FILL' 1">live_tv</span>
+      <span>Modo Demo · Feria Tech</span>
+    </div>
+    <div class="demo-banner-actions">
+      <button class="demo-btn" onclick="location.href='perfil.html'" title="Cambiar perfil de demostración">
+        Cambiar Perfil
+      </button>
+      <button class="demo-btn demo-btn-reset" onclick="resetDemo()" title="Reiniciar demo para el próximo visitante">
+        Reiniciar Demo
+      </button>
+    </div>`;
+  document.body.appendChild(banner);
+  document.body.classList.add('has-demo-banner');
+}
+
+/* ─── Dynamic today label ───────────────────────── */
+function getTodayLabel(short) {
+  const now = new Date();
+  const days   = ['Domingo','Lunes','Martes','Miércoles','Jueves','Viernes','Sábado'];
+  const months = short
+    ? ['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic']
+    : ['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
+  return short
+    ? `${days[now.getDay()]}, ${now.getDate()} ${months[now.getMonth()]} ${now.getFullYear()}`
+    : `${days[now.getDay()]}, ${now.getDate()} de ${months[now.getMonth()]} de ${now.getFullYear()}`;
+}
+
 /* ─── Init ─────────────────────────────────────── */
 document.addEventListener('DOMContentLoaded', () => {
   renderSidebar();
   renderMobileHeader();
+  renderDemoBanner();
 
   // Close sidebar on Escape
   document.addEventListener('keydown', e => {

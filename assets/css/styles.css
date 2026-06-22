@@ -490,9 +490,67 @@ a { text-decoration: none; color: inherit; }
   50%       { opacity:0.5; transform:scale(0.8); }
 }
 
+/* ─── Demo / Feria Banner ─────────────────────── */
+.demo-banner {
+  position: fixed;
+  bottom: 0; left: 0; right: 0;
+  z-index: 50;
+  background: var(--carbon);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 0 20px;
+  height: 48px;
+  font-size: 12px;
+  box-shadow: 0 -2px 12px rgba(0,0,0,0.18);
+}
+
+.demo-banner-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .06em;
+  font-size: 11px;
+  flex-shrink: 0;
+}
+
+.demo-banner-actions {
+  display: flex;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.demo-btn {
+  background: rgba(255,255,255,.12);
+  border: none;
+  color: white;
+  padding: 5px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 11px;
+  font-weight: 600;
+  font-family: 'Inter', sans-serif;
+  transition: background .15s;
+  white-space: nowrap;
+}
+.demo-btn:hover { background: rgba(255,255,255,.22); }
+.demo-btn.demo-btn-reset {
+  background: #EF4444;
+}
+.demo-btn.demo-btn-reset:hover { background: #DC2626; }
+
+/* Push FAB up when demo banner is visible */
+body.has-demo-banner .fab {
+  bottom: 68px;
+}
+
 /* ─── Print (for reports PDF) ─────────────────── */
 @media print {
-  .no-print, .app-sidebar, .sidebar-overlay, .mobile-header, .fab { display: none !important; }
+  .no-print, .app-sidebar, .sidebar-overlay, .mobile-header, .fab, .demo-banner { display: none !important; }
   .content-area { margin-left: 0 !important; }
   body { background: white; }
   .card { box-shadow: none; border: 1px solid #eee; }

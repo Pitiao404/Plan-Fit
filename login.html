@@ -166,6 +166,30 @@
             </p>
 
           </form>
+
+          <!-- ── Feria / Demo quick access ── -->
+          <div style="margin-top:20px;padding-top:20px;border-top:2px dashed #E5EAE7;text-align:center">
+            <p style="font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--gris-piedra);margin-bottom:12px">
+              ¿Estás en la Feria de Tecnología?
+            </p>
+            <button onclick="enterDemoMode()" style="
+              display:inline-flex;align-items:center;justify-content:center;gap:10px;
+              width:100%;padding:15px 20px;
+              background:linear-gradient(135deg,var(--verde-vital),#0B3B2E);
+              color:white;border:none;border-radius:50px;cursor:pointer;
+              font-family:'Poppins',sans-serif;font-weight:700;font-size:15px;
+              box-shadow:0 4px 16px rgba(21,184,110,0.35);
+              transition:opacity .15s,transform .1s;margin-bottom:10px"
+              onmouseover="this.style.opacity='.88'" onmouseout="this.style.opacity='1'"
+              onmousedown="this.style.transform='scale(.98)'" onmouseup="this.style.transform='scale(1)'">
+              <span style="font-size:20px">🚀</span>
+              Explorar Plan·Fit — Acceso Directo
+            </button>
+            <p style="font-size:11px;color:var(--gris-piedra);line-height:1.5">
+              Sin registro · Datos de demo · Solo para visitantes de la feria
+            </p>
+          </div>
+
         </div>
       </div>
 
@@ -364,6 +388,21 @@
   /* ── Social login ── */
   function socialLogin(provider) {
     // Simulate; in a real app, redirect to OAuth
+    window.location.href = 'dashboard.html';
+  }
+
+  /* ── Demo / Feria mode bypass ── */
+  function enterDemoMode() {
+    localStorage.clear();
+    localStorage.setItem('pf_user', JSON.stringify({
+      name: 'Elena Martínez', firstName: 'Elena', lastName: 'Martínez',
+      email: 'elena@planfit.app', initials: 'EM',
+      plan: 'Premium Anual', memberSince: 'Enero 2024',
+      registered: true, onboardingDone: true,
+      age: 28, height: 172, weight: 64, gender: 'Femenino',
+      objective: 'Salud', activityLevel: 'mod', kcal: 2150,
+    }));
+    localStorage.setItem('pf_active_demo', 'activo');
     window.location.href = 'dashboard.html';
   }
 
