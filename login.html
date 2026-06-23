@@ -69,20 +69,20 @@
     aria-label="Formulario de acceso">
     <div style="width:100%;max-width:440px">
 
-      <!-- ── Step 1: Login form ── -->
+      <!-- ── Login form: solo correo ── -->
       <div id="step-login" class="fade-in">
         <div style="background:white;border-radius:24px;padding:36px;box-shadow:0 2px 20px rgba(0,0,0,0.07)">
           <div style="margin-bottom:24px">
             <h2 style="font-family:'Poppins',sans-serif;font-weight:700;font-size:24px;color:var(--verde-vital);margin-bottom:6px">
               Comienza Ahora
             </h2>
-            <p style="font-size:13px;color:var(--gris-piedra)">Ingresa tus credenciales para continuar con Plan-Fit.</p>
+            <p style="font-size:13px;color:var(--gris-piedra)">Ingresa tu correo y accede a tu plan personalizado.</p>
           </div>
 
           <form id="login-form" onsubmit="handleSubmit(event)" novalidate>
 
             <!-- Email -->
-            <div style="margin-bottom:16px">
+            <div style="margin-bottom:24px">
               <label for="email" style="display:block;font-size:11px;font-weight:600;color:var(--gris-piedra);margin-bottom:6px;letter-spacing:0.04em;text-transform:uppercase">
                 Correo Electrónico
               </label>
@@ -93,47 +93,9 @@
               </div>
             </div>
 
-            <!-- Password -->
-            <div style="margin-bottom:12px">
-              <label for="password" style="display:block;font-size:11px;font-weight:600;color:var(--gris-piedra);margin-bottom:6px;letter-spacing:0.04em;text-transform:uppercase">
-                Contraseña
-              </label>
-              <div style="position:relative">
-                <span class="material-symbols-outlined" style="position:absolute;left:14px;top:50%;transform:translateY(-50%);font-size:18px;color:var(--gris-piedra)">lock</span>
-                <input class="form-input" id="password" type="password" placeholder="••••••••"
-                  style="padding-left:44px;padding-right:48px" oninput="checkStrength(this.value)" required autocomplete="current-password"/>
-                <button type="button" onclick="togglePass()" id="toggle-btn"
-                  style="position:absolute;right:14px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:var(--gris-piedra);display:flex;align-items:center"
-                  aria-label="Mostrar/ocultar contraseña">
-                  <span class="material-symbols-outlined" id="toggle-icon" style="font-size:20px">visibility</span>
-                </button>
-              </div>
-
-              <!-- Strength meter -->
-              <div style="margin-top:8px">
-                <div class="strength-bar">
-                  <div class="strength-fill" id="strength-fill" style="width:0%;background:var(--gris-piedra)"></div>
-                </div>
-                <div style="display:flex;justify-content:space-between;align-items:center;margin-top:5px">
-                  <span id="strength-text" style="font-size:11px;color:var(--gris-piedra)">Contraseña necesaria</span>
-                  <span class="material-symbols-outlined" id="strength-icon" style="font-size:14px;color:var(--gris-piedra)">verified_user</span>
-                </div>
-              </div>
-            </div>
-
-            <!-- Remember + Forgot -->
-            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px">
-              <label style="display:flex;align-items:center;gap:8px;cursor:pointer">
-                <input type="checkbox" id="remember"
-                  style="width:16px;height:16px;accent-color:var(--verde-vital);cursor:pointer"/>
-                <span style="font-size:13px;color:var(--gris-piedra)">Recordarme</span>
-              </label>
-              <a href="#" style="font-size:13px;font-weight:600;color:var(--verde-vital)" onclick="return false">¿Olvidaste tu contraseña?</a>
-            </div>
-
             <!-- Submit -->
             <button type="submit" class="btn-coral" style="width:100%;justify-content:center;font-size:15px;padding:15px;margin-bottom:20px">
-              Ingresar
+              Acceder a mi plan
               <span class="material-symbols-outlined" style="font-size:20px">arrow_forward</span>
             </button>
 
@@ -160,15 +122,10 @@
               </button>
             </div>
 
-            <p style="text-align:center;font-size:13px;color:var(--gris-piedra)">
-              ¿No tienes una cuenta?
-              <a href="registro.html" style="color:var(--verde-vital);font-weight:700">Regístrate gratis</a>
-            </p>
-
           </form>
 
           <!-- ── Feria / Demo quick access ── -->
-          <div style="margin-top:20px;padding-top:20px;border-top:2px dashed #E5EAE7;text-align:center">
+          <div style="margin-top:4px;padding-top:20px;border-top:2px dashed #E5EAE7;text-align:center">
             <p style="font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--gris-piedra);margin-bottom:12px">
               ¿Estás en la Feria de Tecnología?
             </p>
@@ -193,201 +150,39 @@
         </div>
       </div>
 
-      <!-- ── Step 2: MFA ── -->
-      <div id="step-mfa" style="display:none" class="fade-in">
-        <div style="background:white;border-radius:24px;padding:36px;box-shadow:0 2px 20px rgba(0,0,0,0.07)">
-          <button onclick="backToLogin()" style="display:flex;align-items:center;gap:6px;background:none;border:none;cursor:pointer;color:var(--verde-vital);font-size:13px;font-weight:600;margin-bottom:20px;padding:0"
-            aria-label="Volver al inicio de sesión">
-            <span class="material-symbols-outlined" style="font-size:18px">arrow_back</span>
-            Volver al inicio
-          </button>
-
-          <div style="margin-bottom:28px">
-            <h2 style="font-family:'Poppins',sans-serif;font-weight:700;font-size:22px;color:var(--carbon);margin-bottom:6px">
-              Verificación MFA
-            </h2>
-            <p style="font-size:13px;color:var(--gris-piedra);line-height:1.5">
-              Hemos enviado un código de 6 dígitos a <strong>e***@planfit.app</strong>. Ingrésalo a continuación.
-            </p>
-          </div>
-
-          <!-- OTP inputs -->
-          <div id="otp-wrap" style="display:flex;justify-content:center;gap:8px;margin-bottom:24px" aria-label="Ingresa el código de verificación">
-            <input class="otp-input" type="text" inputmode="numeric" maxlength="1" aria-label="Dígito 1"/>
-            <input class="otp-input" type="text" inputmode="numeric" maxlength="1" aria-label="Dígito 2"/>
-            <input class="otp-input" type="text" inputmode="numeric" maxlength="1" aria-label="Dígito 3"/>
-            <input class="otp-input" type="text" inputmode="numeric" maxlength="1" aria-label="Dígito 4"/>
-            <input class="otp-input" type="text" inputmode="numeric" maxlength="1" aria-label="Dígito 5"/>
-            <input class="otp-input" type="text" inputmode="numeric" maxlength="1" aria-label="Dígito 6"/>
-          </div>
-
-          <!-- Resend -->
-          <div style="text-align:center;margin-bottom:24px">
-            <p style="font-size:12px;color:var(--gris-piedra);margin-bottom:6px">¿No recibiste el código?</p>
-            <button id="resend-btn" onclick="startResendTimer()" style="background:none;border:none;cursor:pointer;color:var(--verde-vital);font-size:13px;font-weight:600">
-              Reenviar código (<span id="timer-text">00:59</span>)
-            </button>
-          </div>
-
-          <!-- Verify button -->
-          <button onclick="verifyMFA()" class="btn-primary" style="width:100%;justify-content:center;font-size:15px;padding:15px;margin-bottom:16px">
-            Verificar y Entrar
-            <span class="material-symbols-outlined" style="font-size:20px">check_circle</span>
-          </button>
-
-          <!-- Security badge -->
-          <div style="display:flex;align-items:center;gap:10px;background:var(--verde-bruma);border-radius:14px;padding:12px 16px">
-            <span class="material-symbols-outlined" style="color:var(--verde-vital);font-size:22px;font-variation-settings:'FILL' 1">shield_lock</span>
-            <span style="font-size:12px;color:#224e41;line-height:1.4">Protección de grado corporativo activa · Conexión cifrada con TLS 1.3</span>
-          </div>
-        </div>
-      </div>
-
     </div>
   </section>
 </main>
 
 <script>
-  /* ── Password toggle ── */
-  function togglePass() {
-    const inp = document.getElementById('password');
-    const ico = document.getElementById('toggle-icon');
-    const show = inp.type === 'password';
-    inp.type = show ? 'text' : 'password';
-    ico.textContent = show ? 'visibility_off' : 'visibility';
-  }
-
-  /* ── Strength meter ── */
-  function checkStrength(val) {
-    const fill = document.getElementById('strength-fill');
-    const txt  = document.getElementById('strength-text');
-    const ico  = document.getElementById('strength-icon');
-
-    let score = 0;
-    let label = 'Muy débil';
-    let color = '#EF4444';
-    let width = '15%';
-
-    if (val.length === 0) {
-      fill.style.width = '0%';
-      txt.textContent = 'Contraseña necesaria';
-      fill.style.background = 'var(--gris-piedra)';
-      ico.style.color = 'var(--gris-piedra)';
-      return;
-    }
-    if (val.length >= 8)        score++;
-    if (/[A-Z]/.test(val))      score++;
-    if (/[0-9]/.test(val))      score++;
-    if (/[^A-Za-z0-9]/.test(val)) score++;
-
-    const levels = [
-      { l:'Muy débil',   c:'#EF4444', w:'20%' },
-      { l:'Débil',       c:'#F59E0B', w:'40%' },
-      { l:'Moderada',    c:'#F59E0B', w:'60%' },
-      { l:'Fuerte',      c:'#15B86E', w:'85%' },
-      { l:'Muy fuerte',  c:'#15B86E', w:'100%' },
-    ];
-    const lv = levels[Math.min(score, 4)];
-
-    fill.style.width    = lv.w;
-    fill.style.background = lv.c;
-    txt.textContent     = lv.l;
-    ico.style.color     = lv.c;
-  }
-
-  /* ── Form submit ── */
+  /* ── Form submit: solo correo, sin verificación ── */
   function handleSubmit(e) {
     e.preventDefault();
     const email = document.getElementById('email').value.trim();
-    const pass  = document.getElementById('password').value;
-    if (!email || !pass) return;
+    if (!email) return;
 
-    // Show MFA step
-    document.getElementById('step-login').style.display = 'none';
-    const mfa = document.getElementById('step-mfa');
-    mfa.style.display = 'block';
-    mfa.classList.remove('fade-in');
-    void mfa.offsetWidth;
-    mfa.classList.add('fade-in');
+    // Derivar nombre del correo: "juan.perez@gmail.com" → "Juan Perez"
+    const local = email.split('@')[0];
+    const parts = local.split(/[._\-+]/).filter(Boolean);
+    const toTitle = s => s.charAt(0).toUpperCase() + s.slice(1).toLowerCase();
+    const name = parts.map(toTitle).join(' ') || 'Visitante';
+    const firstName = parts[0] ? toTitle(parts[0]) : name;
+    const lastName  = parts[1] ? toTitle(parts[1]) : '';
+    const initials  = (firstName[0] + (lastName[0] || firstName[1] || '')).toUpperCase();
 
-    startResendTimer();
-    document.querySelector('#otp-wrap input').focus();
-  }
-
-  function backToLogin() {
-    document.getElementById('step-mfa').style.display = 'none';
-    document.getElementById('step-login').style.display = 'block';
-  }
-
-  /* ── OTP auto-advance ── */
-  document.addEventListener('DOMContentLoaded', () => {
-    const inputs = document.querySelectorAll('.otp-input');
-    inputs.forEach((inp, i) => {
-      inp.addEventListener('input', () => {
-        inp.value = inp.value.replace(/\D/g, '').slice(0, 1);
-        if (inp.value && i < inputs.length - 1) inputs[i + 1].focus();
-        inp.classList.toggle('filled', !!inp.value);
-      });
-      inp.addEventListener('keydown', e => {
-        if (e.key === 'Backspace' && !inp.value && i > 0) inputs[i - 1].focus();
-      });
-      inp.addEventListener('paste', e => {
-        e.preventDefault();
-        const data = (e.clipboardData || window.clipboardData).getData('text').replace(/\D/g,'');
-        data.split('').slice(0, inputs.length - i).forEach((ch, j) => {
-          if (inputs[i + j]) { inputs[i + j].value = ch; inputs[i + j].classList.add('filled'); }
-        });
-        const nextEmpty = [...inputs].findIndex(el => !el.value);
-        if (nextEmpty !== -1) inputs[nextEmpty].focus();
-      });
-    });
-  });
-
-  /* ── Resend countdown ── */
-  let _timerID = null;
-  function startResendTimer() {
-    const btn = document.getElementById('resend-btn');
-    const txt = document.getElementById('timer-text');
-    btn.disabled = true;
-    let secs = 59;
-    clearInterval(_timerID);
-    _timerID = setInterval(() => {
-      txt.textContent = `00:${String(secs).padStart(2,'0')}`;
-      secs--;
-      if (secs < 0) {
-        clearInterval(_timerID);
-        btn.disabled = false;
-        txt.textContent = '';
-      }
-    }, 1000);
-  }
-
-  /* ── Verify MFA ── */
-  function verifyMFA() {
-    const inputs = document.querySelectorAll('.otp-input');
-    const code = [...inputs].map(i => i.value).join('');
-    if (code.length < 6) {
-      inputs.forEach(i => { if (!i.value) i.style.borderColor = '#EF4444'; });
-      return;
-    }
-    // If user has no account yet, send to registro; if already registered, to dashboard
-    try {
-      const u = JSON.parse(localStorage.getItem('pf_user') || 'null');
-      if (u && u.registered) {
-        // Reset demo mode to the user's own profile on every login
-        localStorage.setItem('pf_active_demo', 'activo');
-        window.location.href = 'dashboard.html';
-      } else {
-        window.location.href = 'registro.html';
-      }
-    } catch (_) {
-      window.location.href = 'registro.html';
-    }
+    localStorage.setItem('pf_user', JSON.stringify({
+      name, firstName, lastName, initials, email,
+      plan: 'Demo Feria', memberSince: 'Hoy',
+      registered: true, onboardingDone: true,
+      age: null, height: null, weight: null, gender: null,
+      objective: 'Salud', activityLevel: 'mod', kcal: 2150,
+    }));
+    localStorage.setItem('pf_active_demo', 'activo');
+    window.location.href = 'dashboard.html';
   }
 
   /* ── Social login ── */
   function socialLogin(provider) {
-    // Simulate; in a real app, redirect to OAuth
     window.location.href = 'dashboard.html';
   }
 
