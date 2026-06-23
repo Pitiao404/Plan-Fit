@@ -286,7 +286,7 @@
 <script>
   /* ── Init profile with real user data ── */
   document.addEventListener('DOMContentLoaded', () => {
-    if (!getCurrentUser()?.registered) { window.location.href = 'registro.html'; return; }
+    if (!getCurrentUser()?.registered) { window.location.href = 'bienvenida.html'; return; }
     initProfile(getDisplayUser()); // display user: real user or demo persona
     initDemoButtons();
   });
@@ -369,7 +369,11 @@
   }
 
   function invite() {
-    showToast('Enlace de referido copiado: planfit.app/invite/EM2025', 'success', 4000);
+    const u = getDisplayUser();
+    const code = (u?.initials || 'PF') + new Date().getFullYear();
+    const link = `planfit.app/invite/${code}`;
+    if (navigator.clipboard) navigator.clipboard.writeText(link).catch(() => {});
+    showToast(`Enlace de referido copiado: ${link}`, 'success', 4000);
   }
 
   const _profileMeta = {

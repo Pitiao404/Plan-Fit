@@ -213,7 +213,7 @@
           <h1 style="font-family:'Poppins',sans-serif;font-weight:700;font-size:clamp(24px,2.5vw,32px);color:var(--carbon);margin:0">
             Resumen del Sistema
           </h1>
-          <p style="font-size:13px;color:var(--gris-piedra);margin-top:4px">Jueves, 12 Jun 2025 · Datos en tiempo real</p>
+          <p style="font-size:13px;color:var(--gris-piedra);margin-top:4px" id="admin-date">— · Datos en tiempo real</p>
         </div>
         <div style="display:flex;gap:10px">
           <button onclick="adminToast('Exportando datos…','info')" class="btn-ghost" style="gap:6px">
@@ -495,6 +495,15 @@
 
   /* ─── Init ─── */
   document.addEventListener('DOMContentLoaded', () => {
+    // Dynamic date in header
+    const adminDateEl = document.getElementById('admin-date');
+    if (adminDateEl) {
+      const d = new Date();
+      const dias  = ['Domingo','Lunes','Martes','Miércoles','Jueves','Viernes','Sábado'];
+      const meses = ['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
+      adminDateEl.textContent = `${dias[d.getDay()]}, ${d.getDate()} ${meses[d.getMonth()]} ${d.getFullYear()} · Datos en tiempo real`;
+    }
+
     // Show real registered user in admin sidebar footer
     try {
       const raw = localStorage.getItem('pf_user');

@@ -193,7 +193,7 @@
   const _GOAL_COLOR = { Salud:'#15B86E', Estética:'#FF6B35', Rendimiento:'#2BB3E0' };
 
   document.addEventListener('DOMContentLoaded', () => {
-    if (!getCurrentUser()?.registered) { window.location.href = 'registro.html'; return; }
+    if (!getCurrentUser()?.registered) { window.location.href = 'bienvenida.html'; return; }
     const u = getDisplayUser();
     const demoType = localStorage.getItem('pf_active_demo') || 'activo';
 
@@ -314,7 +314,7 @@
       kicker: 'INSIGHT SEMANAL',
       title:  'Cómo la meditación mejora tu recuperación metabólica',
       body:   'Tan solo 10 minutos de meditación después de tu entrenamiento puede duplicar tu recuperación muscular y reducir el cortisol en un 35%.',
-      cta:    'Leer artículo', href: '#',
+      cta:    'Ver mis metas de salud', href: 'metas.html',
       icon:   'self_improvement', grad: 'linear-gradient(135deg,var(--verde-vital),var(--verde-pino))',
     },
     Estética: {

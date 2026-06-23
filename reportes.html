@@ -186,7 +186,7 @@
 <script src="assets/js/app.js?v=3"></script>
 <script>
   document.addEventListener('DOMContentLoaded', () => {
-    if (!getCurrentUser()?.registered) { window.location.href = 'registro.html'; return; }
+    if (!getCurrentUser()?.registered) { window.location.href = 'bienvenida.html'; return; }
     const u = getDisplayUser();
     const title = document.getElementById('report-title');
     if (title) title.textContent = `Excelente progreso, ${u.firstName || u.name}.`;
@@ -304,7 +304,7 @@
   function shareReport() {
     if (navigator.share) {
       navigator.share({
-        title: 'Mi Reporte Plan-Fit — Octubre 2023',
+        title: `Mi Reporte Plan-Fit — ${document.getElementById('report-period')?.textContent || 'Mensual'}`,
         text: '¡Excelente progreso! Score de Salud General: 85/100. +12% vs mes anterior.',
         url: window.location.href,
       }).catch(() => {});

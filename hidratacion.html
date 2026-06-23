@@ -156,7 +156,7 @@
   let intervalMin = 60;
 
   document.addEventListener('DOMContentLoaded', () => {
-    if (!getCurrentUser()?.registered) { window.location.href = 'registro.html'; return; }
+    if (!getCurrentUser()?.registered) { window.location.href = 'bienvenida.html'; return; }
     const st = getState();
     const hyd = PLANFIT.hydration;
     waterGoal = hyd.goalMl || 2500;
@@ -245,7 +245,7 @@
 
   /* ── History ── */
   function showHistory() {
-    showToast('Historial disponible en el Reporte Mensual', 'info');
+    window.location.href = 'reportes.html';
   }
 
   /* ── Records ── */
