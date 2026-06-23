@@ -162,9 +162,15 @@
     waterGoal = hyd.goalMl || 2500;
     waterMl   = st.waterMl != null ? st.waterMl : (hyd.currentMl || 1850);
 
-    // Hydration tip from profile
+    // Hydration tip — personalized by fair goal, fallback to profile tip
     const tipEl = document.getElementById('hydration-tip');
-    if (tipEl && hyd.tip) tipEl.textContent = hyd.tip;
+    const _HYD_TIPS = {
+      estetica:    'La hidratación óptima acelera tu metabolismo hasta un 30% y es clave para la definición muscular.',
+      rendimiento: 'Beber 500 ml 2 horas antes de entrenar mejora tu rendimiento deportivo hasta un 20%.',
+      salud:       'Beber agua antes de las comidas puede mejorar tu metabolismo hasta en un 24%.',
+    };
+    const fairGoal = localStorage.getItem('pf_fair_goal');
+    if (tipEl) tipEl.textContent = (fairGoal && _HYD_TIPS[fairGoal]) ? _HYD_TIPS[fairGoal] : (hyd.tip || '');
 
     // Goal label
     const goalLbl = document.getElementById('water-goal-ml-label');

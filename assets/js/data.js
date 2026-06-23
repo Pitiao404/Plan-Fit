@@ -162,7 +162,7 @@ const PLANFIT = {
       { icon: 'coffee',         label: 'Café (Contable)',  time: '08:15',  ml: 150 },
       { icon: 'water_full',     label: 'Vaso de agua',     time: '10:30',  ml: 250 },
       { icon: 'sports_score',   label: 'Post-Entreno',     time: '12:00',  ml: 500 },
-      { icon: 'restaurant',     label: 'Almuerzo',         time: '05:45',  ml: 350 },
+      { icon: 'restaurant',     label: 'Almuerzo',         time: '13:45',  ml: 350 },
     ],
   },
 
@@ -212,11 +212,30 @@ const PLANFIT = {
   },
 };
 
-/* Dynamic today label — runs at load time, independent of app.js */
+/* Dynamic labels — runs at load time, independent of app.js */
 (function () {
-  const d = new Date();
-  const dias  = ['Domingo','Lunes','Martes','Miércoles','Jueves','Viernes','Sábado'];
-  const meses = ['enero','febrero','marzo','abril','mayo','junio','julio',
-                 'agosto','septiembre','octubre','noviembre','diciembre'];
-  PLANFIT.today.label = `${dias[d.getDay()]}, ${d.getDate()} de ${meses[d.getMonth()]} de ${d.getFullYear()}`;
+  const now   = new Date();
+  const dias   = ['Domingo','Lunes','Martes','Miércoles','Jueves','Viernes','Sábado'];
+  const meses  = ['enero','febrero','marzo','abril','mayo','junio','julio',
+                  'agosto','septiembre','octubre','noviembre','diciembre'];
+  const MESES_UP = ['ENERO','FEBRERO','MARZO','ABRIL','MAYO','JUNIO','JULIO',
+                    'AGOSTO','SEPTIEMBRE','OCTUBRE','NOVIEMBRE','DICIEMBRE'];
+
+  /* today.label */
+  PLANFIT.today.label = `${dias[now.getDay()]}, ${now.getDate()} de ${meses[now.getMonth()]} de ${now.getFullYear()}`;
+
+  /* memberSince: 18 months ago */
+  const ago = new Date(now);
+  ago.setMonth(ago.getMonth() - 18);
+  const mesAgo = meses[ago.getMonth()];
+  PLANFIT.user.memberSince = `${mesAgo.charAt(0).toUpperCase()}${mesAgo.slice(1)} ${ago.getFullYear()}`;
+
+  /* planRenewal: 1 year from today */
+  const renewal = new Date(now);
+  renewal.setFullYear(renewal.getFullYear() + 1);
+  PLANFIT.user.planRenewal = `${renewal.getDate()} de ${meses[renewal.getMonth()]}, ${renewal.getFullYear()}`;
+
+  /* report.period: last month */
+  const last = new Date(now.getFullYear(), now.getMonth() - 1, 1);
+  PLANFIT.report.period = `${MESES_UP[last.getMonth()]} ${last.getFullYear()}`;
 })();

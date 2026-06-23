@@ -200,6 +200,15 @@
 
   document.addEventListener('DOMContentLoaded', () => {
     if (!getCurrentUser()?.registered) { window.location.href = 'registro.html'; return; }
+
+    /* Preload fair goal from bienvenida if no state goal yet */
+    const fairGoalKey = localStorage.getItem('pf_fair_goal');
+    if (fairGoalKey) {
+      const GOAL_MAP = { salud:'Salud', estetica:'Estética', rendimiento:'Rendimiento' };
+      const mapped = GOAL_MAP[fairGoalKey];
+      if (mapped) setState({ activeGoal: mapped });
+    }
+
     const st = getState();
     const u  = getDisplayUser();
     currentGoal    = st.activeGoal    || u?.objective || 'Salud';
