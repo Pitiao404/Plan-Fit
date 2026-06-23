@@ -54,8 +54,15 @@
     <div class="loader"></div>
   </div>
   <script>
-    // Redirect to login after brief splash
-    setTimeout(() => { window.location.href = 'login.html'; }, 1000);
+    // QR visitors → interactive onboarding; returning users → dashboard
+    setTimeout(() => {
+      try {
+        const u = JSON.parse(localStorage.getItem('pf_user') || 'null');
+        window.location.href = (u && u.registered) ? 'dashboard.html' : 'bienvenida.html';
+      } catch (_) {
+        window.location.href = 'bienvenida.html';
+      }
+    }, 800);
   </script>
 </body>
 </html>

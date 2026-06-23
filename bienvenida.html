@@ -1,0 +1,733 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no"/>
+  <title>Plan·Fit — Bienvenido</title>
+  <meta name="theme-color" content="#0B3B2E"/>
+  <link rel="manifest" href="manifest.json"/>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --green:   #15B86E;
+      --pine:    #0B3B2E;
+      --coral:   #FF6B35;
+      --blue:    #2BB3E0;
+      --carbon:  #13212B;
+      --gray:    #5B6B78;
+      --bruma:   #F4F8F6;
+      --white:   #FFFFFF;
+    }
+
+    html, body {
+      height: 100%; overflow: hidden;
+      font-family: 'Inter', sans-serif;
+      background: var(--pine);
+      touch-action: manipulation;
+    }
+
+    /* ── Viewport wrapper ── */
+    #app {
+      position: relative;
+      width: 100vw; height: 100vh;
+      overflow: hidden;
+    }
+
+    /* ── Screens ── */
+    .screen {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 32px 24px 40px;
+      transition: transform .45s cubic-bezier(.4,0,.2,1), opacity .45s;
+      will-change: transform, opacity;
+      overflow-y: auto;
+    }
+    .screen.hidden-right { transform: translateX(100%); opacity: 0; pointer-events: none; }
+    .screen.hidden-left  { transform: translateX(-100%); opacity: 0; pointer-events: none; }
+    .screen.active       { transform: translateX(0); opacity: 1; }
+
+    /* ── Progress dots ── */
+    .dots {
+      position: fixed;
+      top: 20px; left: 50%;
+      transform: translateX(-50%);
+      display: flex; gap: 8px;
+      z-index: 10;
+    }
+    .dot {
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      background: rgba(255,255,255,.25);
+      transition: background .3s, width .3s;
+    }
+    .dot.active {
+      background: var(--green);
+      width: 24px;
+      border-radius: 4px;
+    }
+
+    /* ── Buttons ── */
+    .btn-main {
+      display: flex; align-items: center; justify-content: center; gap: 10px;
+      width: 100%; max-width: 360px;
+      padding: 18px 28px;
+      background: var(--green);
+      color: white;
+      border: none; border-radius: 50px;
+      font-family: 'Poppins', sans-serif;
+      font-weight: 700; font-size: 17px;
+      cursor: pointer;
+      box-shadow: 0 8px 32px rgba(21,184,110,.45);
+      transition: transform .12s, box-shadow .12s;
+      position: relative; overflow: hidden;
+    }
+    .btn-main::after {
+      content: '';
+      position: absolute; inset: 0;
+      background: radial-gradient(circle, rgba(255,255,255,.3) 0%, transparent 60%);
+      opacity: 0; transition: opacity .2s;
+    }
+    .btn-main:active { transform: scale(.97); box-shadow: 0 4px 16px rgba(21,184,110,.35); }
+    .btn-main:active::after { opacity: 1; }
+    .btn-main.pulse { animation: pulse 2s infinite; }
+    @keyframes pulse {
+      0%,100% { box-shadow: 0 8px 32px rgba(21,184,110,.45); }
+      50%      { box-shadow: 0 8px 48px rgba(21,184,110,.75); }
+    }
+
+    /* ── Screen 1: Hero ── */
+    #s1 { background: linear-gradient(160deg, #0B3B2E 0%, #13212B 55%, #0a1a22 100%); }
+
+    .ecg-wrap {
+      width: 100%; max-width: 320px;
+      margin-bottom: 28px; position: relative;
+    }
+    .ecg-line {
+      stroke-dasharray: 260;
+      stroke-dashoffset: 260;
+      animation: drawECG 1.6s ease forwards .3s;
+    }
+    @keyframes drawECG { to { stroke-dashoffset: 0; } }
+
+    .hero-logo {
+      display: flex; align-items: center; gap: 12px;
+      margin-bottom: 14px;
+      animation: fadeUp .6s ease both .8s;
+    }
+    .hero-title {
+      font-family: 'Poppins', sans-serif;
+      font-weight: 800; font-size: clamp(30px,8vw,42px);
+      color: white; line-height: 1;
+    }
+    .hero-title span { color: var(--green); }
+
+    .hero-tag {
+      font-size: clamp(15px,4vw,18px);
+      color: rgba(255,255,255,.75);
+      text-align: center; line-height: 1.5;
+      max-width: 300px; margin-bottom: 10px;
+      animation: fadeUp .6s ease both 1s;
+    }
+
+    .hero-proof {
+      display: flex; align-items: center; gap: 10px;
+      background: rgba(255,255,255,.08);
+      border: 1px solid rgba(255,255,255,.12);
+      border-radius: 50px; padding: 10px 18px;
+      margin-bottom: 32px;
+      animation: fadeUp .6s ease both 1.1s;
+    }
+    .hero-avatars { display: flex; }
+    .hero-avatar {
+      width: 30px; height: 30px; border-radius: 50%;
+      border: 2px solid rgba(255,255,255,.3);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 10px; font-weight: 700; color: white;
+    }
+    .hero-avatar:not(:first-child) { margin-left: -8px; }
+
+    .hero-cta-wrap {
+      width: 100%; display: flex; flex-direction: column; align-items: center; gap: 12px;
+      animation: fadeUp .6s ease both 1.2s;
+    }
+    .hero-fine {
+      font-size: 12px; color: rgba(255,255,255,.45);
+      display: flex; align-items: center; gap: 14px;
+    }
+    .hero-fine span::before { content: '·'; margin-right: 14px; }
+    .hero-fine span:first-child::before { content: ''; margin: 0; }
+
+    /* ── Screen 2 & 3: Dark card bg ── */
+    #s2, #s3 { background: var(--carbon); }
+
+    .screen-title {
+      font-family: 'Poppins', sans-serif;
+      font-weight: 700; font-size: clamp(22px,6vw,28px);
+      color: white; text-align: center;
+      margin-bottom: 6px; line-height: 1.2;
+    }
+    .screen-sub {
+      font-size: 14px; color: rgba(255,255,255,.5);
+      text-align: center; margin-bottom: 28px;
+    }
+
+    /* ── Goal cards (screen 2) ── */
+    .goal-cards {
+      width: 100%; max-width: 380px;
+      display: flex; flex-direction: column; gap: 14px;
+      margin-bottom: 20px;
+    }
+    .goal-card {
+      display: flex; align-items: center; gap: 16px;
+      padding: 18px 20px;
+      border-radius: 20px;
+      border: 2px solid rgba(255,255,255,.08);
+      background: rgba(255,255,255,.05);
+      cursor: pointer;
+      transition: border-color .2s, background .2s, transform .15s;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .goal-card:active { transform: scale(.97); }
+    .goal-card.selected {
+      border-color: var(--accent, var(--green));
+      background: rgba(255,255,255,.1);
+    }
+    .goal-icon {
+      width: 52px; height: 52px; border-radius: 16px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 26px; flex-shrink: 0;
+    }
+    .goal-info { flex: 1; }
+    .goal-name {
+      font-family: 'Poppins', sans-serif;
+      font-weight: 700; font-size: 16px;
+      color: white; margin-bottom: 2px;
+    }
+    .goal-desc { font-size: 12px; color: rgba(255,255,255,.5); }
+    .goal-check {
+      width: 24px; height: 24px; border-radius: 50%;
+      border: 2px solid rgba(255,255,255,.2);
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0; transition: all .2s;
+      font-size: 14px;
+    }
+    .goal-card.selected .goal-check {
+      background: var(--accent, var(--green));
+      border-color: var(--accent, var(--green));
+    }
+
+    /* ── Activity options (screen 3) ── */
+    .activity-opts {
+      width: 100%; max-width: 380px;
+      display: flex; flex-direction: column; gap: 12px;
+      margin-bottom: 20px;
+    }
+    .act-opt {
+      display: flex; align-items: center; gap: 16px;
+      padding: 16px 20px;
+      border-radius: 18px;
+      border: 2px solid rgba(255,255,255,.08);
+      background: rgba(255,255,255,.04);
+      cursor: pointer;
+      transition: border-color .2s, background .2s, transform .15s;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .act-opt:active { transform: scale(.97); }
+    .act-opt.selected {
+      border-color: var(--green);
+      background: rgba(21,184,110,.12);
+    }
+    .act-emoji { font-size: 28px; width: 44px; text-align: center; flex-shrink: 0; }
+    .act-info { flex: 1; }
+    .act-name {
+      font-family: 'Poppins', sans-serif;
+      font-weight: 600; font-size: 15px; color: white; margin-bottom: 2px;
+    }
+    .act-desc { font-size: 12px; color: rgba(255,255,255,.5); }
+    .act-check {
+      width: 22px; height: 22px; border-radius: 50%;
+      border: 2px solid rgba(255,255,255,.2);
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0; transition: all .2s; font-size: 12px;
+    }
+    .act-opt.selected .act-check {
+      background: var(--green); border-color: var(--green);
+    }
+
+    /* ── Screen 4: Result ── */
+    #s4 { background: linear-gradient(160deg, #0B3B2E 0%, #13212B 100%); }
+
+    .result-check {
+      width: 80px; height: 80px; border-radius: 50%;
+      background: var(--green);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 36px;
+      box-shadow: 0 0 0 16px rgba(21,184,110,.15), 0 0 0 32px rgba(21,184,110,.07);
+      animation: popIn .5s cubic-bezier(.34,1.56,.64,1) both;
+      margin-bottom: 20px;
+    }
+    @keyframes popIn { from { transform: scale(0); opacity:0; } to { transform: scale(1); opacity:1; } }
+
+    .result-title {
+      font-family: 'Poppins', sans-serif;
+      font-weight: 800; font-size: clamp(24px,6vw,30px);
+      color: white; text-align: center; margin-bottom: 6px;
+    }
+    .result-sub {
+      font-size: 14px; color: rgba(255,255,255,.55);
+      text-align: center; margin-bottom: 24px;
+    }
+
+    .result-goal-badge {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 8px 18px;
+      border-radius: 50px;
+      font-size: 13px; font-weight: 700;
+      margin-bottom: 24px;
+    }
+
+    .result-stats {
+      width: 100%; max-width: 360px;
+      display: grid; grid-template-columns: 1fr 1fr 1fr;
+      gap: 12px; margin-bottom: 28px;
+    }
+    .stat-box {
+      background: rgba(255,255,255,.07);
+      border: 1px solid rgba(255,255,255,.1);
+      border-radius: 16px; padding: 16px 12px;
+      text-align: center;
+    }
+    .stat-val {
+      font-family: 'Poppins', sans-serif;
+      font-weight: 700; font-size: 22px;
+      color: var(--green); display: block;
+    }
+    .stat-unit { font-size: 10px; color: rgba(255,255,255,.45); display: block; margin-top: 2px; }
+    .stat-label { font-size: 11px; color: rgba(255,255,255,.5); display: block; margin-top: 4px; }
+
+    .result-profile {
+      display: flex; align-items: center; gap: 12px;
+      background: rgba(255,255,255,.06);
+      border-radius: 16px; padding: 12px 16px;
+      width: 100%; max-width: 360px; margin-bottom: 24px;
+    }
+    .result-avatar {
+      width: 44px; height: 44px; border-radius: 50%;
+      background: var(--green);
+      display: flex; align-items: center; justify-content: center;
+      font-family: 'Poppins', sans-serif; font-weight: 700;
+      font-size: 16px; color: white; flex-shrink: 0;
+    }
+    .result-profile-info { flex: 1; }
+    .result-profile-name { font-size: 14px; font-weight: 600; color: white; }
+    .result-profile-role { font-size: 11px; color: rgba(255,255,255,.45); }
+
+    /* ── Animations ── */
+    @keyframes fadeUp {
+      from { opacity:0; transform: translateY(20px); }
+      to   { opacity:1; transform: translateY(0); }
+    }
+
+    /* ── Particles ── */
+    #particles { position: fixed; inset: 0; pointer-events: none; z-index: 0; }
+
+    /* Scrollable screens on small phones */
+    @media (max-height: 650px) {
+      .screen { justify-content: flex-start; padding-top: 52px; }
+    }
+  </style>
+</head>
+<body>
+
+<canvas id="particles"></canvas>
+
+<div class="dots" id="dots">
+  <div class="dot active" id="d1"></div>
+  <div class="dot" id="d2"></div>
+  <div class="dot" id="d3"></div>
+  <div class="dot" id="d4"></div>
+</div>
+
+<div id="app">
+
+  <!-- ═══════════════════════════════════════
+       SCREEN 1 — Hero
+  ════════════════════════════════════════ -->
+  <div class="screen active" id="s1">
+
+    <!-- ECG animation -->
+    <div class="ecg-wrap">
+      <svg viewBox="0 0 320 60" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <polyline class="ecg-line"
+          points="0,30 30,30 55,30 80,8 105,52 122,15 140,43 165,30 220,30 260,30 320,30"
+          stroke="#15B86E" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </div>
+
+    <!-- Logo -->
+    <div class="hero-logo">
+      <svg width="48" height="48" viewBox="0 0 32 32" fill="none" aria-hidden="true">
+        <rect width="32" height="32" rx="8" fill="#15B86E"/>
+        <polyline points="3,16 7,16 10,9.5 13,22.5 15.5,12 18,19 21,16 29,16"
+          stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+      </svg>
+      <h1 class="hero-title">Plan·<span>Fit</span></h1>
+    </div>
+
+    <p class="hero-tag">Tu salud es el mejor proyecto.<br/>Descubre lo que puedes lograr.</p>
+
+    <!-- Social proof -->
+    <div class="hero-proof">
+      <div class="hero-avatars">
+        <div class="hero-avatar" style="background:linear-gradient(135deg,#15B86E,#0B3B2E)">MR</div>
+        <div class="hero-avatar" style="background:linear-gradient(135deg,#FF6B35,#c94e1e)">JP</div>
+        <div class="hero-avatar" style="background:linear-gradient(135deg,#2BB3E0,#1a7fa8)">+</div>
+      </div>
+      <p style="font-size:12px;color:rgba(255,255,255,.7);line-height:1.4">
+        <strong style="color:white" id="counter">2,847</strong> personas activas<br/>alcanzando sus metas hoy
+      </p>
+    </div>
+
+    <div class="hero-cta-wrap">
+      <button class="btn-main pulse" onclick="goTo(2)" style="max-width:360px;width:100%">
+        Descubrir mi plan
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+      </button>
+      <div class="hero-fine">
+        <span>Sin registro</span>
+        <span>30 segundos</span>
+        <span>100% gratis</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════
+       SCREEN 2 — Objetivo
+  ════════════════════════════════════════ -->
+  <div class="screen hidden-right" id="s2">
+    <p style="font-size:12px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--green);margin-bottom:10px">Paso 1 de 2</p>
+    <h2 class="screen-title">¿Qué quieres lograr?</h2>
+    <p class="screen-sub">Elige tu objetivo principal</p>
+
+    <div class="goal-cards" id="goal-cards">
+      <div class="goal-card" data-goal="salud" onclick="selectGoal(this)"
+           style="--accent:#15B86E">
+        <div class="goal-icon" style="background:rgba(21,184,110,.15)">❤️</div>
+        <div class="goal-info">
+          <p class="goal-name">Salud y Bienestar</p>
+          <p class="goal-desc">Más energía, mejor sueño y vitalidad diaria</p>
+        </div>
+        <div class="goal-check"></div>
+      </div>
+
+      <div class="goal-card" data-goal="estetica" onclick="selectGoal(this)"
+           style="--accent:#FF6B35">
+        <div class="goal-icon" style="background:rgba(255,107,53,.15)">✨</div>
+        <div class="goal-info">
+          <p class="goal-name">Estética y Tonificación</p>
+          <p class="goal-desc">Definir cuerpo, reducir grasa y ganar músculo</p>
+        </div>
+        <div class="goal-check"></div>
+      </div>
+
+      <div class="goal-card" data-goal="rendimiento" onclick="selectGoal(this)"
+           style="--accent:#2BB3E0">
+        <div class="goal-icon" style="background:rgba(43,179,224,.15)">⚡</div>
+        <div class="goal-info">
+          <p class="goal-name">Rendimiento</p>
+          <p class="goal-desc">Fuerza máxima, resistencia y marcas personales</p>
+        </div>
+        <div class="goal-check"></div>
+      </div>
+    </div>
+
+    <button class="btn-main" id="btn-goal" onclick="goTo(3)"
+            style="max-width:360px;width:100%;opacity:.4;pointer-events:none"
+            disabled>
+      Continuar
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+    </button>
+  </div>
+
+  <!-- ═══════════════════════════════════════
+       SCREEN 3 — Actividad
+  ════════════════════════════════════════ -->
+  <div class="screen hidden-right" id="s3">
+    <p style="font-size:12px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--green);margin-bottom:10px">Paso 2 de 2</p>
+    <h2 class="screen-title">¿Cómo describes<br/>tu nivel actual?</h2>
+    <p class="screen-sub">Personalizamos tu plan según tu punto de partida</p>
+
+    <div class="activity-opts" id="act-opts">
+      <div class="act-opt" data-level="nuevo" onclick="selectActivity(this)">
+        <span class="act-emoji">🌱</span>
+        <div class="act-info">
+          <p class="act-name">Recién empezando</p>
+          <p class="act-desc">Poco o nulo ejercicio actualmente</p>
+        </div>
+        <div class="act-check"></div>
+      </div>
+      <div class="act-opt" data-level="intermedio" onclick="selectActivity(this)">
+        <span class="act-emoji">🚶</span>
+        <div class="act-info">
+          <p class="act-name">Activo ocasional</p>
+          <p class="act-desc">Me muevo pero sin rutina fija</p>
+        </div>
+        <div class="act-check"></div>
+      </div>
+      <div class="act-opt" data-level="avanzado" onclick="selectActivity(this)">
+        <span class="act-emoji">🏋️</span>
+        <div class="act-info">
+          <p class="act-name">Deportista</p>
+          <p class="act-desc">Entreno con regularidad y consistencia</p>
+        </div>
+        <div class="act-check"></div>
+      </div>
+    </div>
+
+    <button class="btn-main" id="btn-act" onclick="buildPlan()"
+            style="max-width:360px;width:100%;opacity:.4;pointer-events:none"
+            disabled>
+      Crear mi plan
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+    </button>
+  </div>
+
+  <!-- ═══════════════════════════════════════
+       SCREEN 4 — Resultado
+  ════════════════════════════════════════ -->
+  <div class="screen hidden-right" id="s4">
+    <div class="result-check" id="result-check">✓</div>
+
+    <h2 class="result-title">¡Tu plan está listo!</h2>
+    <p class="result-sub">Basado en tus respuestas, esto es lo que te espera</p>
+
+    <div class="result-goal-badge" id="result-badge"></div>
+
+    <div class="result-profile" id="result-profile"></div>
+
+    <div class="result-stats" id="result-stats"></div>
+
+    <button class="btn-main" id="btn-enter" onclick="enterApp()"
+            style="max-width:360px;width:100%">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg>
+      Ingresar a Plan·Fit
+    </button>
+
+    <p style="font-size:11px;color:rgba(255,255,255,.3);margin-top:14px;text-align:center">
+      Datos de demostración · Feria de Tecnología
+    </p>
+  </div>
+
+</div><!-- /app -->
+
+<script>
+  /* ─── State ─── */
+  let selectedGoal = null;
+  let selectedLevel = null;
+  let currentScreen = 1;
+
+  /* ─── Particle background (subtle) ─── */
+  (function initParticles() {
+    const cv = document.getElementById('particles');
+    const ctx = cv.getContext('2d');
+    let W, H, pts = [];
+
+    function resize() {
+      W = cv.width  = window.innerWidth;
+      H = cv.height = window.innerHeight;
+    }
+    resize();
+    window.addEventListener('resize', resize);
+
+    for (let i = 0; i < 28; i++) {
+      pts.push({
+        x: Math.random() * window.innerWidth,
+        y: Math.random() * window.innerHeight,
+        r: Math.random() * 1.8 + .4,
+        vx: (Math.random() - .5) * .3,
+        vy: (Math.random() - .5) * .3,
+        a: Math.random() * .5 + .1,
+      });
+    }
+
+    function draw() {
+      ctx.clearRect(0, 0, W, H);
+      pts.forEach(p => {
+        p.x = (p.x + p.vx + W) % W;
+        p.y = (p.y + p.vy + H) % H;
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(21,184,110,${p.a})`;
+        ctx.fill();
+      });
+      requestAnimationFrame(draw);
+    }
+    draw();
+  })();
+
+  /* ─── Counter animation ─── */
+  (function animateCounter() {
+    const el = document.getElementById('counter');
+    let n = 2800;
+    const target = 2847;
+    const t = setInterval(() => {
+      n += Math.ceil((target - n) * .2);
+      el.textContent = n.toLocaleString('es-ES');
+      if (n >= target) { el.textContent = '2.847'; clearInterval(t); }
+    }, 60);
+  })();
+
+  /* ─── Navigation ─── */
+  function goTo(n) {
+    const prev = document.getElementById('s' + currentScreen);
+    const next = document.getElementById('s' + n);
+    prev.classList.remove('active');
+    prev.classList.add('hidden-left');
+    next.classList.remove('hidden-right', 'hidden-left');
+    next.classList.add('active');
+    currentScreen = n;
+    updateDots(n);
+  }
+
+  function updateDots(n) {
+    for (let i = 1; i <= 4; i++) {
+      document.getElementById('d' + i).classList.toggle('active', i === n);
+    }
+  }
+
+  /* ─── Goal selection ─── */
+  function selectGoal(el) {
+    document.querySelectorAll('.goal-card').forEach(c => c.classList.remove('selected'));
+    el.classList.add('selected');
+    el.querySelector('.goal-check').textContent = '✓';
+    selectedGoal = el.dataset.goal;
+
+    const btn = document.getElementById('btn-goal');
+    btn.disabled = false;
+    btn.style.opacity = '1';
+    btn.style.pointerEvents = 'auto';
+    btn.classList.add('pulse');
+  }
+
+  /* ─── Activity selection ─── */
+  function selectActivity(el) {
+    document.querySelectorAll('.act-opt').forEach(c => c.classList.remove('selected'));
+    el.classList.add('selected');
+    el.querySelector('.act-check').textContent = '✓';
+    selectedLevel = el.dataset.level;
+
+    const btn = document.getElementById('btn-act');
+    btn.disabled = false;
+    btn.style.opacity = '1';
+    btn.style.pointerEvents = 'auto';
+    btn.classList.add('pulse');
+  }
+
+  /* ─── Plan data ─── */
+  const GOALS = {
+    salud:        { label:'Salud y Bienestar', emoji:'❤️', color:'#15B86E', bg:'rgba(21,184,110,.2)',  kcal:2150, sesiones:3, macroP:160, meta:'Energía y longevidad' },
+    estetica:     { label:'Estética',           emoji:'✨', color:'#FF6B35', bg:'rgba(255,107,53,.2)', kcal:1850, sesiones:4, macroP:175, meta:'Definición corporal' },
+    rendimiento:  { label:'Rendimiento',         emoji:'⚡', color:'#2BB3E0', bg:'rgba(43,179,224,.2)', kcal:2450, sesiones:5, macroP:185, meta:'Fuerza y resistencia' },
+  };
+  const PROFILES = {
+    nuevo:       { name:'Carlos Mendoza', initials:'CM', role:'Principiante', demoType:'principiante' },
+    intermedio:  { name:'Elena Martínez', initials:'EM', role:'Usuario Activo', demoType:'activo' },
+    avanzado:    { name:'Elena Martínez', initials:'EM', role:'Atleta',        demoType:'activo' },
+  };
+
+  /* ─── Build result screen ─── */
+  function buildPlan() {
+    const g = GOALS[selectedGoal];
+    const p = PROFILES[selectedLevel];
+
+    /* Badge */
+    document.getElementById('result-badge').style.cssText =
+      `background:${g.bg};color:${g.color};border:1.5px solid ${g.color};`;
+    document.getElementById('result-badge').innerHTML =
+      `<span>${g.emoji}</span><span>${g.label}</span>`;
+
+    /* Profile */
+    document.getElementById('result-profile').innerHTML = `
+      <div class="result-avatar">${p.initials}</div>
+      <div class="result-profile-info">
+        <p class="result-profile-name">${p.name}</p>
+        <p class="result-profile-role">Perfil: ${p.role}</p>
+      </div>
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="${g.color}" stroke-width="2.5"
+           stroke-linecap="round" stroke-linejoin="round">
+        <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+        <polyline points="22 4 12 14.01 9 11.01"/>
+      </svg>`;
+
+    /* Stats */
+    document.getElementById('result-stats').innerHTML = `
+      <div class="stat-box">
+        <span class="stat-val" id="sv-kcal">0</span>
+        <span class="stat-unit">kcal/día</span>
+        <span class="stat-label">Objetivo</span>
+      </div>
+      <div class="stat-box">
+        <span class="stat-val">${g.sesiones}</span>
+        <span class="stat-unit">días/sem</span>
+        <span class="stat-label">Sesiones</span>
+      </div>
+      <div class="stat-box">
+        <span class="stat-val">${g.macroP}g</span>
+        <span class="stat-unit">proteína</span>
+        <span class="stat-label">Diaria</span>
+      </div>`;
+
+    goTo(4);
+
+    /* Animate kcal counter */
+    let k = 0;
+    const kTarget = g.kcal;
+    const kEl = document.getElementById('sv-kcal');
+    const kInt = setInterval(() => {
+      k = Math.min(k + Math.ceil((kTarget - k) * .25), kTarget);
+      kEl.textContent = k.toLocaleString('es-ES');
+      if (k >= kTarget) clearInterval(kInt);
+    }, 40);
+  }
+
+  /* ─── Enter app ─── */
+  function enterApp() {
+    const g = GOALS[selectedGoal];
+    const p = PROFILES[selectedLevel];
+
+    localStorage.clear();
+
+    const userBase = p.demoType === 'principiante'
+      ? { name:'Carlos Mendoza', firstName:'Carlos', lastName:'Mendoza', email:'carlos@planfit.app',
+          initials:'CM', plan:'Básico', memberSince:'Abril 2025',
+          age:35, height:178, weight:92, gender:'Masculino', kcal:g.kcal }
+      : { name:'Elena Martínez', firstName:'Elena', lastName:'Martínez', email:'elena@planfit.app',
+          initials:'EM', plan:'Premium Anual', memberSince:'Enero 2024',
+          age:28, height:172, weight:64, gender:'Femenino', kcal:g.kcal };
+
+    localStorage.setItem('pf_user', JSON.stringify({
+      ...userBase,
+      registered: true, onboardingDone: true,
+      objective: selectedGoal === 'salud' ? 'Salud'
+               : selectedGoal === 'estetica' ? 'Estética' : 'Rendimiento',
+      activityLevel: selectedLevel === 'nuevo' ? 'sed'
+                   : selectedLevel === 'intermedio' ? 'mod' : 'act',
+    }));
+    localStorage.setItem('pf_active_demo', p.demoType);
+    localStorage.setItem('pf_fair_goal', selectedGoal);
+
+    /* Brief enter animation */
+    const btn = document.getElementById('btn-enter');
+    btn.textContent = 'Cargando...';
+    btn.disabled = true;
+    setTimeout(() => { window.location.href = 'dashboard.html'; }, 600);
+  }
+</script>
+</body>
+</html>
