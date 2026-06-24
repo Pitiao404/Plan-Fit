@@ -624,6 +624,7 @@ body.has-demo-banner .chat-panel { bottom: 280px; }
   border-radius: 16px 16px 4px 16px;
 }
 .chat-msg-bot strong { color: #15B86E; }
+.chat-ts { display: block; font-size: 10px; color: #9CA3AF; margin-top: 4px; text-align: right; }
 
 /* Typing dots */
 .chat-typing { display: flex; gap: 5px; align-items: center; padding: 12px 16px; }
