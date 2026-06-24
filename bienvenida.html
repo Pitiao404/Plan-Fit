@@ -7,6 +7,7 @@
   <meta name="theme-color" content="#0B3B2E"/>
   <link rel="manifest" href="manifest.json"/>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"/>
+  <script src="https://cdn.jsdelivr.net/npm/face-api.js@0.22.2/dist/face-api.min.js"></script>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -337,6 +338,86 @@
     /* ── Particles ── */
     #particles { position: fixed; inset: 0; pointer-events: none; z-index: 0; }
 
+    /* ── AI Camera screen ── */
+    .ai-video-wrap {
+      position: relative; width: 100%; max-width: 320px;
+      border-radius: 20px; overflow: hidden;
+      background: #000; margin-bottom: 16px;
+      aspect-ratio: 4/3;
+    }
+    #ai-video {
+      width: 100%; height: 100%; object-fit: cover;
+      transform: scaleX(-1); /* mirror */
+    }
+    #ai-face-box {
+      position: absolute; inset: 0; pointer-events: none;
+    }
+    .ai-hint {
+      font-size: 12px; color: rgba(255,255,255,.55);
+      text-align: center; margin-bottom: 16px; line-height: 1.5;
+    }
+    .ai-result-box {
+      width: 100%; max-width: 320px;
+      background: rgba(255,255,255,.08);
+      border: 1.5px solid rgba(21,184,110,.4);
+      border-radius: 18px; padding: 18px 20px;
+      text-align: center; margin-bottom: 16px;
+    }
+    .ai-gender-label {
+      font-family: 'Poppins', sans-serif;
+      font-weight: 700; font-size: 22px; color: white; margin-bottom: 6px;
+    }
+    .ai-confidence {
+      font-size: 13px; color: var(--green); margin-bottom: 14px;
+    }
+    .ai-confirm-btns {
+      display: flex; gap: 10px; justify-content: center;
+    }
+    .ai-btn-confirm {
+      background: var(--green); color: white;
+      border: none; border-radius: 50px;
+      padding: 9px 20px; font-size: 13px; font-weight: 700;
+      cursor: pointer; font-family: 'Inter', sans-serif;
+    }
+    .ai-btn-change {
+      background: rgba(255,255,255,.1); color: white;
+      border: 1.5px solid rgba(255,255,255,.2); border-radius: 50px;
+      padding: 9px 20px; font-size: 13px; font-weight: 600;
+      cursor: pointer; font-family: 'Inter', sans-serif;
+    }
+    /* Body type cards */
+    .body-cards {
+      width: 100%; max-width: 360px;
+      display: flex; gap: 12px; margin-bottom: 20px;
+    }
+    .body-card {
+      flex: 1; padding: 16px 10px; border-radius: 18px;
+      border: 2px solid rgba(255,255,255,.1);
+      background: rgba(255,255,255,.05);
+      cursor: pointer; text-align: center;
+      transition: border-color .2s, background .2s, transform .15s;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .body-card:active { transform: scale(.96); }
+    .body-card.selected {
+      border-color: var(--green);
+      background: rgba(21,184,110,.12);
+    }
+    .body-card-icon { font-size: 32px; display: block; margin-bottom: 8px; }
+    .body-card-name {
+      font-family: 'Poppins', sans-serif;
+      font-weight: 700; font-size: 13px; color: white; margin-bottom: 4px;
+    }
+    .body-card-desc { font-size: 10px; color: rgba(255,255,255,.45); line-height: 1.4; }
+
+    @keyframes spin-ai {
+      to { transform: rotate(360deg); }
+    }
+    @keyframes pulse-ring {
+      0%,100% { transform: scale(1); opacity:.6; }
+      50%      { transform: scale(1.1); opacity:.3; }
+    }
+
     /* Scrollable screens on small phones */
     @media (max-height: 650px) {
       .screen { justify-content: flex-start; padding-top: 52px; }
@@ -352,6 +433,7 @@
   <div class="dot" id="d2"></div>
   <div class="dot" id="d3"></div>
   <div class="dot" id="d4"></div>
+  <div class="dot" id="d5"></div>
 </div>
 
 <div id="app">
@@ -490,18 +572,132 @@
       </div>
     </div>
 
-    <button class="btn-main" id="btn-act" onclick="buildPlan()"
+    <button class="btn-main" id="btn-act" onclick="goTo(4)"
             style="max-width:360px;width:100%;opacity:.4;pointer-events:none"
             disabled>
-      Crear mi plan
+      Continuar
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
     </button>
   </div>
 
   <!-- ═══════════════════════════════════════
-       SCREEN 4 — Resultado
+       SCREEN 4 — IA: Género + Tipo Corporal
   ════════════════════════════════════════ -->
-  <div class="screen hidden-right" id="s4">
+  <div class="screen hidden-right" id="s4" style="gap:0">
+
+    <!-- Sub-paso 1: cámara / resultado de género -->
+    <div id="ai-camera-step" style="display:flex;flex-direction:column;align-items:center;width:100%">
+      <p style="font-size:12px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--green);margin-bottom:8px">Análisis IA</p>
+      <h2 class="screen-title" style="margin-bottom:4px">Detección de género</h2>
+      <p class="screen-sub" style="margin-bottom:12px">Usamos IA para personalizar mejor tu plan</p>
+
+      <!-- Video / resultado -->
+      <div id="ai-video-container">
+        <!-- Estado: pedir permiso -->
+        <div id="ai-state-ask" style="text-align:center">
+          <div style="width:80px;height:80px;border-radius:50%;background:rgba(21,184,110,.15);border:2px solid rgba(21,184,110,.3);display:flex;align-items:center;justify-content:center;margin:0 auto 14px;font-size:36px">📷</div>
+          <p class="ai-hint">Tomaremos una foto de tu rostro para detectar tu género automáticamente. <strong style="color:rgba(255,255,255,.7)">No almacenamos la imagen.</strong></p>
+          <button class="btn-main" onclick="startCamera()" style="width:100%;max-width:280px;margin-bottom:10px">
+            Activar Cámara
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+          </button>
+          <button onclick="skipToBodyType()" style="background:none;border:none;color:rgba(255,255,255,.4);font-size:12px;cursor:pointer;text-decoration:underline">Saltar este paso</button>
+        </div>
+
+        <!-- Estado: cámara activa -->
+        <div id="ai-state-camera" style="display:none;width:100%;align-items:center;flex-direction:column">
+          <div class="ai-video-wrap">
+            <video id="ai-video" autoplay muted playsinline></video>
+            <canvas id="ai-face-box"></canvas>
+            <div id="ai-face-indicator" style="display:none;position:absolute;inset:0;display:flex;align-items:center;justify-content:center">
+              <div style="width:120px;height:120px;border:2px solid var(--green);border-radius:50%;opacity:.6;animation:pulse-ring 1.5s infinite"></div>
+            </div>
+          </div>
+          <p class="ai-hint">Mira al frente · Buena iluminación · Retira mascarilla</p>
+          <div style="display:flex;gap:10px;width:100%;max-width:280px">
+            <button class="btn-main" onclick="captureAndDetect()" style="flex:1" id="btn-capture">
+              Capturar
+            </button>
+            <button onclick="skipToBodyType()" style="background:rgba(255,255,255,.08);border:1.5px solid rgba(255,255,255,.15);color:white;border-radius:50px;padding:10px 16px;cursor:pointer;font-size:13px;font-family:'Inter',sans-serif">Saltar</button>
+          </div>
+        </div>
+
+        <!-- Estado: procesando -->
+        <div id="ai-state-processing" style="display:none;text-align:center">
+          <div style="width:72px;height:72px;border:3px solid rgba(21,184,110,.2);border-top-color:var(--green);border-radius:50%;animation:spin-ai 0.8s linear infinite;margin:0 auto 16px"></div>
+          <p style="color:rgba(255,255,255,.7);font-size:14px" id="ai-processing-msg">Detectando características faciales...</p>
+        </div>
+
+        <!-- Estado: resultado -->
+        <div id="ai-state-result" style="display:none;width:100%;align-items:center;flex-direction:column">
+          <div style="font-size:52px;margin-bottom:8px" id="ai-gender-emoji">👤</div>
+          <div class="ai-result-box" style="width:100%;max-width:280px">
+            <p class="ai-gender-label" id="ai-gender-text">—</p>
+            <p class="ai-confidence" id="ai-confidence-text">Confianza: —</p>
+            <div class="ai-confirm-btns">
+              <button class="ai-btn-confirm" onclick="confirmGender()" id="btn-confirm-gender">✓ Correcto</button>
+              <button class="ai-btn-change" onclick="toggleGender()" id="btn-toggle-gender">Cambiar</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Estado: sin cámara / manual -->
+        <div id="ai-state-manual" style="display:none;width:100%;align-items:center;flex-direction:column">
+          <p class="screen-sub" style="margin-bottom:14px">Selecciona tu género:</p>
+          <div style="display:flex;gap:12px;margin-bottom:16px">
+            <button class="body-card" onclick="selectGenderManual('female',this)" style="flex:1">
+              <span class="body-card-icon">👩</span>
+              <p class="body-card-name">Femenino</p>
+            </button>
+            <button class="body-card" onclick="selectGenderManual('male',this)" style="flex:1">
+              <span class="body-card-icon">👨</span>
+              <p class="body-card-name">Masculino</p>
+            </button>
+          </div>
+          <button class="btn-main" onclick="confirmGender()" style="width:100%;max-width:280px;opacity:.4;pointer-events:none" id="btn-manual-confirm">
+            Continuar
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Sub-paso 2: tipo corporal -->
+    <div id="ai-body-step" style="display:none;flex-direction:column;align-items:center;width:100%">
+      <p style="font-size:12px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--green);margin-bottom:8px">Último paso</p>
+      <h2 class="screen-title" style="margin-bottom:4px">Tu complexión</h2>
+      <p class="screen-sub" style="margin-bottom:16px">¿Cómo describes tu tipo de cuerpo?</p>
+
+      <div class="body-cards">
+        <div class="body-card" data-body="ectomorfo" onclick="selectBodyType(this)">
+          <span class="body-card-icon">🦴</span>
+          <p class="body-card-name">Delgado</p>
+          <p class="body-card-desc">Metabolismo rápido, cuesta ganar masa</p>
+        </div>
+        <div class="body-card" data-body="mesomorfo" onclick="selectBodyType(this)">
+          <span class="body-card-icon">💪</span>
+          <p class="body-card-name">Atlético</p>
+          <p class="body-card-desc">Musculatura definida, fácil ganar y perder</p>
+        </div>
+        <div class="body-card" data-body="endomorfo" onclick="selectBodyType(this)">
+          <span class="body-card-icon">🍎</span>
+          <p class="body-card-name">Corpulento</p>
+          <p class="body-card-desc">Tendencia a acumular grasa, más volumen</p>
+        </div>
+      </div>
+
+      <button class="btn-main" id="btn-body-continue" onclick="buildPlan()"
+              style="max-width:360px;width:100%;opacity:.4;pointer-events:none">
+        Ver mi plan personalizado
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+      </button>
+    </div>
+
+  </div>
+
+  <!-- ═══════════════════════════════════════
+       SCREEN 5 — Resultado
+  ════════════════════════════════════════ -->
+  <div class="screen hidden-right" id="s5">
     <div class="result-check" id="result-check">✓</div>
 
     <h2 class="result-title">¡Tu plan está listo!</h2>
@@ -528,9 +724,13 @@
 
 <script>
   /* ─── State ─── */
-  let selectedGoal = null;
+  let selectedGoal  = null;
   let selectedLevel = null;
   let currentScreen = 1;
+  let detectedGender   = null;  // 'male' | 'female' | null
+  let selectedBodyType = null;  // 'ectomorfo' | 'mesomorfo' | 'endomorfo'
+  let modelsLoaded  = false;
+  let _cameraStream = null;
 
   /* ─── Particle background (subtle) ─── */
   (function initParticles() {
@@ -587,6 +787,7 @@
   function goTo(n) {
     const prev = document.getElementById('s' + currentScreen);
     const next = document.getElementById('s' + n);
+    if (!prev || !next) return;
     prev.classList.remove('active');
     prev.classList.add('hidden-left');
     next.classList.remove('hidden-right', 'hidden-left');
@@ -596,9 +797,155 @@
   }
 
   function updateDots(n) {
-    for (let i = 1; i <= 4; i++) {
-      document.getElementById('d' + i).classList.toggle('active', i === n);
+    for (let i = 1; i <= 5; i++) {
+      const d = document.getElementById('d' + i);
+      if (d) d.classList.toggle('active', i === n);
     }
+  }
+
+  /* ─── Preload face-api models (background, during Screen 1) ─── */
+  async function preloadModels() {
+    try {
+      if (typeof faceapi === 'undefined') return;
+      const MODEL_URL = 'https://cdn.jsdelivr.net/npm/face-api.js@0.22.2/weights/';
+      await Promise.all([
+        faceapi.nets.tinyFaceDetector.loadFromUri(MODEL_URL),
+        faceapi.nets.ageGenderNet.loadFromUri(MODEL_URL),
+      ]);
+      modelsLoaded = true;
+    } catch (e) { modelsLoaded = false; }
+  }
+  preloadModels(); // fire and forget
+
+  /* ─── AI Camera functions ─── */
+  function _setAIState(id) {
+    ['ask','camera','processing','result','manual'].forEach(s => {
+      const el = document.getElementById('ai-state-' + s);
+      if (el) el.style.display = (s === id) ? 'flex' : 'none';
+    });
+  }
+
+  async function startCamera() {
+    if (!modelsLoaded) {
+      // models not ready yet → manual fallback
+      _setAIState('manual');
+      return;
+    }
+    try {
+      _setAIState('camera');
+      const stream = await navigator.mediaDevices.getUserMedia({
+        video: { facingMode: 'user', width: { ideal: 480 } }
+      });
+      _cameraStream = stream;
+      const video = document.getElementById('ai-video');
+      video.srcObject = stream;
+    } catch (e) {
+      _setAIState('manual');
+    }
+  }
+
+  function stopCamera() {
+    if (_cameraStream) {
+      _cameraStream.getTracks().forEach(t => t.stop());
+      _cameraStream = null;
+    }
+  }
+
+  async function captureAndDetect() {
+    const btn = document.getElementById('btn-capture');
+    if (btn) { btn.disabled = true; btn.textContent = 'Analizando...'; }
+    _setAIState('processing');
+
+    const msgs = [
+      'Detectando características faciales...',
+      'Analizando rasgos...',
+      'Calibrando modelo IA...',
+      'Casi listo...',
+    ];
+    let mi = 0;
+    const msgEl = document.getElementById('ai-processing-msg');
+    const msgInterval = setInterval(() => {
+      if (msgEl && mi < msgs.length) msgEl.textContent = msgs[mi++];
+    }, 600);
+
+    try {
+      const video = document.getElementById('ai-video');
+      // Give camera 1 extra sec to stabilize
+      await new Promise(r => setTimeout(r, 800));
+
+      const result = await faceapi
+        .detectSingleFace(video, new faceapi.TinyFaceDetectorOptions({ inputSize: 224 }))
+        .withAgeAndGender();
+
+      clearInterval(msgInterval);
+      stopCamera();
+
+      if (result && result.genderProbability >= 0.75) {
+        showGenderResult(result.gender, Math.round(result.genderProbability * 100));
+      } else {
+        // Low confidence or no face → manual
+        _setAIState('manual');
+      }
+    } catch (e) {
+      clearInterval(msgInterval);
+      stopCamera();
+      _setAIState('manual');
+    }
+  }
+
+  function showGenderResult(gender, pct) {
+    detectedGender = gender;
+    const isFemale = gender === 'female';
+    document.getElementById('ai-gender-emoji').textContent = isFemale ? '👩' : '👨';
+    document.getElementById('ai-gender-text').textContent = isFemale ? 'Femenino' : 'Masculino';
+    document.getElementById('ai-confidence-text').textContent = `Confianza IA: ${pct}%`;
+    document.getElementById('btn-toggle-gender').textContent = isFemale ? 'Es Masculino' : 'Es Femenino';
+    _setAIState('result');
+  }
+
+  function toggleGender() {
+    detectedGender = detectedGender === 'female' ? 'male' : 'female';
+    const isFemale = detectedGender === 'female';
+    document.getElementById('ai-gender-emoji').textContent = isFemale ? '👩' : '👨';
+    document.getElementById('ai-gender-text').textContent = isFemale ? 'Femenino' : 'Masculino';
+    document.getElementById('ai-confidence-text').textContent = 'Seleccionado manualmente';
+    document.getElementById('btn-toggle-gender').textContent = isFemale ? 'Es Masculino' : 'Es Femenino';
+  }
+
+  function confirmGender() {
+    // Move to body type sub-step
+    document.getElementById('ai-camera-step').style.display = 'none';
+    const bodyStep = document.getElementById('ai-body-step');
+    bodyStep.style.display = 'flex';
+    bodyStep.style.flexDirection = 'column';
+    bodyStep.style.alignItems = 'center';
+  }
+
+  function skipToBodyType() {
+    stopCamera();
+    detectedGender = null;
+    document.getElementById('ai-camera-step').style.display = 'none';
+    const bodyStep = document.getElementById('ai-body-step');
+    bodyStep.style.display = 'flex';
+    bodyStep.style.flexDirection = 'column';
+    bodyStep.style.alignItems = 'center';
+  }
+
+  function selectGenderManual(gender, el) {
+    document.querySelectorAll('#ai-state-manual .body-card').forEach(c => c.classList.remove('selected'));
+    el.classList.add('selected');
+    detectedGender = gender;
+    const btn = document.getElementById('btn-manual-confirm');
+    if (btn) { btn.style.opacity = '1'; btn.style.pointerEvents = 'auto'; }
+  }
+
+  /* ─── Body type selection ─── */
+  function selectBodyType(el) {
+    document.querySelectorAll('.body-card[data-body]').forEach(c => c.classList.remove('selected'));
+    el.classList.add('selected');
+    selectedBodyType = el.dataset.body;
+    const btn = document.getElementById('btn-body-continue');
+    if (btn) { btn.style.opacity = '1'; btn.style.pointerEvents = 'auto'; btn.classList.add('pulse'); }
   }
 
   /* ─── Goal selection ─── */
@@ -652,12 +999,21 @@
     document.getElementById('result-badge').innerHTML =
       `<span>${g.emoji}</span><span>${g.label}</span>`;
 
-    /* Profile */
+    /* Profile — include gender badge if detected */
+    const genderBadge = detectedGender
+      ? `<span style="display:inline-flex;align-items:center;gap:4px;background:rgba(21,184,110,.15);color:var(--green);border-radius:50px;padding:2px 10px;font-size:10px;font-weight:700;margin-top:4px">
+           ${detectedGender === 'female' ? '👩 Femenino' : '👨 Masculino'} · IA
+         </span>`
+      : '';
+    const bodyBadge = selectedBodyType
+      ? `<span style="font-size:11px;color:rgba(255,255,255,.5);">${selectedBodyType.charAt(0).toUpperCase()+selectedBodyType.slice(1)}</span>`
+      : '';
     document.getElementById('result-profile').innerHTML = `
       <div class="result-avatar">${p.initials}</div>
       <div class="result-profile-info">
         <p class="result-profile-name">${p.name}</p>
         <p class="result-profile-role">Perfil: ${p.role}</p>
+        <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:4px">${genderBadge}${bodyBadge}</div>
       </div>
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="${g.color}" stroke-width="2.5"
            stroke-linecap="round" stroke-linejoin="round">
@@ -683,7 +1039,7 @@
         <span class="stat-label">Diaria</span>
       </div>`;
 
-    goTo(4);
+    goTo(5);
 
     /* Animate kcal counter */
     let k = 0;
@@ -711,6 +1067,11 @@
           initials:'EM', plan:'Premium Anual', memberSince:'Enero 2024',
           age:28, height:172, weight:64, gender:'Femenino', kcal:g.kcal };
 
+    // Override gender with AI detection if available
+    const genderOverride = detectedGender === 'female' ? 'Femenino'
+                         : detectedGender === 'male'   ? 'Masculino'
+                         : null;
+
     localStorage.setItem('pf_user', JSON.stringify({
       ...userBase,
       registered: true, onboardingDone: true,
@@ -718,6 +1079,8 @@
                : selectedGoal === 'estetica' ? 'Estética' : 'Rendimiento',
       activityLevel: selectedLevel === 'nuevo' ? 'sed'
                    : selectedLevel === 'intermedio' ? 'mod' : 'act',
+      ...(genderOverride && { gender: genderOverride }),
+      ...(selectedBodyType && { bodyType: selectedBodyType }),
     }));
     localStorage.setItem('pf_active_demo', p.demoType);
     localStorage.setItem('pf_fair_goal', selectedGoal);
