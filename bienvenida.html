@@ -913,27 +913,42 @@
     const file = input.files[0];
     if (!file) return;
 
-    // Create object URL and load image
     if (_photoUrl) URL.revokeObjectURL(_photoUrl);
     _photoUrl = URL.createObjectURL(file);
 
+    // ── FIX 1: set onload BEFORE src (evita race condition con blob URLs) ──
     const img = new Image();
-    img.src = _photoUrl;
-    await new Promise((res, rej) => { img.onload = res; img.onerror = rej; });
+    await new Promise((res, rej) => {
+      img.onload = res;
+      img.onerror = rej;
+      img.src = _photoUrl;
+    });
 
-    // Show photo preview in processing state
+    // ── FIX 2: redimensionar a canvas ≤ 800px (fotos móvil pueden ser 12MP+) ──
+    const MAX = 800;
+    let W = img.naturalWidth  || img.width;
+    let H = img.naturalHeight || img.height;
+    if (W > MAX || H > MAX) {
+      if (W >= H) { H = Math.round(H * MAX / W); W = MAX; }
+      else        { W = Math.round(W * MAX / H); H = MAX; }
+    }
+    const canvas = document.createElement('canvas');
+    canvas.width = W; canvas.height = H;
+    canvas.getContext('2d').drawImage(img, 0, 0, W, H);
+
+    // Show preview
     const prev  = document.getElementById('ai-photo-preview');
     const prevI = document.getElementById('ai-preview-img');
-    if (prev)  prev.style.display  = 'block';
+    if (prev)  prev.style.display = 'block';
     if (prevI) prevI.src = _photoUrl;
 
     _setAIState('processing');
 
-    // Wait for models (max 8s)
+    // Wait for models (max 10s)
     if (!modelsLoaded) {
       const msgEl = document.getElementById('ai-processing-msg');
       if (msgEl) msgEl.textContent = 'Cargando modelo IA...';
-      for (let i = 0; i < 80 && !modelsLoaded; i++) {
+      for (let i = 0; i < 100 && !modelsLoaded; i++) {
         await new Promise(r => setTimeout(r, 100));
       }
       if (!modelsLoaded) { _setAIState('manual'); return; }
@@ -947,21 +962,34 @@
     }, 700);
 
     try {
-      await new Promise(r => setTimeout(r, 500)); // mínimo visual
-      const result = await faceapi
-        .detectSingleFace(img, new faceapi.TinyFaceDetectorOptions({ inputSize: 320, scoreThreshold: 0.3 }))
+      await new Promise(r => setTimeout(r, 400));
+
+      // ── FIX 3: pasar canvas (no img), scoreThreshold bajo, dos tamaños de input ──
+      let result = await faceapi
+        .detectSingleFace(canvas, new faceapi.TinyFaceDetectorOptions({ inputSize: 416, scoreThreshold: 0.2 }))
         .withAgeAndGender();
+
+      // Si no detecta con 416, reintentar con 224 (más rápido, diferente escala)
+      if (!result) {
+        result = await faceapi
+          .detectSingleFace(canvas, new faceapi.TinyFaceDetectorOptions({ inputSize: 224, scoreThreshold: 0.15 }))
+          .withAgeAndGender();
+      }
 
       clearInterval(msgInt);
 
-      if (result && result.genderProbability >= 0.70) {
-        // Show photo in result too
+      // ── FIX 4: umbral bajado a 0.55 ──
+      if (result && result.genderProbability >= 0.55) {
         const rPrev  = document.getElementById('ai-result-preview');
         const rPrevI = document.getElementById('ai-result-img');
-        if (rPrev)  { rPrev.style.display  = 'block'; }
-        if (rPrevI) { rPrevI.src = _photoUrl; }
+        if (rPrev)  rPrev.style.display = 'block';
+        if (rPrevI) rPrevI.src = _photoUrl;
         showGenderResult(result.gender, Math.round(result.genderProbability * 100));
       } else {
+        // No detectó rostro — mostrar mensaje claro y opción de reintentar
+        const msgElF = document.getElementById('ai-processing-msg');
+        if (msgElF) msgElF.textContent = 'No se detectó rostro con claridad';
+        await new Promise(r => setTimeout(r, 800));
         _setAIState('manual');
       }
     } catch(e) {
