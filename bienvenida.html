@@ -852,8 +852,28 @@
   }
 
   async function captureAndDetect() {
-    const btn = document.getElementById('btn-capture');
+    const video = document.getElementById('ai-video');
+    const btn   = document.getElementById('btn-capture');
+
+    // ── 1. Snapshot canvas WHILE video is still visible ──
+    const snap = document.createElement('canvas');
+    snap.width  = video.videoWidth  || 320;
+    snap.height = video.videoHeight || 240;
+    // Video is CSS-mirrored; draw it flipped back to normal for face-api
+    const ctx = snap.getContext('2d');
+    ctx.translate(snap.width, 0);
+    ctx.scale(-1, 1);
+    ctx.drawImage(video, 0, 0);
+
+    // ── 2. Flash effect so user knows photo was taken ──
+    const flash = document.createElement('div');
+    flash.style.cssText = 'position:fixed;inset:0;background:white;opacity:.85;z-index:999;pointer-events:none;transition:opacity .25s';
+    document.body.appendChild(flash);
+    setTimeout(() => { flash.style.opacity = '0'; setTimeout(() => flash.remove(), 260); }, 60);
+
+    // ── 3. Now switch UI to processing (safe — snapshot already taken) ──
     if (btn) { btn.disabled = true; btn.textContent = 'Analizando...'; }
+    stopCamera();
     _setAIState('processing');
 
     const msgs = [
@@ -866,29 +886,25 @@
     const msgEl = document.getElementById('ai-processing-msg');
     const msgInterval = setInterval(() => {
       if (msgEl && mi < msgs.length) msgEl.textContent = msgs[mi++];
-    }, 600);
+    }, 700);
 
+    // ── 4. Detect from canvas snapshot ──
     try {
-      const video = document.getElementById('ai-video');
-      // Give camera 1 extra sec to stabilize
-      await new Promise(r => setTimeout(r, 800));
+      await new Promise(r => setTimeout(r, 400)); // min visual processing time
 
       const result = await faceapi
-        .detectSingleFace(video, new faceapi.TinyFaceDetectorOptions({ inputSize: 224 }))
+        .detectSingleFace(snap, new faceapi.TinyFaceDetectorOptions({ inputSize: 224, scoreThreshold: 0.4 }))
         .withAgeAndGender();
 
       clearInterval(msgInterval);
-      stopCamera();
 
-      if (result && result.genderProbability >= 0.75) {
+      if (result && result.genderProbability >= 0.72) {
         showGenderResult(result.gender, Math.round(result.genderProbability * 100));
       } else {
-        // Low confidence or no face → manual
         _setAIState('manual');
       }
     } catch (e) {
       clearInterval(msgInterval);
-      stopCamera();
       _setAIState('manual');
     }
   }
