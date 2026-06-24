@@ -43,6 +43,34 @@ const _INTENTS = [
   { id: 'motivation',        test: m => /motiv|anim|no puedo|dificil|cansad|rend[ií]|sin ganas|desanimad/i.test(m) },
   { id: 'summary',           test: m => /resumen|como estoy|estado.*hoy|puntuaci|score|que tal.*dia/i.test(m) },
   { id: 'greeting',          test: m => /^(hola|hey|buenas|buenos|hi\b|ey|buenas tardes|buenas noches|buen d[ií]a)/i.test(m) },
+
+  // ── Conocimiento general de salud y ejercicio ──
+  { id: 'kb_hiit',          test: m => /\bhiit\b|intervalo|interval|alta intensidad|tabata/i.test(m) },
+  { id: 'kb_cardio',        test: m => /cardio|aerobic|correr|trotar|corr[ei]|zona.*grasa|liss|steady state/i.test(m) },
+  { id: 'kb_fuerza',        test: m => /fuerza|musculo|hipertrofia|masa muscular|ganar musculo|volumen|compound|compuesto/i.test(m) },
+  { id: 'kb_reps',          test: m => /cuantas.*rep|rep.*musculo|rep.*fuerza|series.*rep|peso.*rep|rango.*rep/i.test(m) },
+  { id: 'kb_descanso',      test: m => /dia.*descanso|descanso.*entreno|cuantos.*dias.*gym|frecuencia.*entreno|overtraining|sobreentren/i.test(m) },
+  { id: 'kb_calentamiento', test: m => /calentar|calentamiento|warm.?up|antes.*entreno|estiramient/i.test(m) },
+  { id: 'kb_doms',          test: m => /dolor.*musculo|agujeta|doms|dolor.*despues|dolorido|adolorido/i.test(m) },
+  { id: 'kb_proteina',      test: m => /cuanta.*proteina|proteina.*dia|gramo.*proteina|suplemento.*proteina|whey|batido.*proteina/i.test(m) },
+  { id: 'kb_creatina',      test: m => /creatina|monohidrat|suplemento/i.test(m) },
+  { id: 'kb_ayuno',         test: m => /ayuno|intermitente|fasting|ventana.*comida|16.?8|18.?6/i.test(m) },
+  { id: 'kb_pre_post',      test: m => /comer.*antes.*entreno|antes.*gym|despues.*entreno|post.*workout|pre.*workout|que.*comer.*gym/i.test(m) },
+  { id: 'kb_perdida_grasa', test: m => /perder grasa|quemar grasa|bajar.*grasa|reducir.*grasa|definicion|cutting/i.test(m) },
+  { id: 'kb_ganar_masa',    test: m => /ganar.*peso|ganar.*masa|subir.*peso|bulk|volumen.*muscular|comer.*mas/i.test(m) },
+  { id: 'kb_imc',           test: m => /\bimc\b|indice.*masa|peso.*ideal|sobrepeso|obesidad/i.test(m) },
+  { id: 'kb_frecuencia_c',  test: m => /frecuencia.*cardiaca|pulso|latidos|zona.*cardiaca|fc.*max|220.*edad/i.test(m) },
+  { id: 'kb_sueño_gen',     test: m => /cuanto.*dormir|horas.*dormir|importancia.*sueno|calidad.*sueno|dormir.*bien/i.test(m) },
+  { id: 'kb_estres',        test: m => /estres|cortisol|ansiedad|tension|relajar|mental|salud.*mental/i.test(m) },
+  { id: 'kb_agua_gen',      test: m => /cuanta.*agua.*dia|agua.*cuerpo|importancia.*agua|deshidrat|beber.*suficiente/i.test(m) },
+  { id: 'kb_flexibilidad',  test: m => /flexibilidad|estirar|yoga|movilidad|stretching/i.test(m) },
+  { id: 'kb_abdomen',       test: m => /abdomen|abdominales|six.?pack|core|panza|cintura/i.test(m) },
+  { id: 'kb_gluteos',       test: m => /gluteo|pompas|sentadill|hip.*thrust|pierna/i.test(m) },
+  { id: 'kb_espalda',       test: m => /espalda|lumbar|dolor.*espalda|postura/i.test(m) },
+  { id: 'kb_principiante',  test: m => /empezar.*gym|primer.*vez|principiante|nunca.*entren|como.*empezar|sin.*experiencia/i.test(m) },
+  { id: 'kb_plateau',       test: m => /plateau|estancado|no avanzo|no progreso|no bajo|no subo/i.test(m) },
+  { id: 'kb_alcohol',       test: m => /alcohol|cerveza|vino|copa|bebida.*alcoholic/i.test(m) },
+  { id: 'kb_vitaminas',     test: m => /vitamina|mineral|hierro|calcio|magnesio|zinc|omega|d3/i.test(m) },
 ];
 
 function _detectIntent(msg) {
@@ -554,14 +582,137 @@ function _processMessage(raw) {
       return { reply: `${greeting}, ${fn}! 😊 Estoy listo para ayudarte.\n\nPuedes preguntarme sobre:\n• 💧 Agua · 🔥 Calorías · 🚶 Pasos · 😴 Sueño\n• 💪 Rutina · 🍽️ Nutrición · 📊 Reportes\n• Registrar agua, peso y ejercicios\n• Cambiar objetivos y notificaciones\n• Análisis de tu semana`, action: null };
     }
 
+    /* ══════════════════════════════════════════
+       KNOWLEDGE BASE — Salud, ejercicio y nutrición
+    ══════════════════════════════════════════ */
+
+    case 'kb_hiit': {
+      return { reply: `⚡ **HIIT (High-Intensity Interval Training):**\n\nAlterna períodos de **esfuerzo máximo** (20-40s) con **descanso** (10-20s). Ejemplo clásico — Tabata: 8 rondas de 20s trabajo / 10s descanso.\n\n**Beneficios:**\n• Quema hasta un **30% más calorías** que el cardio tradicional en menos tiempo\n• El efecto EPOC ("afterburn") continúa quemando grasa hasta **24h** después\n• Mejora la resistencia cardiovascular y la sensibilidad a la insulina\n\n**¿Cuánto?** 2-3 sesiones/semana, máx 30 min. Más no es mejor.\n\n${goal === 'Estética' ? '✅ Para tu objetivo de **Estética**, el HIIT es ideal — maximiza la pérdida de grasa preservando músculo.' : goal === 'Rendimiento' ? '✅ Para **Rendimiento**, el HIIT mejora el VO₂ máx rápidamente.' : '✅ Para **Salud**, 2x HIIT/semana combinado con caminatas es óptimo.'}`, action: null };
+    }
+
+    case 'kb_cardio': {
+      return { reply: `🏃 **Cardio: tipos y cuándo usar cada uno:**\n\n**LISS (baja intensidad):** caminar, bici suave, nadar despacio\n• Zona de frecuencia cardíaca: 50-65% FC máx\n• Ideal para: recuperación activa, quema de grasa sin fatiga muscular\n• Duración: 30-60 min, puede hacerse a diario\n\n**Cardio moderado:** trotar, elíptica a ritmo medio\n• Zona: 65-75% FC máx\n• 3-4x semana, 20-40 min\n\n**HIIT (alta intensidad):**\n• 2-3x semana máximo, 15-25 min\n• Mayor eficiencia calórica post-ejercicio\n\n💡 Para **${goal}**, te recomiendo: ${goal === 'Estética' ? '2 HIIT + 1-2 LISS por semana' : goal === 'Rendimiento' ? '2 HIIT + cardio de zona 2 (65-70% FC)' : '3-4 sesiones de cardio moderado o caminatas rápidas'}`, action: null };
+    }
+
+    case 'kb_fuerza': {
+      const u2 = getCurrentUser() || {};
+      return { reply: `💪 **Entrenamiento de fuerza e hipertrofia:**\n\n**Para fuerza máxima:**\n• 3-6 series · 1-5 repeticiones · Peso >85% 1RM · Descanso 3-5 min\n\n**Para hipertrofia (masa muscular):**\n• 3-5 series · 6-12 repeticiones · Peso 67-85% 1RM · Descanso 60-90s\n\n**Para resistencia muscular:**\n• 2-4 series · 13-20 repeticiones · Descanso 30-60s\n\n**Principios clave:**\n• **Sobrecarga progresiva**: aumenta peso o reps cada semana\n• **Técnica > peso**: mejor 60kg con forma perfecta que 100kg con mala técnica\n• **Frecuencia**: cada músculo 2x semana para máximo crecimiento\n\n${u2.weight ? `💡 Con tu peso de ${u2.weight}kg, apunta a proteína de ${Math.round(u2.weight * 1.8)}-${Math.round(u2.weight * 2.2)}g/día para hipertrofia.` : ''}`, action: null };
+    }
+
+    case 'kb_reps': {
+      return { reply: `🔢 **¿Cuántas repeticiones debo hacer?**\n\n| Objetivo | Reps | Series | Descanso |\n|---|---|---|---|\n| Fuerza máxima | 1-5 | 4-6 | 3-5 min |\n| Hipertrofia | 6-12 | 3-5 | 60-90s |\n| Resistencia | 13-20 | 2-3 | 30-45s |\n| Tonificación | 12-15 | 3-4 | 45-60s |\n\n💡 **Regla de oro**: el peso debe ser tal que las últimas 2-3 reps sean difíciles pero con buena técnica. Si terminas fácil, sube el peso. Si pierdes la forma antes de acabar, bájalo.\n\nPara tu objetivo de **${goal}**: ${goal === 'Rendimiento' ? 'prioriza 3-6 reps con peso alto para fuerza máxima.' : goal === 'Estética' ? 'trabaja en rango 8-15 reps para máxima hipertrofia y definición.' : '10-15 reps a intensidad moderada, consistencia sobre intensidad.'}`, action: null };
+    }
+
+    case 'kb_descanso': {
+      return { reply: `🗓️ **¿Cuántos días de descanso necesito?**\n\n**Regla general:** cada grupo muscular necesita **48-72h** de recuperación antes de volver a trabajarlo.\n\n**Por nivel:**\n• 🌱 Principiante: 3 días/semana con descanso entre sesiones\n• 🚶 Intermedio: 4 días/semana (ej: lun/mar/jue/vie)\n• 🏋️ Avanzado: 5-6 días/semana con splits musculares\n\n**Señales de que necesitas descansar más:**\n• Rendimiento cae sesión a sesión\n• Dolor articular (≠ dolor muscular normal)\n• Mal sueño, irritabilidad, hambre excesiva\n• Ausencia de "pump" en el gimnasio\n\n⚠️ El **descanso no es opcional** — el músculo crece durante el reposo, no durante el ejercicio.\n\nTu nivel actual (${selectedLevel || 'activo'}) sugiere: **${selectedLevel === 'nuevo' ? '3 días de entrenamiento + 4 descanso' : selectedLevel === 'avanzado' ? '5 días + 2 descanso activo' : '4 días entreno + 3 descanso'}**`, action: null };
+    }
+
+    case 'kb_calentamiento': {
+      return { reply: `🔥 **Calentamiento correcto (10-15 min):**\n\n**Fase 1 — Activación cardiovascular (3-5 min):**\nTrote suave, saltar la cuerda, bici a baja intensidad\n\n**Fase 2 — Movilidad dinámica (5 min):**\n• Círculos de cadera, hombros y tobillos\n• Sentadillas sin peso\n• Estocadas de movilidad\n• Rotaciones de tronco\n\n**Fase 3 — Series de activación (3-5 min):**\nUna serie ligera (50% del peso de trabajo) del primer ejercicio\n\n❌ **Evita:** estiramiento estático antes de entrenar — reduce la fuerza hasta un 8%\n✅ **El estiramiento estático va DESPUÉS** del entrenamiento\n\n💡 Un buen calentamiento reduce el riesgo de lesión en un **40%** y mejora el rendimiento un **10-15%**.`, action: null };
+    }
+
+    case 'kb_doms': {
+      return { reply: `😅 **Dolor muscular post-ejercicio (DOMS):**\n\nEl DOMS (Delayed Onset Muscle Soreness) aparece **24-72h** después y es causado por micro-roturas musculares — ¡son normales y necesarias para crecer!\n\n**¿Es normal mi dolor?**\n• ✅ Dolor difuso, muscular, que mejora al calentarte → NORMAL\n• ⚠️ Dolor agudo, articular, que empeora al moverte → Posible lesión\n\n**Para reducir el DOMS:**\n• 💧 Hidratación: reduce inflamación\n• Proteína post-entreno: acelera la reparación muscular\n• Sueño: la mayor parte de la recuperación ocurre durmiendo\n• LISS (caminata suave): aumenta el flujo sanguíneo sin fatigar\n• Baño de contraste (frío/calor): reduce inflamación\n\n⏱️ El DOMS disminuye con el tiempo — tu cuerpo se adapta. Si siempre te duele igual, algo está mal con la recuperación.\n\nHoy tu sueño fue **${td.sleepScore || '—'}/100** — ${(td.sleepScore || 0) >= 75 ? 'buena recuperación, el dolor bajará rápido.' : 'con más sueño te recuperarías más rápido.'}`, action: null };
+    }
+
+    case 'kb_proteina': {
+      const u2 = getCurrentUser() || {};
+      const w  = u2.weight || 70;
+      const pMin = Math.round(w * 1.6), pMax = Math.round(w * 2.2);
+      return { reply: `🥩 **Proteína: cuánta necesitas:**\n\n| Objetivo | g/kg peso corporal |\n|---|---|\n| Sedentario | 0.8g/kg |\n| Salud general | 1.2-1.6g/kg |\n| Hipertrofia | 1.8-2.2g/kg |\n| Pérdida de grasa | 2.0-2.4g/kg |\n\n${u2.weight ? `**Para ti (${w}kg):** ${pMin}-${pMax}g de proteína/día para tu objetivo de ${goal}.` : '**Regla simple:** 1.8-2g por kg de peso corporal si entrenas regularmente.'}\n\n**Fuentes de proteína de calidad:**\n• Pollo/pavo, carne magra, atún, salmón\n• Huevos (proteína de alta biodisponibilidad)\n• Yogur griego, queso cottage\n• Legumbres (lentejas, garbanzos)\n• Proteína en polvo (whey, caseína)\n\n💡 Distribuye la proteína en 4-5 comidas. El cuerpo absorbe ~30-40g por comida óptimamente.`, action: null };
+    }
+
+    case 'kb_creatina': {
+      return { reply: `💊 **Creatina — el suplemento más estudiado:**\n\nLa creatina monohidratada es uno de los pocos suplementos con evidencia científica sólida.\n\n**Beneficios comprobados:**\n• +5-15% de fuerza en ejercicios de alta intensidad\n• Mejor recuperación entre series\n• Aumento de masa muscular (principalmente por mayor retención de agua en células musculares)\n• Posibles beneficios cognitivos\n\n**Dosis:** 3-5g diarios. No necesitas fase de carga.\n**Cuándo:** en cualquier momento del día, con o sin comida\n\n**¿Es segura?** Sí, ampliamente estudiada. Puede aumentar la creatinina sérica (sin daño renal real). Beber suficiente agua (${((td.waterGoalMl||2500)/1000).toFixed(1)}L, como tu meta).\n\n**Otros suplementos con evidencia:**\n• Cafeína: mejora rendimiento +3-7%\n• Beta-alanina: reduce fatiga muscular\n• Vitamina D: si hay déficit`, action: null };
+    }
+
+    case 'kb_ayuno': {
+      return { reply: `⏰ **Ayuno intermitente — ¿funciona?**\n\nEl ayuno intermitente (AI) es una estrategia de timing de comidas, no una dieta per se.\n\n**Protocolos más comunes:**\n• **16/8**: 16h ayuno + 8h ventana de comida (ej: comer 12:00-20:00)\n• **18/6**: más restrictivo, mismo principio\n• **5:2**: 5 días normal + 2 días 500-600 kcal\n\n**¿Qué dice la ciencia?**\n• Para pérdida de peso: funciona igual que restricción calórica tradicional **si las calorías son iguales**\n• Ventaja real: algunas personas comen menos naturalmente dentro de la ventana\n• Puede mejorar sensibilidad a la insulina\n\n**Para entrenamiento:** entrena dentro de la ventana de alimentación cuando sea posible, o toma BCAA/proteína si entrenas en ayunas.\n\n${goal === 'Rendimiento' ? '⚠️ Para **Rendimiento**, el AI puede limitar el volumen de entrenamiento. Asegúrate de consumir las ' + (plan.kcal||2450) + ' kcal dentro de la ventana.' : '✅ Para tu objetivo de **' + goal + '**, el AI puede ser una herramienta útil si se te hace difícil comer menos.'}`, action: null };
+    }
+
+    case 'kb_pre_post': {
+      return { reply: `🍽️ **¿Qué comer antes y después de entrenar?**\n\n**PRE-ENTRENAMIENTO (1-2h antes):**\n• Carbohidratos complejos + proteína moderada + poca grasa\n• Ejemplos: avena con proteína, arroz con pollo, banana con mantequilla de maní\n• ¿Poco tiempo? (30-45 min antes): fruta + proteína en polvo\n\n**POST-ENTRENAMIENTO (dentro de 30-90 min):**\n• Proteína + carbohidratos (relación 1:2 o 1:3)\n• Ejemplos: pollo con arroz, batido de proteína con banana, huevos con tostadas\n• Esto maximiza la síntesis proteica y repone glucógeno\n\n**¿Importa TANTO el timing?**\n• Si comes bien durante el día, el timing importa menos de lo que se cree\n• La ventana anabólica es de **4-6 horas**, no solo 30 min post-entreno\n• Prioridad: **cantidad total diaria** > timing\n\n💡 Tu meta calórica es **${plan.kcal||2150} kcal/día**. Distribuye proteína en cada comida.`, action: null };
+    }
+
+    case 'kb_perdida_grasa': {
+      const u2 = getCurrentUser() || {};
+      const deficit = Math.round((plan.kcal || 1850) * 0.15);
+      return { reply: `🔥 **Perder grasa: la guía definitiva**\n\n**Principio fundamental:** necesitas un **déficit calórico** — gastar más de lo que comes.\n• 3.500 kcal de déficit ≈ 0.5 kg de grasa perdida\n• Déficit seguro: 300-500 kcal/día = 0.5-1 kg/semana\n\n**Los 4 pilares:**\n1. 🍽️ **Déficit calórico** sin bajar de tu TMB (metabolismo basal)\n2. 💪 **Entrenamiento de fuerza**: preserva músculo durante el déficit\n3. 🥩 **Proteína alta** (2-2.4g/kg): efecto saciante + preserva músculo\n4. 😴 **Sueño**: dormir poco aumenta grelina (hambre) y cortisol\n\n**Lo que NO funciona:**\n❌ Dietas extremas — pierdes músculo y el metabolismo se ralentiza\n❌ Solo cardio — sin fuerza, pierdes músculo con la grasa\n❌ Productos "quemagrasa" — ninguno tiene evidencia sólida\n\n${u2.weight ? `**Para ti:** con ${u2.weight}kg, tu déficit recomendado es ~${deficit} kcal/día menos que tu TDEE.` : ''}`, action: null };
+    }
+
+    case 'kb_ganar_masa': {
+      return { reply: `📈 **Ganar masa muscular: cómo hacerlo bien**\n\n**Necesitas un superávit calórico moderado:** +200-300 kcal sobre tu mantenimiento.\nMás calorías = más grasa acumulada sin más músculo.\n\n**Ritmo realista:**\n• Principiante: 1-1.5 kg músculo/mes\n• Intermedio: 0.5-1 kg músculo/mes\n• Avanzado: 0.25-0.5 kg músculo/mes\n\n**Los 3 estímulos para crecer:**\n1. **Tensión mecánica**: levantar cargas progresivamente mayores\n2. **Daño muscular**: el DOMS controlado\n3. **Estrés metabólico**: el "pump" y la quema\n\n**Nutrición para masa:**\n• Calorías: TDEE + 250 kcal\n• Proteína: 1.8-2.2g/kg\n• Carbohidratos: 4-6g/kg (tu combustible principal)\n• Dormir 7-9h: la hormona de crecimiento se libera durmiendo\n\n💡 Tu objetivo actual de **${goal}** tiene ${plan.kcal||2450} kcal/día. ${goal === 'Rendimiento' ? '¡Perfecto para ganar masa!' : 'Considera cambiar a Rendimiento para mayor superávit calórico.'}`, action: null };
+    }
+
+    case 'kb_imc': {
+      const u2 = getCurrentUser() || {};
+      let imcTxt = '';
+      if (u2.weight && u2.height) {
+        const imc = (u2.weight / ((u2.height/100) ** 2)).toFixed(1);
+        const cat  = imc < 18.5 ? 'Bajo peso' : imc < 25 ? 'Peso normal ✅' : imc < 30 ? 'Sobrepeso' : 'Obesidad';
+        imcTxt = `\n\n**Tu IMC: ${imc}** → ${cat}`;
+      }
+      return { reply: `📊 **IMC (Índice de Masa Corporal):**\n\n| Categoría | IMC |\n|---|---|\n| Bajo peso | < 18.5 |\n| Normal | 18.5 - 24.9 |\n| Sobrepeso | 25 - 29.9 |\n| Obesidad | ≥ 30 |${imcTxt}\n\n⚠️ **Limitación importante:** el IMC no distingue músculo de grasa. Un atleta musculoso puede tener IMC de "sobrepeso" siendo completamente sano.\n\n**Mejor indicador:** porcentaje de grasa corporal\n• Hombre: 10-20% saludable, < 10% atlético\n• Mujer: 18-28% saludable, < 18% atlético\n\nLa composición corporal importa más que el número en la báscula.`, action: null };
+    }
+
+    case 'kb_frecuencia_c': {
+      const u2 = getCurrentUser() || {};
+      const fcMax = u2.age ? 220 - u2.age : 195;
+      return { reply: `❤️ **Frecuencia cardíaca y zonas de entrenamiento:**\n\n${u2.age ? `**Tu FC máxima estimada: ${fcMax} lpm** (220 - ${u2.age} años)` : '**FC máxima estimada:** 220 - tu edad'}\n\n| Zona | % FC máx | Beneficio |\n|---|---|---|\n| Z1 Reposo | < 60% | Recuperación activa |\n| Z2 Aeróbica | 60-70% | Quema grasa, base aeróbica |\n| Z3 Umbral | 70-80% | Resistencia cardiovascular |\n| Z4 Anaeróbica | 80-90% | VO₂ máx, potencia |\n| Z5 Máxima | > 90% | Sprint, HIIT |\n\n${u2.age ? `**Tus zonas:** Z2: ${Math.round(fcMax*0.6)}-${Math.round(fcMax*0.7)} lpm | Z3: ${Math.round(fcMax*0.7)}-${Math.round(fcMax*0.8)} lpm` : ''}\n\n💡 El **70% del cardio** debería ser en Z2 (puedes hablar mientras entrenas). Solo el 30% en zonas altas.`, action: null };
+    }
+
+    case 'kb_sueño_gen': {
+      return { reply: `😴 **Sueño: el suplemento más poderoso (gratis)**\n\n**¿Cuánto dormir?**\n• 18-25 años: 7-9 horas\n• 26-64 años: 7-9 horas\n• 65+: 7-8 horas\n\n**Lo que pasa mientras duermes:**\n• Se libera un **70% de la hormona de crecimiento** del día\n• Síntesis proteica muscular máxima\n• Consolidación de memoria motriz (aprendes mejor los movimientos)\n• Regulación de grelina/leptina (hambre y saciedad)\n\n**Dormir menos de 6h causa:**\n• Pérdida de masa muscular incluso con entrenamiento\n• +40% más probabilidad de lesión\n• Cortisol elevado → almacenamiento de grasa abdominal\n• Reducción del 10-15% en rendimiento físico\n\n**Tips para mejor sueño:**\n• Oscuridad total y temperatura 17-19°C\n• Sin pantallas 1h antes\n• Horario consistente (mismo hora siempre)\n• Magnesio glicinato antes de dormir\n\nTu score de anoche: **${td.sleepScore || '—'}/100**`, action: null };
+    }
+
+    case 'kb_estres': {
+      return { reply: `🧠 **Estrés, cortisol y su impacto en tu cuerpo:**\n\nEl cortisol es la hormona del estrés — en dosis correctas es buena, en exceso destruye.\n\n**Efectos del cortisol crónico alto:**\n• Acumula grasa abdominal (el cuerpo prioriza reservas de energía)\n• Destruye tejido muscular (catabolismo)\n• Suprime el sistema inmune\n• Deteriora la calidad del sueño\n• Eleva la presión arterial\n\n**El ejercicio y el estrés:**\n• ✅ Ejercicio moderado (30-60 min): **reduce** el cortisol\n• ⚠️ Ejercicio excesivo sin recuperación: **eleva** el cortisol\n• ✅ Caminar al aire libre: reduce cortisol 15-20% en solo 20 min\n\n**Estrategias probadas para reducir estrés:**\n• Meditación 10 min/día: -35% cortisol\n• Respiración diafragmática: activa el sistema parasimpático en segundos\n• Ejercicio regular: el mejor ansiolítico natural\n• Reducir cafeína después de las 14:00\n• Desconectar del trabajo 1h antes de dormir`, action: null };
+    }
+
+    case 'kb_agua_gen': {
+      return { reply: `💧 **¿Cuánta agua necesitas realmente?**\n\n**Regla base:** 35 ml por kg de peso corporal\n${getCurrentUser()?.weight ? `→ Para tus ${getCurrentUser().weight}kg: **${Math.round(getCurrentUser().weight * 35 / 100) / 10}L base**` : '→ Ejemplo: 70kg × 35ml = 2.45L'}\n\n**Factores que aumentan la necesidad:**\n• +500ml por hora de ejercicio intenso\n• +300-500ml en clima caluroso o húmedo\n• +200ml por cada taza de café/té\n• Fiebre, diarrea: reponer activamente\n\n**Señales de deshidratación:**\n• Orina oscura (debe ser amarillo pálido)\n• Dolor de cabeza\n• Fatiga sin causa aparente\n• Dificultad de concentración (el cerebro es 73% agua)\n\n**Impacto en rendimiento:**\n• 2% deshidratación = -20% rendimiento físico\n• 1% = ya hay impacto cognitivo\n\n📊 Hoy llevas **${st.waterMl?.toLocaleString('es-ES') || 0}ml** de ${(td.waterGoalMl||2500).toLocaleString('es-ES')}ml — ${Math.round(((st.waterMl||0)/(td.waterGoalMl||2500))*100)}% de tu meta.`, action: null };
+    }
+
+    case 'kb_flexibilidad': {
+      return { reply: `🧘 **Flexibilidad y movilidad — diferencias clave:**\n\n**Flexibilidad:** capacidad del músculo de estirarse\n**Movilidad:** rango de movimiento activo de una articulación\n\n*La movilidad importa más para el entrenamiento.*\n\n**¿Cuándo estirar?**\n• ❌ Antes de entrenar: reduce fuerza hasta 8% (evita estático)\n• ✅ Después de entrenar: músculos calientes, mayor beneficio\n• ✅ En días de descanso: sesiones de 20-30 min\n\n**Tipos de estiramiento:**\n• **Dinámico** (antes de entreno): movimientos activos, círculos, balanceos\n• **Estático** (después de entreno): mantener 20-60 segundos\n• **PNF**: contrae → relaja → estira. Más efectivo pero requiere pareja\n\n**Áreas más importantes para trabajar:**\n• Cadera (flexores): esencial para sentadillas y salud lumbar\n• Pectoral/hombros: corrección de postura\n• Isquiotibiales: reduce lesiones de espalda baja\n\n💡 10 min de movilidad de cadera diaria puede mejorar tu sentadilla más que meses de práctica sin trabajarla.`, action: null };
+    }
+
+    case 'kb_abdomen': {
+      return { reply: `🏋️ **Abdomen y core — la verdad:**\n\n**No existe la "quema grasa localizada"** — no puedes elegir de dónde perder grasa haciendo abdominales.\n\n**Cómo marcar el abdomen:**\n1. **Déficit calórico** para bajar grasa corporal total\n2. **Ejercicios de core** para desarrollar el músculo\n3. Cuando la grasa baje (<12-15% en hombre, <18-22% en mujer) → se marcan\n\n**Mejores ejercicios de core (más efectivos que los crunch tradicionales):**\n• Plancha (isométrico): activa 100% del core\n• Dead bug: coordina core y movilidad\n• Hollow body hold: base de la gimnasia\n• Rueda abdominal: alta activación del recto\n• Elevaciones de piernas colgado: parte baja del abdomen\n\n**¿Cuánto trabajar el core?**\n• 2-3x semana directo es suficiente\n• El core se trabaja indirectamente en sentadillas, peso muerto y press\n\n💡 Con tu objetivo de **${goal}**, el déficit calórico de ${goal === 'Estética' ? 'tu plan actual' : 'un plan de Estética'} es la clave principal para marcar el abdomen.`, action: null };
+    }
+
+    case 'kb_gluteos': {
+      return { reply: `🍑 **Glúteos — cómo desarrollarlos efectivamente:**\n\n**Los mejores ejercicios (evidencia EMG):**\n1. **Hip Thrust**: activación máxima del glúteo mayor\n2. **Sentadilla búlgara**: glúteo + cuádriceps\n3. **Peso muerto rumano**: isquiotibiales + glúteo\n4. **Glute bridge**: accesible, alto impacto\n5. **Step-up**: unilateral, activa glúteo medio\n\n**Frecuencia óptima:**\n• Glúteos responden muy bien a **2-3x semana** con 3-5 días de recuperación\n• Rango de hipertrofia: 10-20 series semanales totales\n\n**Error común:** solo hacer sentadillas. Los glúteos necesitan **extensión de cadera** (hip thrust) para máxima activación.\n\n**Nutrición:**\n• El glúteo es músculo — necesitas proteína suficiente y no un déficit extremo\n• Para crecimiento: mínimo mantenimiento calórico\n\n**Progresión en 12 semanas:**\n• Semanas 1-4: dominar técnica con peso moderado\n• Semanas 5-8: aumentar carga progresivamente\n• Semanas 9-12: intensificar con técnicas avanzadas (pausa, 1.5 reps)`, action: null };
+    }
+
+    case 'kb_espalda': {
+      return { reply: `🦴 **Salud de espalda y postura:**\n\n**Las 3 causas principales de dolor lumbar:**\n1. Debilidad del core\n2. Flexores de cadera acortados (por estar sentado)\n3. Técnica incorrecta al levantar\n\n**Ejercicios correctivos esenciales:**\n• **Bird-dog**: estabilidad lumbar\n• **Puente de glúteos**: activa glúteos e isquios (antagonistas de espalda)\n• **Superman/extensiones**: fortalece erector espinal\n• **Estiramiento flexor de cadera**: abre la cadera, alivia lumbar\n\n**Reglas para proteger la espalda al entrenar:**\n• Siempre mantén la columna neutra (ni demasiado arqueada ni redondeada)\n• En peso muerto: empuja el suelo, no jales la barra hacia arriba\n• En sentadilla: rodillas alineadas con pies, pecho arriba\n\n**Para dolor de espalda agudo:**\n• Movimiento suave > reposo total (el reposo prolongado empeora)\n• Caminar 20 min, yoga suave, natación\n• Consultar fisioterapeuta si persiste más de 2 semanas\n\n💡 ¿Tienes dolor de espalda? El chatbot puede sugerir una rutina correctiva.`, action: null };
+    }
+
+    case 'kb_principiante': {
+      return { reply: `🌱 **Guía para empezar desde cero:**\n\n**Semanas 1-4 — Construye el hábito:**\n• 3 días/semana (lun/mié/vie)\n• Enfócate en los patrones básicos: sentadilla, empuje, jalón, bisagra de cadera\n• Peso que puedas controlar perfectamente\n• 20-30 min máximo\n\n**Los 5 ejercicios fundamentales para aprender:**\n1. Sentadilla con peso corporal → Goblet squat\n2. Flexiones (en pared o suelo) → Press con barra\n3. Remo con mancuerna\n4. Peso muerto rumano con poco peso\n5. Plancha\n\n**Lo más importante al inicio:**\n• ✅ **Consistencia** > intensidad. 3x semana durante 3 meses = base sólida\n• ✅ **Técnica** antes de aumentar peso\n• ✅ **Sueño y proteína**: sin estos, no hay progreso\n• ❌ No imites rutinas de Instagram de atletas avanzados\n\n**Progresión recomendada:**\n• Mes 1: patrones básicos con peso corporal/ligero\n• Mes 2: incorporar barra y mancuernas\n• Mes 3: comenzar sobrecarga progresiva\n\n💡 El mayor error de los principiantes es hacer demasiado muy rápido. La paciencia es tu mayor ventaja.`, action: null };
+    }
+
+    case 'kb_plateau': {
+      return { reply: `📉 **Estancamiento (plateau) — cómo romperlo:**\n\n**¿Por qué ocurre?**\nTu cuerpo se adapta al mismo estímulo en 4-8 semanas. Lo que funcionó al inicio, deja de funcionar.\n\n**Estrategias para romper el plateau:**\n\n**En pérdida de peso:**\n• Recalcula tu TDEE (probablemente bajó con el peso)\n• Semana de recarga (eat at maintenance): resetea hormonas\n• Cambia el tipo de cardio\n• Revisa si estás midiendo las calorías correctamente\n\n**En fuerza/músculo:**\n• Cambia el esquema de series/reps\n• Introduce nuevos ejercicios para el mismo grupo muscular\n• Aumenta la frecuencia de entrenamiento\n• Deload week: semana de entrenamiento al 60% para recuperación neural\n• Duerme más y come más proteína\n\n**Cuándo es normal estancarse:**\n• Después de 6-12 meses, los progresos son más lentos — es normal\n• El principiante gana fuerza rápido; el avanzado trabaja meses por pequeños avances\n\n💡 Si llevas 2+ semanas sin progreso, cambia UNA variable a la vez para saber qué funcionó.`, action: null };
+    }
+
+    case 'kb_alcohol': {
+      return { reply: `🍺 **Alcohol y ejercicio — el impacto real:**\n\n**¿Cómo afecta el alcohol al entrenamiento?**\n\n• **Síntesis proteica**: una sola sesión de consumo moderado reduce la síntesis proteica muscular **24%** (incluso con proteína post-entreno)\n• **Testosterona**: el alcohol reduce los niveles hasta un 23% hasta 24h después\n• **Hidratación**: el alcohol es diurético — aumenta la deshidratación\n• **Sueño**: aunque "ayuda a dormir", fragmenta el sueño REM (el reparador)\n• **Calorías vacías**: 7 kcal/g. Una copa de vino ≈ 125 kcal\n\n**Si vas a beber:**\n• No el mismo día que entrenaste (el daño a síntesis proteica es mayor)\n• Hidrátate bien (1 vaso agua por cada bebida alcohólica)\n• Come antes — reduce la absorción\n• Evitarlo 48h antes de eventos importantes de rendimiento\n\n**En perspectiva:** consumo social ocasional (1-2 copas, 1x semana) tiene impacto mínimo en objetivos de salud general. El problema es el consumo frecuente o en exceso.`, action: null };
+    }
+
+    case 'kb_vitaminas': {
+      return { reply: `💊 **Vitaminas y minerales para el deportista:**\n\n**Las más importantes si entrenas:**\n\n| Nutriente | Para qué | Fuente |\n|---|---|---|\n| **Vitamina D** | Testosterona, huesos, inmunidad | Sol, pescado graso, suplemento |\n| **Magnesio** | Relajación muscular, sueño | Frutos secos, legumbres |\n| **Zinc** | Testosterona, recuperación | Carnes rojas, mariscos |\n| **Omega-3** | Antiinflamatorio, corazón | Salmón, nueces, suplemento |\n| **Hierro** | Transporte de oxígeno | Carne roja, espinacas + vitamina C |\n| **Vitamina C** | Inmunidad, colágeno | Cítricos, pimientos |\n| **Calcio** | Huesos, contracción muscular | Lácteos, brócoli, almendras |\n\n**Déficits más comunes en deportistas:**\n• Vitamina D (80% de la población tiene niveles bajos)\n• Hierro (especialmente mujeres)\n• Magnesio (el estrés y el sudor lo agotan)\n\n**¿Necesito suplementos?**\nSi comes variado: probablemente no. Si hay restricciones alimentarias o entrenas intensamente: considera Vit D + Omega-3 + Magnesio.`, action: null };
+    }
+
     /* ── Fallback ── */
     default: {
       const tips = [
         `Prueba: "¿cómo va mi hidratación?" o "registra 250ml de agua"`,
-        `Puedes decirme: "hice 2 series de press de banca" o "mi peso es 72kg"`,
-        `Pregúntame: "¿cómo fue mi semana en pasos?" o "dame mi reporte mensual"`,
-        `Dime: "desactiva recordatorios" o "cambia mi meta de agua a 3 litros"`,
-        `Intenta: "¿qué hago hoy?" y te daré un plan según tu sueño y objetivo`,
+        `Puedes preguntarme sobre ejercicio: "¿qué es el HIIT?" o "¿cuántas reps debo hacer?"`,
+        `Pregúntame sobre nutrición: "¿cuánta proteína necesito?" o "¿qué comer antes de entrenar?"`,
+        `Dime: "hice 2 series de press de banca" o "dame el resumen de mi día"`,
+        `Intenta: "¿cómo empezar en el gym?" o "¿qué es el plateau y cómo romperlo?"`,
       ];
       return { reply: `Entendí tu mensaje, ${fn} 😊 pero necesito más detalles.\n\n💡 ${tips[Math.floor(Math.random()*tips.length)]}`, action: null };
     }
