@@ -343,7 +343,6 @@ function getTodayLabel(short) {
 document.addEventListener('DOMContentLoaded', () => {
   renderSidebar();
   renderMobileHeader();
-  renderDemoBanner();
 
   // Close sidebar on Escape
   document.addEventListener('keydown', e => {
