@@ -23,7 +23,8 @@
     }
 
     html, body {
-      height: 100%; overflow: hidden;
+      height: 100%; height: 100dvh;
+      overflow: hidden;
       font-family: 'Inter', sans-serif;
       background: var(--pine);
       touch-action: manipulation;
@@ -32,7 +33,8 @@
     /* ── Viewport wrapper ── */
     #app {
       position: relative;
-      width: 100vw; height: 100vh;
+      width: 100vw;
+      height: 100vh; height: 100dvh;
       overflow: hidden;
     }
 
@@ -420,7 +422,12 @@
 
     /* Scrollable screens on small phones */
     @media (max-height: 650px) {
-      .screen { justify-content: flex-start; padding-top: 52px; }
+      .screen { justify-content: flex-start; padding-top: 52px; overflow-y: auto; -webkit-overflow-scrolling: touch; }
+      .ai-video-wrap { max-height: 180px; }
+    }
+    @media (max-width: 360px) {
+      .body-cards { flex-wrap: wrap; }
+      .body-card { min-width: 45%; }
     }
   </style>
 </head>
@@ -723,10 +730,28 @@
 </div><!-- /app -->
 
 <script>
+  /* ─── Email mode: detectar ?mode=email y saltar al screen 2 ─── */
+  const _emailMode = new URLSearchParams(location.search).get('mode') === 'email';
+  if (_emailMode) {
+    document.addEventListener('DOMContentLoaded', () => {
+      document.getElementById('s1').className = 'screen hidden-left';
+      const s2 = document.getElementById('s2');
+      s2.classList.remove('hidden-right');
+      s2.classList.add('active');
+      currentScreen = 2;
+      updateDots(2);
+      try {
+        const u = JSON.parse(localStorage.getItem('pf_user') || '{}');
+        const t = s2.querySelector('.screen-title');
+        if (t && u.firstName) t.textContent = `Hola ${u.firstName}, ¿qué quieres lograr?`;
+      } catch(_) {}
+    });
+  }
+
   /* ─── State ─── */
   let selectedGoal  = null;
   let selectedLevel = null;
-  let currentScreen = 1;
+  let currentScreen = _emailMode ? 2 : 1;
   let detectedGender   = null;  // 'male' | 'female' | null
   let selectedBodyType = null;  // 'ectomorfo' | 'mesomorfo' | 'endomorfo'
   let modelsLoaded  = false;
@@ -827,9 +852,14 @@
 
   async function startCamera() {
     if (!modelsLoaded) {
-      // models not ready yet → manual fallback
-      _setAIState('manual');
-      return;
+      // Models still loading — wait up to 6s with visual feedback
+      const askBtn = document.querySelector('#ai-state-ask .btn-main');
+      if (askBtn) { askBtn.textContent = 'Cargando IA...'; askBtn.disabled = true; }
+      for (let i = 0; i < 60 && !modelsLoaded; i++) {
+        await new Promise(r => setTimeout(r, 100));
+      }
+      if (askBtn) { askBtn.innerHTML = 'Activar Cámara <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>'; askBtn.disabled = false; }
+      if (!modelsLoaded) { _setAIState('manual'); return; }
     }
     try {
       _setAIState('camera');
@@ -855,23 +885,32 @@
     const video = document.getElementById('ai-video');
     const btn   = document.getElementById('btn-capture');
 
-    // ── 1. Snapshot canvas WHILE video is still visible ──
+    // ── 1. Esperar hasta que el video tenga frames reales ──
+    let attempts = 0;
+    while (attempts < 40) {
+      if (video.videoWidth > 0 && video.readyState >= 2) break;
+      await new Promise(r => setTimeout(r, 75));
+      attempts++;
+    }
+    if (video.videoWidth === 0) { _setAIState('manual'); return; }
+
+    // ── 2. Snapshot canvas WHILE video is still visible ──
     const snap = document.createElement('canvas');
-    snap.width  = video.videoWidth  || 320;
-    snap.height = video.videoHeight || 240;
+    snap.width  = video.videoWidth;
+    snap.height = video.videoHeight;
     // Video is CSS-mirrored; draw it flipped back to normal for face-api
     const ctx = snap.getContext('2d');
     ctx.translate(snap.width, 0);
     ctx.scale(-1, 1);
     ctx.drawImage(video, 0, 0);
 
-    // ── 2. Flash effect so user knows photo was taken ──
+    // ── 3. Flash effect so user knows photo was taken ──
     const flash = document.createElement('div');
     flash.style.cssText = 'position:fixed;inset:0;background:white;opacity:.85;z-index:999;pointer-events:none;transition:opacity .25s';
     document.body.appendChild(flash);
     setTimeout(() => { flash.style.opacity = '0'; setTimeout(() => flash.remove(), 260); }, 60);
 
-    // ── 3. Now switch UI to processing (safe — snapshot already taken) ──
+    // ── 4. Now switch UI to processing (safe — snapshot already taken) ──
     if (btn) { btn.disabled = true; btn.textContent = 'Analizando...'; }
     stopCamera();
     _setAIState('processing');
@@ -888,7 +927,7 @@
       if (msgEl && mi < msgs.length) msgEl.textContent = msgs[mi++];
     }, 700);
 
-    // ── 4. Detect from canvas snapshot ──
+    // ── 5. Detect from canvas snapshot ──
     try {
       await new Promise(r => setTimeout(r, 400)); // min visual processing time
 
@@ -1073,6 +1112,13 @@
     const g = GOALS[selectedGoal];
     const p = PROFILES[selectedLevel];
 
+    // Preservar datos del usuario real si entró por email
+    let existingUser = {};
+    try { existingUser = JSON.parse(localStorage.getItem('pf_user') || '{}'); } catch(_) {}
+    const hasRealUser = existingUser.firstName &&
+                        !['Elena','Carlos'].includes(existingUser.firstName) &&
+                        existingUser.email && !existingUser.email.includes('planfit.app');
+
     localStorage.clear();
 
     const userBase = p.demoType === 'principiante'
@@ -1082,6 +1128,17 @@
       : { name:'Elena Martínez', firstName:'Elena', lastName:'Martínez', email:'elena@planfit.app',
           initials:'EM', plan:'Premium Anual', memberSince:'Enero 2024',
           age:28, height:172, weight:64, gender:'Femenino', kcal:g.kcal };
+
+    // Si había usuario real con email, sobreescribir nombre/identidad manteniendo stats del perfil demo
+    if (hasRealUser) {
+      userBase.name      = existingUser.name;
+      userBase.firstName = existingUser.firstName;
+      userBase.lastName  = existingUser.lastName  || '';
+      userBase.initials  = existingUser.initials  || existingUser.firstName[0].toUpperCase();
+      userBase.email     = existingUser.email;
+      userBase.plan      = existingUser.plan || 'Básico';
+      userBase.memberSince = existingUser.memberSince || 'Hoy';
+    }
 
     // Override gender with AI detection if available
     const genderOverride = detectedGender === 'female' ? 'Femenino'

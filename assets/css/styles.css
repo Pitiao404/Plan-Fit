@@ -543,9 +543,12 @@ a { text-decoration: none; color: inherit; }
 }
 .demo-btn.demo-btn-reset:hover { background: #DC2626; }
 
-/* Push FAB up when demo banner is visible */
+/* Push FAB and main content up when demo banner is visible */
 body.has-demo-banner .fab {
   bottom: 68px;
+}
+body.has-demo-banner .main-content {
+  padding-bottom: 72px;
 }
 
 /* ─── Print (for reports PDF) ─────────────────── */

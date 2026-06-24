@@ -147,15 +147,20 @@
     const lastName  = parts[1] ? toTitle(parts[1]) : '';
     const initials  = (firstName[0] + (lastName[0] || firstName[1] || '')).toUpperCase();
 
+    const hoy = new Date();
+    const mesesNombres = ['enero','febrero','marzo','abril','mayo','junio',
+                          'julio','agosto','septiembre','octubre','noviembre','diciembre'];
+    const memberSince = `${hoy.getDate()} de ${mesesNombres[hoy.getMonth()]} de ${hoy.getFullYear()}`;
+
     localStorage.setItem('pf_user', JSON.stringify({
       name, firstName, lastName, initials, email,
-      plan: 'Demo Feria', memberSince: 'Hoy',
-      registered: true, onboardingDone: true,
+      plan: 'Básico', memberSince,
+      registered: true, onboardingDone: false,
       age: null, height: null, weight: null, gender: null,
-      objective: 'Salud', activityLevel: 'mod', kcal: 2150,
+      objective: null, activityLevel: null, kcal: null,
     }));
-    localStorage.setItem('pf_active_demo', 'activo');
-    window.location.href = 'dashboard.html';
+    // Redirigir a bienvenida saltando el hero — el usuario elige objetivo/nivel ahí
+    window.location.href = 'bienvenida.html?mode=email';
   }
 
   /* ── Social login ── */

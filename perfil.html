@@ -306,10 +306,11 @@
     const dc = document.getElementById('data-cards');
     if (dc) {
       const items = [
-        { val: u.age    || '—', unit: 'años',       label: 'EDAD'        },
-        { val: u.height || '—', unit: 'cm',          label: 'ALTURA'      },
-        { val: u.weight || '—', unit: 'kg',          label: 'PESO ACTUAL' },
-        { val: u.gender ? (u.gender === 'Femenino' ? 'Fem.' : 'Masc.') : '—', unit: 'biológico', label: 'GÉNERO' },
+        { val: u.age    || '—', unit: u.age    ? 'años'      : 'por registrar', label: 'EDAD'        },
+        { val: u.height || '—', unit: u.height ? 'cm'        : 'por registrar', label: 'ALTURA'      },
+        { val: u.weight || '—', unit: u.weight ? 'kg'        : 'por registrar', label: 'PESO ACTUAL' },
+        { val: u.gender ? (u.gender === 'Femenino' ? 'Fem.' : 'Masc.') : '—',
+          unit: u.gender ? 'biológico' : 'por registrar', label: 'GÉNERO' },
       ];
       dc.innerHTML = items.map(i => `
         <div style="background:var(--bruma);border-radius:14px;padding:14px;text-align:center">
@@ -322,8 +323,14 @@
     // Plan
     const planName = u.plan || 'Básico';
     document.getElementById('plan-name').textContent   = planName;
-    document.getElementById('plan-detail').textContent =
-      planName.toLowerCase().includes('premium') ? 'Próxima renovación: 16 de enero, 2026' : 'Plan gratuito activo';
+    if (planName.toLowerCase().includes('premium')) {
+      const renewal = new Date(); renewal.setFullYear(renewal.getFullYear() + 1);
+      const mP = ['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
+      document.getElementById('plan-detail').textContent =
+        `Próxima renovación: ${renewal.getDate()} de ${mP[renewal.getMonth()]}, ${renewal.getFullYear()}`;
+    } else {
+      document.getElementById('plan-detail').textContent = 'Plan gratuito activo';
+    }
   }
 
   function editData() {
