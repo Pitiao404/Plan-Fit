@@ -66,124 +66,74 @@
 
   <!-- Right panel -->
   <section style="width:100%;background:var(--bruma);display:flex;align-items:center;justify-content:center;padding:32px 24px"
-    aria-label="Formulario de acceso">
-    <div style="width:100%;max-width:440px">
+    aria-label="Acceso a Plan-Fit">
+    <div style="width:100%;max-width:400px" class="fade-in">
 
-      <!-- ── Login form: solo correo ── -->
-      <div id="step-login" class="fade-in">
-        <div style="background:white;border-radius:24px;padding:36px;box-shadow:0 2px 20px rgba(0,0,0,0.07)">
-          <div style="margin-bottom:24px">
-            <h2 style="font-family:'Poppins',sans-serif;font-weight:700;font-size:24px;color:var(--verde-vital);margin-bottom:6px">
-              Comienza Ahora
-            </h2>
-            <p style="font-size:13px;color:var(--gris-piedra)">Ingresa tu correo y accede a tu plan personalizado.</p>
-          </div>
+      <div style="background:white;border-radius:24px;padding:36px;box-shadow:0 2px 20px rgba(0,0,0,0.07);text-align:center">
 
-          <form id="login-form" onsubmit="handleSubmit(event)" novalidate>
-
-            <!-- Email -->
-            <div style="margin-bottom:24px">
-              <label for="email" style="display:block;font-size:11px;font-weight:600;color:var(--gris-piedra);margin-bottom:6px;letter-spacing:0.04em;text-transform:uppercase">
-                Correo Electrónico
-              </label>
-              <div style="position:relative">
-                <span class="material-symbols-outlined" style="position:absolute;left:14px;top:50%;transform:translateY(-50%);font-size:18px;color:var(--gris-piedra)">mail</span>
-                <input class="form-input" id="email" type="email" placeholder="ejemplo@correo.com"
-                  style="padding-left:44px" required autocomplete="email"/>
-              </div>
-            </div>
-
-            <!-- Submit -->
-            <button type="submit" class="btn-coral" style="width:100%;justify-content:center;font-size:15px;padding:15px;margin-bottom:20px">
-              Acceder a mi plan
-              <span class="material-symbols-outlined" style="font-size:20px">arrow_forward</span>
-            </button>
-
-          </form>
-
-          <!-- ── Feria / Demo quick access ── -->
-          <div style="margin-top:4px;padding-top:20px;border-top:2px dashed #E5EAE7;text-align:center">
-            <p style="font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--gris-piedra);margin-bottom:12px">
-              ¿Estás en la Feria de Tecnología?
-            </p>
-            <button onclick="enterDemoMode()" style="
-              display:inline-flex;align-items:center;justify-content:center;gap:10px;
-              width:100%;padding:15px 20px;
-              background:linear-gradient(135deg,var(--verde-vital),#0B3B2E);
-              color:white;border:none;border-radius:50px;cursor:pointer;
-              font-family:'Poppins',sans-serif;font-weight:700;font-size:15px;
-              box-shadow:0 4px 16px rgba(21,184,110,0.35);
-              transition:opacity .15s,transform .1s;margin-bottom:10px"
-              onmouseover="this.style.opacity='.88'" onmouseout="this.style.opacity='1'"
-              onmousedown="this.style.transform='scale(.98)'" onmouseup="this.style.transform='scale(1)'">
-              <span style="font-size:20px">🚀</span>
-              Explorar Plan·Fit — Acceso Directo
-            </button>
-            <p style="font-size:11px;color:var(--gris-piedra);line-height:1.5">
-              Sin registro · Datos de demo · Solo para visitantes de la feria
-            </p>
-          </div>
-
+        <!-- Icon -->
+        <div style="width:64px;height:64px;border-radius:18px;background:var(--verde-bruma);display:flex;align-items:center;justify-content:center;margin:0 auto 20px">
+          <svg width="32" height="32" viewBox="0 0 32 32" fill="none" aria-hidden="true">
+            <rect width="32" height="32" rx="8" fill="#15B86E"/>
+            <polyline points="3,16 7,16 10,9.5 13,22.5 15.5,12 18,19 21,16 29,16"
+              stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+          </svg>
         </div>
-      </div>
 
+        <h2 style="font-family:'Poppins',sans-serif;font-weight:700;font-size:24px;color:var(--carbon);margin-bottom:8px">
+          ¡Bienvenido!
+        </h2>
+        <p style="font-size:14px;color:var(--gris-piedra);margin-bottom:32px;line-height:1.5">
+          Tu plan de salud personalizado te espera. ¿Cómo quieres comenzar?
+        </p>
+
+        <!-- Crear cuenta -->
+        <a href="bienvenida.html?mode=register" style="
+          display:flex;align-items:center;justify-content:center;gap:10px;
+          width:100%;padding:16px 20px;margin-bottom:14px;
+          background:var(--verde-vital);color:white;
+          border-radius:50px;text-decoration:none;
+          font-family:'Poppins',sans-serif;font-weight:700;font-size:15px;
+          box-shadow:0 4px 16px rgba(21,184,110,0.3);
+          transition:opacity .15s,transform .1s"
+          onmouseover="this.style.opacity='.88'" onmouseout="this.style.opacity='1'">
+          <span class="material-symbols-outlined" style="font-size:20px">person_add</span>
+          Crear mi cuenta
+        </a>
+
+        <!-- Divider -->
+        <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px">
+          <div style="flex:1;height:1px;background:#E5EAE7"></div>
+          <span style="font-size:11px;color:var(--gris-piedra);text-transform:uppercase;letter-spacing:.06em">O</span>
+          <div style="flex:1;height:1px;background:#E5EAE7"></div>
+        </div>
+
+        <!-- Demo -->
+        <a href="bienvenida.html" style="
+          display:flex;align-items:center;justify-content:center;gap:10px;
+          width:100%;padding:14px 20px;
+          background:transparent;color:var(--gris-piedra);
+          border:1.5px solid #E5EAE7;border-radius:50px;text-decoration:none;
+          font-family:'Poppins',sans-serif;font-weight:600;font-size:14px;
+          transition:background .15s,color .15s"
+          onmouseover="this.style.background='var(--verde-bruma)';this.style.color='var(--carbon)'"
+          onmouseout="this.style.background='transparent';this.style.color='var(--gris-piedra)'">
+          <span style="font-size:18px">🚀</span>
+          Explorar Demo
+        </a>
+
+        <p style="font-size:11px;color:var(--gris-piedra);margin-top:16px;line-height:1.5">
+          "Crear mi cuenta" pide tu nombre y personaliza tu plan.<br/>
+          "Explorar Demo" muestra la app con datos de ejemplo.
+        </p>
+
+      </div>
     </div>
   </section>
 </main>
 
 <script>
-  /* ── Form submit: solo correo, sin verificación ── */
-  function handleSubmit(e) {
-    e.preventDefault();
-    const email = document.getElementById('email').value.trim();
-    if (!email) return;
-
-    // Derivar nombre del correo: "juan.perez@gmail.com" → "Juan Perez"
-    const local = email.split('@')[0];
-    const parts = local.split(/[._\-+]/).filter(Boolean);
-    const toTitle = s => s.charAt(0).toUpperCase() + s.slice(1).toLowerCase();
-    const name = parts.map(toTitle).join(' ') || 'Visitante';
-    const firstName = parts[0] ? toTitle(parts[0]) : name;
-    const lastName  = parts[1] ? toTitle(parts[1]) : '';
-    const initials  = (firstName[0] + (lastName[0] || firstName[1] || '')).toUpperCase();
-
-    const hoy = new Date();
-    const mesesNombres = ['enero','febrero','marzo','abril','mayo','junio',
-                          'julio','agosto','septiembre','octubre','noviembre','diciembre'];
-    const memberSince = `${hoy.getDate()} de ${mesesNombres[hoy.getMonth()]} de ${hoy.getFullYear()}`;
-
-    localStorage.setItem('pf_user', JSON.stringify({
-      name, firstName, lastName, initials, email,
-      plan: 'Básico', memberSince,
-      registered: true, onboardingDone: false,
-      age: null, height: null, weight: null, gender: null,
-      objective: null, activityLevel: null, kcal: null,
-    }));
-    // Redirigir a bienvenida saltando el hero — el usuario elige objetivo/nivel ahí
-    window.location.href = 'bienvenida.html?mode=email';
-  }
-
-  /* ── Social login ── */
-  function socialLogin(provider) {
-    window.location.href = 'dashboard.html';
-  }
-
-  /* ── Demo / Feria mode bypass ── */
-  function enterDemoMode() {
-    localStorage.clear();
-    localStorage.setItem('pf_user', JSON.stringify({
-      name: 'Elena Martínez', firstName: 'Elena', lastName: 'Martínez',
-      email: 'elena@planfit.app', initials: 'EM',
-      plan: 'Premium Anual', memberSince: 'Enero 2024',
-      registered: true, onboardingDone: true,
-      age: 28, height: 172, weight: 64, gender: 'Femenino',
-      objective: 'Salud', activityLevel: 'mod', kcal: 2150,
-    }));
-    localStorage.setItem('pf_active_demo', 'activo');
-    window.location.href = 'dashboard.html';
-  }
-
-  // Responsive: stack panels on mobile using CSS flex-direction
+  // Responsive layout
   const mq = window.matchMedia('(min-width:768px)');
   function applyLayout(mql) {
     const main = document.querySelector('main');
@@ -191,15 +141,12 @@
     const right = document.querySelector('main > section:last-child');
     if (mql.matches) {
       main.style.flexDirection = 'row';
-      left.style.width = '42%';
-      right.style.width = '58%';
-      left.style.minHeight = '100vh';
-      right.style.minHeight = '100vh';
+      left.style.width = '42%'; right.style.width = '58%';
+      left.style.minHeight = '100vh'; right.style.minHeight = '100vh';
     } else {
       main.style.flexDirection = 'column';
-      left.style.width = '100%';
-      right.style.width = '100%';
-      left.style.minHeight = '280px';
+      left.style.width = '100%'; right.style.width = '100%';
+      left.style.minHeight = '200px';
     }
   }
   mq.addEventListener('change', applyLayout);

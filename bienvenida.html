@@ -446,6 +446,36 @@
 <div id="app">
 
   <!-- ═══════════════════════════════════════
+       SCREEN 0 — Nombre (solo modo registro)
+  ════════════════════════════════════════ -->
+  <div class="screen hidden-right" id="s0" style="background:linear-gradient(160deg,#0B3B2E 0%,#13212B 100%)">
+    <div style="font-size:56px;margin-bottom:16px">👋</div>
+    <h2 class="screen-title" style="margin-bottom:8px">¿Cómo te llamas?</h2>
+    <p class="screen-sub" style="margin-bottom:28px">Tu plan será completamente personalizado</p>
+
+    <div style="width:100%;max-width:320px;margin-bottom:20px">
+      <input type="text" id="name-input"
+        placeholder="Tu nombre completo"
+        autocomplete="given-name"
+        oninput="onNameInput(this.value)"
+        style="width:100%;padding:18px 22px;border-radius:50px;
+               border:1.5px solid rgba(255,255,255,.2);
+               background:rgba(255,255,255,.08);color:white;
+               font-size:17px;font-family:'Inter',sans-serif;
+               outline:none;text-align:center;box-sizing:border-box;
+               -webkit-appearance:none"/>
+    </div>
+
+    <button class="btn-main" id="btn-name" onclick="saveName()"
+            style="width:100%;max-width:320px;opacity:.4;pointer-events:none">
+      Continuar
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+    </button>
+
+    <p style="font-size:11px;color:rgba(255,255,255,.3);margin-top:16px">Plan·Fit · Feria de Tecnología</p>
+  </div>
+
+  <!-- ═══════════════════════════════════════
        SCREEN 1 — Hero
   ════════════════════════════════════════ -->
   <div class="screen active" id="s1">
@@ -598,46 +628,39 @@
       <h2 class="screen-title" style="margin-bottom:4px">Detección de género</h2>
       <p class="screen-sub" style="margin-bottom:12px">Usamos IA para personalizar mejor tu plan</p>
 
-      <!-- Video / resultado -->
-      <div id="ai-video-container">
-        <!-- Estado: pedir permiso -->
+      <!-- Input oculto para subir foto -->
+      <input type="file" id="ai-file-input" accept="image/*" style="display:none" onchange="analyzeUploadedPhoto(this)"/>
+
+      <div id="ai-video-container" style="width:100%;max-width:320px">
+
+        <!-- Estado: subir foto -->
         <div id="ai-state-ask" style="text-align:center">
-          <div style="width:80px;height:80px;border-radius:50%;background:rgba(21,184,110,.15);border:2px solid rgba(21,184,110,.3);display:flex;align-items:center;justify-content:center;margin:0 auto 14px;font-size:36px">📷</div>
-          <p class="ai-hint">Tomaremos una foto de tu rostro para detectar tu género automáticamente. <strong style="color:rgba(255,255,255,.7)">No almacenamos la imagen.</strong></p>
-          <button class="btn-main" onclick="startCamera()" style="width:100%;max-width:280px;margin-bottom:10px">
-            Activar Cámara
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+          <div style="width:88px;height:88px;border-radius:50%;background:rgba(21,184,110,.12);border:2px solid rgba(21,184,110,.3);display:flex;align-items:center;justify-content:center;margin:0 auto 14px;font-size:40px">🤳</div>
+          <p class="ai-hint">Sube una foto clara de tu rostro y la IA detectará tu género automáticamente.<br/><strong style="color:rgba(255,255,255,.6)">No almacenamos la imagen.</strong></p>
+          <button class="btn-main" onclick="document.getElementById('ai-file-input').click()" style="width:100%;max-width:280px;margin-bottom:10px">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+            Subir mi foto
           </button>
           <button onclick="skipToBodyType()" style="background:none;border:none;color:rgba(255,255,255,.4);font-size:12px;cursor:pointer;text-decoration:underline">Saltar este paso</button>
         </div>
 
-        <!-- Estado: cámara activa -->
-        <div id="ai-state-camera" style="display:none;width:100%;align-items:center;flex-direction:column">
-          <div class="ai-video-wrap">
-            <video id="ai-video" autoplay muted playsinline></video>
-            <canvas id="ai-face-box"></canvas>
-            <div id="ai-face-indicator" style="display:none;position:absolute;inset:0;display:flex;align-items:center;justify-content:center">
-              <div style="width:120px;height:120px;border:2px solid var(--green);border-radius:50%;opacity:.6;animation:pulse-ring 1.5s infinite"></div>
-            </div>
-          </div>
-          <p class="ai-hint">Mira al frente · Buena iluminación · Retira mascarilla</p>
-          <div style="display:flex;gap:10px;width:100%;max-width:280px">
-            <button class="btn-main" onclick="captureAndDetect()" style="flex:1" id="btn-capture">
-              Capturar
-            </button>
-            <button onclick="skipToBodyType()" style="background:rgba(255,255,255,.08);border:1.5px solid rgba(255,255,255,.15);color:white;border-radius:50px;padding:10px 16px;cursor:pointer;font-size:13px;font-family:'Inter',sans-serif">Saltar</button>
-          </div>
-        </div>
-
         <!-- Estado: procesando -->
         <div id="ai-state-processing" style="display:none;text-align:center">
-          <div style="width:72px;height:72px;border:3px solid rgba(21,184,110,.2);border-top-color:var(--green);border-radius:50%;animation:spin-ai 0.8s linear infinite;margin:0 auto 16px"></div>
-          <p style="color:rgba(255,255,255,.7);font-size:14px" id="ai-processing-msg">Detectando características faciales...</p>
+          <!-- Preview de la foto subida -->
+          <div id="ai-photo-preview" style="width:100px;height:100px;border-radius:50%;overflow:hidden;border:3px solid var(--green);margin:0 auto 16px;display:none">
+            <img id="ai-preview-img" style="width:100%;height:100%;object-fit:cover"/>
+          </div>
+          <div style="width:56px;height:56px;border:3px solid rgba(21,184,110,.2);border-top-color:var(--green);border-radius:50%;animation:spin-ai 0.8s linear infinite;margin:0 auto 14px"></div>
+          <p style="color:rgba(255,255,255,.7);font-size:14px" id="ai-processing-msg">Analizando imagen...</p>
         </div>
 
         <!-- Estado: resultado -->
         <div id="ai-state-result" style="display:none;width:100%;align-items:center;flex-direction:column">
-          <div style="font-size:52px;margin-bottom:8px" id="ai-gender-emoji">👤</div>
+          <!-- Preview foto pequeña -->
+          <div id="ai-result-preview" style="width:72px;height:72px;border-radius:50%;overflow:hidden;border:3px solid var(--green);margin:0 auto 10px;display:none">
+            <img id="ai-result-img" style="width:100%;height:100%;object-fit:cover"/>
+          </div>
+          <div style="font-size:36px;margin-bottom:6px" id="ai-gender-emoji">👤</div>
           <div class="ai-result-box" style="width:100%;max-width:280px">
             <p class="ai-gender-label" id="ai-gender-text">—</p>
             <p class="ai-confidence" id="ai-confidence-text">Confianza: —</p>
@@ -648,10 +671,11 @@
           </div>
         </div>
 
-        <!-- Estado: sin cámara / manual -->
+        <!-- Estado: sin detección / manual -->
         <div id="ai-state-manual" style="display:none;width:100%;align-items:center;flex-direction:column">
+          <p style="font-size:13px;color:rgba(255,255,255,.5);margin-bottom:6px">No se detectó rostro en la foto.</p>
           <p class="screen-sub" style="margin-bottom:14px">Selecciona tu género:</p>
-          <div style="display:flex;gap:12px;margin-bottom:16px">
+          <div style="display:flex;gap:12px;margin-bottom:16px;width:100%">
             <button class="body-card" onclick="selectGenderManual('female',this)" style="flex:1">
               <span class="body-card-icon">👩</span>
               <p class="body-card-name">Femenino</p>
@@ -664,7 +688,9 @@
           <button class="btn-main" onclick="confirmGender()" style="width:100%;max-width:280px;opacity:.4;pointer-events:none" id="btn-manual-confirm">
             Continuar
           </button>
+          <button onclick="_setAIState('ask')" style="background:none;border:none;color:rgba(255,255,255,.4);font-size:12px;cursor:pointer;text-decoration:underline;margin-top:10px">Intentar con otra foto</button>
         </div>
+
       </div>
     </div>
 
@@ -730,32 +756,17 @@
 </div><!-- /app -->
 
 <script>
-  /* ─── Email mode: detectar ?mode=email y saltar al screen 2 ─── */
-  const _emailMode = new URLSearchParams(location.search).get('mode') === 'email';
-  if (_emailMode) {
-    document.addEventListener('DOMContentLoaded', () => {
-      document.getElementById('s1').className = 'screen hidden-left';
-      const s2 = document.getElementById('s2');
-      s2.classList.remove('hidden-right');
-      s2.classList.add('active');
-      currentScreen = 2;
-      updateDots(2);
-      try {
-        const u = JSON.parse(localStorage.getItem('pf_user') || '{}');
-        const t = s2.querySelector('.screen-title');
-        if (t && u.firstName) t.textContent = `Hola ${u.firstName}, ¿qué quieres lograr?`;
-      } catch(_) {}
-    });
-  }
+  /* ─── Modo de entrada ─── */
+  const _urlMode = new URLSearchParams(location.search).get('mode'); // 'register' | null
+  const _registerMode = _urlMode === 'register';
 
   /* ─── State ─── */
   let selectedGoal  = null;
   let selectedLevel = null;
-  let currentScreen = _emailMode ? 2 : 1;
+  let currentScreen = _registerMode ? 0 : 1;
   let detectedGender   = null;  // 'male' | 'female' | null
   let selectedBodyType = null;  // 'ectomorfo' | 'mesomorfo' | 'endomorfo'
   let modelsLoaded  = false;
-  let _cameraStream = null;
 
   /* ─── Particle background (subtle) ─── */
   (function initParticles() {
@@ -822,11 +833,25 @@
   }
 
   function updateDots(n) {
+    // s0→d1, s1→d1, s2→d2, s3→d3, s4→d4, s5→d5
+    const dotMap = { 0:1, 1:1, 2:2, 3:3, 4:4, 5:5 };
+    const active = dotMap[n] ?? n;
     for (let i = 1; i <= 5; i++) {
       const d = document.getElementById('d' + i);
-      if (d) d.classList.toggle('active', i === n);
+      if (d) d.classList.toggle('active', i === active);
     }
   }
+
+  /* Iniciar en screen correcto según modo */
+  document.addEventListener('DOMContentLoaded', () => {
+    if (_registerMode) {
+      document.getElementById('s1').className = 'screen hidden-right';
+      document.getElementById('s0').className = 'screen active';
+      // Focus en el input de nombre
+      setTimeout(() => { const inp = document.getElementById('name-input'); if (inp) inp.focus(); }, 300);
+    }
+    updateDots(currentScreen);
+  });
 
   /* ─── Preload face-api models (background, during Screen 1) ─── */
   async function preloadModels() {
@@ -842,108 +867,105 @@
   }
   preloadModels(); // fire and forget
 
-  /* ─── AI Camera functions ─── */
+  /* ─── Nombre (Screen 0) ─── */
+  function onNameInput(val) {
+    const btn = document.getElementById('btn-name');
+    const ok = val.trim().length >= 2;
+    if (btn) { btn.style.opacity = ok ? '1' : '.4'; btn.style.pointerEvents = ok ? 'auto' : 'none'; }
+  }
+
+  function saveName() {
+    const raw = (document.getElementById('name-input')?.value || '').trim();
+    if (raw.length < 2) return;
+    const parts = raw.split(/\s+/);
+    const firstName = parts[0];
+    const lastName  = parts.slice(1).join(' ');
+    const initials  = (firstName[0] + (lastName ? lastName[0] : (firstName[1] || ''))).toUpperCase();
+    const hoy = new Date();
+    const mesesArr = ['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
+    localStorage.setItem('pf_user', JSON.stringify({
+      name: raw, firstName, lastName, initials, email: null,
+      plan: 'Básico',
+      memberSince: `${hoy.getDate()} de ${mesesArr[hoy.getMonth()]} de ${hoy.getFullYear()}`,
+      registered: true, onboardingDone: false,
+      age: null, height: null, weight: null, gender: null,
+      objective: null, activityLevel: null, kcal: null,
+    }));
+    goTo(2);
+  }
+
+  /* ─── AI Photo upload functions ─── */
+  let _photoUrl = null;
+
   function _setAIState(id) {
-    ['ask','camera','processing','result','manual'].forEach(s => {
+    ['ask','processing','result','manual'].forEach(s => {
       const el = document.getElementById('ai-state-' + s);
       if (el) el.style.display = (s === id) ? 'flex' : 'none';
     });
-  }
-
-  async function startCamera() {
-    if (!modelsLoaded) {
-      // Models still loading — wait up to 6s with visual feedback
-      const askBtn = document.querySelector('#ai-state-ask .btn-main');
-      if (askBtn) { askBtn.textContent = 'Cargando IA...'; askBtn.disabled = true; }
-      for (let i = 0; i < 60 && !modelsLoaded; i++) {
-        await new Promise(r => setTimeout(r, 100));
-      }
-      if (askBtn) { askBtn.innerHTML = 'Activar Cámara <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>'; askBtn.disabled = false; }
-      if (!modelsLoaded) { _setAIState('manual'); return; }
-    }
-    try {
-      _setAIState('camera');
-      const stream = await navigator.mediaDevices.getUserMedia({
-        video: { facingMode: 'user', width: { ideal: 480 } }
-      });
-      _cameraStream = stream;
-      const video = document.getElementById('ai-video');
-      video.srcObject = stream;
-    } catch (e) {
-      _setAIState('manual');
+    // Reset file input so same file can be re-selected
+    if (id === 'ask') {
+      const fi = document.getElementById('ai-file-input');
+      if (fi) fi.value = '';
     }
   }
 
-  function stopCamera() {
-    if (_cameraStream) {
-      _cameraStream.getTracks().forEach(t => t.stop());
-      _cameraStream = null;
-    }
-  }
+  async function analyzeUploadedPhoto(input) {
+    const file = input.files[0];
+    if (!file) return;
 
-  async function captureAndDetect() {
-    const video = document.getElementById('ai-video');
-    const btn   = document.getElementById('btn-capture');
+    // Create object URL and load image
+    if (_photoUrl) URL.revokeObjectURL(_photoUrl);
+    _photoUrl = URL.createObjectURL(file);
 
-    // ── 1. Esperar hasta que el video tenga frames reales ──
-    let attempts = 0;
-    while (attempts < 40) {
-      if (video.videoWidth > 0 && video.readyState >= 2) break;
-      await new Promise(r => setTimeout(r, 75));
-      attempts++;
-    }
-    if (video.videoWidth === 0) { _setAIState('manual'); return; }
+    const img = new Image();
+    img.src = _photoUrl;
+    await new Promise((res, rej) => { img.onload = res; img.onerror = rej; });
 
-    // ── 2. Snapshot canvas WHILE video is still visible ──
-    const snap = document.createElement('canvas');
-    snap.width  = video.videoWidth;
-    snap.height = video.videoHeight;
-    // Video is CSS-mirrored; draw it flipped back to normal for face-api
-    const ctx = snap.getContext('2d');
-    ctx.translate(snap.width, 0);
-    ctx.scale(-1, 1);
-    ctx.drawImage(video, 0, 0);
+    // Show photo preview in processing state
+    const prev  = document.getElementById('ai-photo-preview');
+    const prevI = document.getElementById('ai-preview-img');
+    if (prev)  prev.style.display  = 'block';
+    if (prevI) prevI.src = _photoUrl;
 
-    // ── 3. Flash effect so user knows photo was taken ──
-    const flash = document.createElement('div');
-    flash.style.cssText = 'position:fixed;inset:0;background:white;opacity:.85;z-index:999;pointer-events:none;transition:opacity .25s';
-    document.body.appendChild(flash);
-    setTimeout(() => { flash.style.opacity = '0'; setTimeout(() => flash.remove(), 260); }, 60);
-
-    // ── 4. Now switch UI to processing (safe — snapshot already taken) ──
-    if (btn) { btn.disabled = true; btn.textContent = 'Analizando...'; }
-    stopCamera();
     _setAIState('processing');
 
-    const msgs = [
-      'Detectando características faciales...',
-      'Analizando rasgos...',
-      'Calibrando modelo IA...',
-      'Casi listo...',
-    ];
+    // Wait for models (max 8s)
+    if (!modelsLoaded) {
+      const msgEl = document.getElementById('ai-processing-msg');
+      if (msgEl) msgEl.textContent = 'Cargando modelo IA...';
+      for (let i = 0; i < 80 && !modelsLoaded; i++) {
+        await new Promise(r => setTimeout(r, 100));
+      }
+      if (!modelsLoaded) { _setAIState('manual'); return; }
+    }
+
+    const msgs = ['Analizando imagen...','Detectando rasgos faciales...','Calibrando modelo IA...','Casi listo...'];
     let mi = 0;
     const msgEl = document.getElementById('ai-processing-msg');
-    const msgInterval = setInterval(() => {
+    const msgInt = setInterval(() => {
       if (msgEl && mi < msgs.length) msgEl.textContent = msgs[mi++];
     }, 700);
 
-    // ── 5. Detect from canvas snapshot ──
     try {
-      await new Promise(r => setTimeout(r, 400)); // min visual processing time
-
+      await new Promise(r => setTimeout(r, 500)); // mínimo visual
       const result = await faceapi
-        .detectSingleFace(snap, new faceapi.TinyFaceDetectorOptions({ inputSize: 224, scoreThreshold: 0.4 }))
+        .detectSingleFace(img, new faceapi.TinyFaceDetectorOptions({ inputSize: 320, scoreThreshold: 0.3 }))
         .withAgeAndGender();
 
-      clearInterval(msgInterval);
+      clearInterval(msgInt);
 
-      if (result && result.genderProbability >= 0.72) {
+      if (result && result.genderProbability >= 0.70) {
+        // Show photo in result too
+        const rPrev  = document.getElementById('ai-result-preview');
+        const rPrevI = document.getElementById('ai-result-img');
+        if (rPrev)  { rPrev.style.display  = 'block'; }
+        if (rPrevI) { rPrevI.src = _photoUrl; }
         showGenderResult(result.gender, Math.round(result.genderProbability * 100));
       } else {
         _setAIState('manual');
       }
-    } catch (e) {
-      clearInterval(msgInterval);
+    } catch(e) {
+      clearInterval(msgInt);
       _setAIState('manual');
     }
   }
