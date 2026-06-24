@@ -203,9 +203,20 @@
     if (fairGoalKey && _GOAL_MAP[fairGoalKey]) {
       PLANFIT.goals.current = _GOAL_MAP[fairGoalKey];
       setState({ activeGoal: _GOAL_MAP[fairGoalKey] });
-      // Sync calorie goal to selected plan
+    }
+
+    /* ── Use real calculated kcal if available ── */
+    const realKcal = u?.kcal;
+    if (realKcal && realKcal > 800) {
+      PLANFIT.today.caloriesGoal = realKcal;
+    } else {
       const plan = PLANFIT.goals.plans[PLANFIT.goals.current];
       if (plan) PLANFIT.today.caloriesGoal = plan.kcal;
+    }
+
+    /* ── Use real user macros if available ── */
+    if (u?.macros && PLANFIT.goals.plans[PLANFIT.goals.current]) {
+      PLANFIT.goals.plans[PLANFIT.goals.current].macros = u.macros;
     }
 
     /* ── Greeting with goal badge ── */

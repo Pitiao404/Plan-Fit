@@ -448,31 +448,70 @@
   <!-- ═══════════════════════════════════════
        SCREEN 0 — Nombre (solo modo registro)
   ════════════════════════════════════════ -->
-  <div class="screen hidden-right" id="s0" style="background:linear-gradient(160deg,#0B3B2E 0%,#13212B 100%)">
-    <div style="font-size:56px;margin-bottom:16px">👋</div>
-    <h2 class="screen-title" style="margin-bottom:8px">¿Cómo te llamas?</h2>
-    <p class="screen-sub" style="margin-bottom:28px">Tu plan será completamente personalizado</p>
+  <div class="screen hidden-right" id="s0" style="background:linear-gradient(160deg,#0B3B2E 0%,#13212B 100%);overflow-y:auto;-webkit-overflow-scrolling:touch;justify-content:flex-start;padding-top:56px">
 
-    <div style="width:100%;max-width:320px;margin-bottom:20px">
-      <input type="text" id="name-input"
-        placeholder="Tu nombre completo"
-        autocomplete="given-name"
-        oninput="onNameInput(this.value)"
-        style="width:100%;padding:18px 22px;border-radius:50px;
-               border:1.5px solid rgba(255,255,255,.2);
-               background:rgba(255,255,255,.08);color:white;
-               font-size:17px;font-family:'Inter',sans-serif;
-               outline:none;text-align:center;box-sizing:border-box;
-               -webkit-appearance:none"/>
+    <div style="width:100%;max-width:340px">
+      <div style="text-align:center;margin-bottom:22px">
+        <div style="font-size:42px;margin-bottom:10px">👋</div>
+        <h2 class="screen-title" style="margin-bottom:6px">Cuéntanos sobre ti</h2>
+        <p class="screen-sub">Calculamos tu plan 100% personalizado</p>
+      </div>
+
+      <!-- Nombre -->
+      <div style="margin-bottom:14px">
+        <label style="display:block;font-size:11px;font-weight:700;color:rgba(255,255,255,.5);text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px">Nombre completo</label>
+        <input type="text" id="name-input" placeholder="Tu nombre" autocomplete="given-name"
+          oninput="onFormInput()"
+          style="width:100%;padding:14px 18px;border-radius:14px;border:1.5px solid rgba(255,255,255,.15);background:rgba(255,255,255,.07);color:white;font-size:15px;font-family:'Inter',sans-serif;outline:none;box-sizing:border-box;-webkit-appearance:none"/>
+      </div>
+
+      <!-- Edad + Género -->
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px">
+        <div>
+          <label style="display:block;font-size:11px;font-weight:700;color:rgba(255,255,255,.5);text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px">Edad</label>
+          <input type="number" id="age-input" placeholder="25" min="14" max="90"
+            oninput="onFormInput()"
+            style="width:100%;padding:14px 18px;border-radius:14px;border:1.5px solid rgba(255,255,255,.15);background:rgba(255,255,255,.07);color:white;font-size:15px;font-family:'Inter',sans-serif;outline:none;box-sizing:border-box;-webkit-appearance:none"/>
+        </div>
+        <div>
+          <label style="display:block;font-size:11px;font-weight:700;color:rgba(255,255,255,.5);text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px">Sexo biológico</label>
+          <div style="display:flex;gap:8px;height:48px">
+            <button id="sex-f" onclick="selectSex('female',this)"
+              style="flex:1;border-radius:14px;border:1.5px solid rgba(255,255,255,.15);background:rgba(255,255,255,.07);color:rgba(255,255,255,.6);font-size:13px;font-weight:600;cursor:pointer;transition:all .15s;font-family:'Inter',sans-serif">
+              👩 F
+            </button>
+            <button id="sex-m" onclick="selectSex('male',this)"
+              style="flex:1;border-radius:14px;border:1.5px solid rgba(255,255,255,.15);background:rgba(255,255,255,.07);color:rgba(255,255,255,.6);font-size:13px;font-weight:600;cursor:pointer;transition:all .15s;font-family:'Inter',sans-serif">
+              👨 M
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Altura + Peso -->
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:22px">
+        <div>
+          <label style="display:block;font-size:11px;font-weight:700;color:rgba(255,255,255,.5);text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px">Altura (cm)</label>
+          <input type="number" id="height-input" placeholder="170" min="100" max="250"
+            oninput="onFormInput()"
+            style="width:100%;padding:14px 18px;border-radius:14px;border:1.5px solid rgba(255,255,255,.15);background:rgba(255,255,255,.07);color:white;font-size:15px;font-family:'Inter',sans-serif;outline:none;box-sizing:border-box;-webkit-appearance:none"/>
+        </div>
+        <div>
+          <label style="display:block;font-size:11px;font-weight:700;color:rgba(255,255,255,.5);text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px">Peso (kg)</label>
+          <input type="number" id="weight-input" placeholder="70" min="30" max="250" step="0.5"
+            oninput="onFormInput()"
+            style="width:100%;padding:14px 18px;border-radius:14px;border:1.5px solid rgba(255,255,255,.15);background:rgba(255,255,255,.07);color:white;font-size:15px;font-family:'Inter',sans-serif;outline:none;box-sizing:border-box;-webkit-appearance:none"/>
+        </div>
+      </div>
+
+      <button class="btn-main" id="btn-name" onclick="saveName()"
+              style="width:100%;opacity:.4;pointer-events:none">
+        Continuar
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+      </button>
+
+      <p style="font-size:11px;color:rgba(255,255,255,.25);margin-top:12px;text-align:center">Tus datos se usan solo para calcular tu plan personal</p>
     </div>
-
-    <button class="btn-main" id="btn-name" onclick="saveName()"
-            style="width:100%;max-width:320px;opacity:.4;pointer-events:none">
-      Continuar
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-    </button>
-
-    <p style="font-size:11px;color:rgba(255,255,255,.3);margin-top:16px">Plan·Fit · Feria de Tecnología</p>
   </div>
 
   <!-- ═══════════════════════════════════════
@@ -867,30 +906,85 @@
   }
   preloadModels(); // fire and forget
 
-  /* ─── Nombre (Screen 0) ─── */
-  function onNameInput(val) {
+  /* ─── Datos personales (Screen 0) ─── */
+  let _userSex = null; // 'female' | 'male'
+
+  function selectSex(sex, btn) {
+    _userSex = sex;
+    ['sex-f','sex-m'].forEach(id => {
+      const el = document.getElementById(id);
+      if (!el) return;
+      const active = (sex === 'female' && id === 'sex-f') || (sex === 'male' && id === 'sex-m');
+      el.style.background = active ? 'rgba(21,184,110,.3)' : 'rgba(255,255,255,.07)';
+      el.style.borderColor = active ? '#15B86E' : 'rgba(255,255,255,.15)';
+      el.style.color       = active ? 'white' : 'rgba(255,255,255,.6)';
+    });
+    onFormInput();
+  }
+
+  function onFormInput() {
+    const name   = (document.getElementById('name-input')?.value   || '').trim();
+    const age    = parseInt(document.getElementById('age-input')?.value   || 0);
+    const height = parseInt(document.getElementById('height-input')?.value || 0);
+    const weight = parseFloat(document.getElementById('weight-input')?.value || 0);
+    const ok = name.length >= 2 && age >= 14 && height >= 100 && weight >= 30 && _userSex;
     const btn = document.getElementById('btn-name');
-    const ok = val.trim().length >= 2;
     if (btn) { btn.style.opacity = ok ? '1' : '.4'; btn.style.pointerEvents = ok ? 'auto' : 'none'; }
   }
 
+  /* Mifflin-St Jeor BMR → TDEE */
+  function calcTDEE(weight, height, age, sex, level) {
+    const bmr = sex === 'female'
+      ? 10 * weight + 6.25 * height - 5 * age - 161
+      : 10 * weight + 6.25 * height - 5 * age + 5;
+    const mult = { nuevo: 1.2, intermedio: 1.375, avanzado: 1.55 };
+    return Math.round(bmr * (mult[level] || 1.375));
+  }
+
+  /* Adjust TDEE for goal */
+  function goalKcal(tdee, goal) {
+    if (goal === 'estetica')    return Math.max(1200, tdee - 350);
+    if (goal === 'rendimiento') return tdee + 250;
+    return tdee; // salud = maintenance
+  }
+
+  /* Macros from kcal and weight */
+  function calcMacros(kcal, weight, goal) {
+    const protMulti = goal === 'rendimiento' ? 2.0 : goal === 'estetica' ? 1.9 : 1.6;
+    const prot = Math.round(weight * protMulti);
+    const fat  = Math.round(kcal * 0.28 / 9);
+    const carb = Math.round((kcal - prot * 4 - fat * 9) / 4);
+    return { p: prot, c: Math.max(carb, 50), g: fat };
+  }
+
   function saveName() {
-    const raw = (document.getElementById('name-input')?.value || '').trim();
-    if (raw.length < 2) return;
+    const raw    = (document.getElementById('name-input')?.value || '').trim();
+    const age    = parseInt(document.getElementById('age-input')?.value   || 0);
+    const height = parseInt(document.getElementById('height-input')?.value || 0);
+    const weight = parseFloat(document.getElementById('weight-input')?.value || 0);
+    if (raw.length < 2 || age < 14 || height < 100 || weight < 30 || !_userSex) return;
+
     const parts = raw.split(/\s+/);
     const firstName = parts[0];
     const lastName  = parts.slice(1).join(' ');
     const initials  = (firstName[0] + (lastName ? lastName[0] : (firstName[1] || ''))).toUpperCase();
     const hoy = new Date();
     const mesesArr = ['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
+
+    // Set detected gender from sex selection if AI hasn't run yet
+    if (!detectedGender) detectedGender = _userSex;
+
     localStorage.setItem('pf_user', JSON.stringify({
       name: raw, firstName, lastName, initials, email: null,
       plan: 'Básico',
       memberSince: `${hoy.getDate()} de ${mesesArr[hoy.getMonth()]} de ${hoy.getFullYear()}`,
       registered: true, onboardingDone: false,
-      age: null, height: null, weight: null, gender: null,
+      age, height, weight,
+      gender: _userSex === 'female' ? 'Femenino' : 'Masculino',
       objective: null, activityLevel: null, kcal: null,
     }));
+    // Store locally for TDEE calc later
+    window._regData = { age, height, weight, sex: _userSex };
     goTo(2);
   }
 
@@ -1098,13 +1192,34 @@
     const g = GOALS[selectedGoal];
     const p = PROFILES[selectedLevel];
 
+    // Calcular TDEE personalizado si hay datos reales
+    const rd = window._regData;
+    const sex = detectedGender || (rd?.sex) || null;
+    let realKcal = g.kcal; // fallback demo
+    let realMacros = null;
+    if (rd && rd.weight && rd.height && rd.age && sex && selectedLevel) {
+      const tdee = calcTDEE(rd.weight, rd.height, rd.age, sex, selectedLevel);
+      realKcal = goalKcal(tdee, selectedGoal);
+      realMacros = calcMacros(realKcal, rd.weight, selectedGoal);
+      window._calculatedKcal = realKcal;
+      window._calculatedMacros = realMacros;
+    }
+
+    // Usar nombre real si existe
+    let existingUser = {};
+    try { existingUser = JSON.parse(localStorage.getItem('pf_user') || '{}'); } catch(_) {}
+    const isRealUser = existingUser.firstName && !['Elena','Carlos'].includes(existingUser.firstName);
+    const displayName     = isRealUser ? existingUser.name     : p.name;
+    const displayInitials = isRealUser ? existingUser.initials : p.initials;
+    const displayRole     = isRealUser ? 'Usuario Plan·Fit'   : p.role;
+
     /* Badge */
     document.getElementById('result-badge').style.cssText =
       `background:${g.bg};color:${g.color};border:1.5px solid ${g.color};`;
     document.getElementById('result-badge').innerHTML =
       `<span>${g.emoji}</span><span>${g.label}</span>`;
 
-    /* Profile — include gender badge if detected */
+    /* Profile */
     const genderBadge = detectedGender
       ? `<span style="display:inline-flex;align-items:center;gap:4px;background:rgba(21,184,110,.15);color:var(--green);border-radius:50px;padding:2px 10px;font-size:10px;font-weight:700;margin-top:4px">
            ${detectedGender === 'female' ? '👩 Femenino' : '👨 Masculino'} · IA
@@ -1114,9 +1229,9 @@
       ? `<span style="font-size:11px;color:rgba(255,255,255,.5);">${selectedBodyType.charAt(0).toUpperCase()+selectedBodyType.slice(1)}</span>`
       : '';
     document.getElementById('result-profile').innerHTML = `
-      <div class="result-avatar">${p.initials}</div>
+      <div class="result-avatar">${displayInitials}</div>
       <div class="result-profile-info">
-        <p class="result-profile-name">${p.name}</p>
+        <p class="result-profile-name">${displayName}</p>
         <p class="result-profile-role">Perfil: ${p.role}</p>
         <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:4px">${genderBadge}${bodyBadge}</div>
       </div>
@@ -1126,12 +1241,13 @@
         <polyline points="22 4 12 14.01 9 11.01"/>
       </svg>`;
 
-    /* Stats */
+    /* Stats — usar kcal y macros calculados si existen */
+    const protDisplay = realMacros ? realMacros.p : g.macroP;
     document.getElementById('result-stats').innerHTML = `
       <div class="stat-box">
         <span class="stat-val" id="sv-kcal">0</span>
         <span class="stat-unit">kcal/día</span>
-        <span class="stat-label">Objetivo</span>
+        <span class="stat-label">${realMacros ? 'Tu TDEE' : 'Objetivo'}</span>
       </div>
       <div class="stat-box">
         <span class="stat-val">${g.sesiones}</span>
@@ -1139,16 +1255,16 @@
         <span class="stat-label">Sesiones</span>
       </div>
       <div class="stat-box">
-        <span class="stat-val">${g.macroP}g</span>
+        <span class="stat-val">${protDisplay}g</span>
         <span class="stat-unit">proteína</span>
         <span class="stat-label">Diaria</span>
       </div>`;
 
     goTo(5);
 
-    /* Animate kcal counter */
+    /* Animate kcal counter con valor real */
     let k = 0;
-    const kTarget = g.kcal;
+    const kTarget = realKcal;
     const kEl = document.getElementById('sv-kcal');
     const kInt = setInterval(() => {
       k = Math.min(k + Math.ceil((kTarget - k) * .25), kTarget);
@@ -1161,48 +1277,60 @@
   function enterApp() {
     const g = GOALS[selectedGoal];
     const p = PROFILES[selectedLevel];
+    const rd = window._regData; // datos físicos del formulario (si los hay)
 
-    // Preservar datos del usuario real si entró por email
+    // Leer usuario guardado en screen 0 (registro real) o existente (demo)
     let existingUser = {};
     try { existingUser = JSON.parse(localStorage.getItem('pf_user') || '{}'); } catch(_) {}
-    const hasRealUser = existingUser.firstName &&
-                        !['Elena','Carlos'].includes(existingUser.firstName) &&
-                        existingUser.email && !existingUser.email.includes('planfit.app');
+    const isRealUser = existingUser.firstName && !['Elena','Carlos'].includes(existingUser.firstName);
+
+    // Calcular kcal real si tenemos datos físicos
+    const sex = detectedGender || (rd?.sex) || null;
+    const finalKcal = (rd && rd.weight && rd.height && rd.age && sex && selectedLevel)
+      ? goalKcal(calcTDEE(rd.weight, rd.height, rd.age, sex, selectedLevel), selectedGoal)
+      : (window._calculatedKcal || g.kcal);
+    const finalMacros = window._calculatedMacros || null;
 
     localStorage.clear();
 
+    // Base demo profile (stats de pasos, sueño, etc.)
     const userBase = p.demoType === 'principiante'
       ? { name:'Carlos Mendoza', firstName:'Carlos', lastName:'Mendoza', email:'carlos@planfit.app',
           initials:'CM', plan:'Básico', memberSince:'Abril 2025',
-          age:35, height:178, weight:92, gender:'Masculino', kcal:g.kcal }
+          age:35, height:178, weight:92, gender:'Masculino' }
       : { name:'Elena Martínez', firstName:'Elena', lastName:'Martínez', email:'elena@planfit.app',
           initials:'EM', plan:'Premium Anual', memberSince:'Enero 2024',
-          age:28, height:172, weight:64, gender:'Femenino', kcal:g.kcal };
+          age:28, height:172, weight:64, gender:'Femenino' };
 
-    // Si había usuario real con email, sobreescribir nombre/identidad manteniendo stats del perfil demo
-    if (hasRealUser) {
-      userBase.name      = existingUser.name;
-      userBase.firstName = existingUser.firstName;
-      userBase.lastName  = existingUser.lastName  || '';
-      userBase.initials  = existingUser.initials  || existingUser.firstName[0].toUpperCase();
-      userBase.email     = existingUser.email;
-      userBase.plan      = existingUser.plan || 'Básico';
-      userBase.memberSince = existingUser.memberSince || 'Hoy';
+    // Datos del usuario real tienen prioridad sobre el perfil demo
+    if (isRealUser) {
+      userBase.name        = existingUser.name;
+      userBase.firstName   = existingUser.firstName;
+      userBase.lastName    = existingUser.lastName   || '';
+      userBase.initials    = existingUser.initials   || existingUser.firstName[0].toUpperCase();
+      userBase.email       = existingUser.email;
+      userBase.plan        = existingUser.plan       || 'Básico';
+      userBase.memberSince = existingUser.memberSince|| 'Hoy';
+      if (rd) { userBase.age = rd.age; userBase.height = rd.height; userBase.weight = rd.weight; }
     }
 
-    // Override gender with AI detection if available
-    const genderOverride = detectedGender === 'female' ? 'Femenino'
-                         : detectedGender === 'male'   ? 'Masculino'
-                         : null;
+    const genderFinal = detectedGender === 'female' ? 'Femenino'
+                      : detectedGender === 'male'   ? 'Masculino'
+                      : null;
+
+    const finalObjective = selectedGoal === 'salud' ? 'Salud'
+                         : selectedGoal === 'estetica' ? 'Estética' : 'Rendimiento';
+    const finalActivity  = selectedLevel === 'nuevo' ? 'sed'
+                         : selectedLevel === 'intermedio' ? 'mod' : 'act';
 
     localStorage.setItem('pf_user', JSON.stringify({
       ...userBase,
       registered: true, onboardingDone: true,
-      objective: selectedGoal === 'salud' ? 'Salud'
-               : selectedGoal === 'estetica' ? 'Estética' : 'Rendimiento',
-      activityLevel: selectedLevel === 'nuevo' ? 'sed'
-                   : selectedLevel === 'intermedio' ? 'mod' : 'act',
-      ...(genderOverride && { gender: genderOverride }),
+      objective: finalObjective,
+      activityLevel: finalActivity,
+      kcal: finalKcal,
+      ...(finalMacros && { macros: finalMacros }),
+      ...(genderFinal && { gender: genderFinal }),
       ...(selectedBodyType && { bodyType: selectedBodyType }),
     }));
     localStorage.setItem('pf_active_demo', p.demoType);
