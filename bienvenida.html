@@ -7,7 +7,6 @@
   <meta name="theme-color" content="#0B3B2E"/>
   <link rel="manifest" href="manifest.json"/>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"/>
-  <script src="https://cdn.jsdelivr.net/npm/face-api.js@0.22.2/dist/face-api.min.js"></script>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -657,113 +656,54 @@
   </div>
 
   <!-- ═══════════════════════════════════════
-       SCREEN 4 — IA: Género + Tipo Corporal
+       SCREEN 4 — Foto de perfil + Complexión
   ════════════════════════════════════════ -->
-  <div class="screen hidden-right" id="s4" style="gap:0">
+  <div class="screen hidden-right" id="s4">
+    <p style="font-size:12px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--green);margin-bottom:10px">Último paso</p>
+    <h2 class="screen-title" style="margin-bottom:4px">Tu foto de perfil</h2>
+    <p class="screen-sub" style="margin-bottom:20px">Opcional · Aparecerá en toda la app</p>
 
-    <!-- Sub-paso 1: cámara / resultado de género -->
-    <div id="ai-camera-step" style="display:flex;flex-direction:column;align-items:center;width:100%">
-      <p style="font-size:12px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--green);margin-bottom:8px">Análisis IA</p>
-      <h2 class="screen-title" style="margin-bottom:4px">Detección de género</h2>
-      <p class="screen-sub" style="margin-bottom:12px">Usamos IA para personalizar mejor tu plan</p>
+    <!-- Input oculto -->
+    <input type="file" id="avatar-input" accept="image/*" style="display:none" onchange="uploadAvatar(this)"/>
 
-      <!-- Input oculto para subir foto -->
-      <input type="file" id="ai-file-input" accept="image/*" style="display:none" onchange="analyzeUploadedPhoto(this)"/>
+    <!-- Avatar preview / botón -->
+    <div id="avatar-preview-wrap" style="position:relative;margin-bottom:16px;cursor:pointer" onclick="document.getElementById('avatar-input').click()">
+      <div id="avatar-circle" style="width:110px;height:110px;border-radius:50%;background:rgba(21,184,110,.15);border:3px dashed rgba(21,184,110,.5);display:flex;align-items:center;justify-content:center;overflow:hidden;transition:border .2s">
+        <span id="avatar-placeholder" style="font-size:40px">📷</span>
+        <img id="avatar-img" style="display:none;width:100%;height:100%;object-fit:cover"/>
+      </div>
+      <div style="position:absolute;bottom:4px;right:4px;width:28px;height:28px;border-radius:50%;background:var(--green);display:flex;align-items:center;justify-content:center">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+      </div>
+    </div>
+    <p id="avatar-status" style="font-size:12px;color:rgba(255,255,255,.45);margin-bottom:20px">Toca para subir foto</p>
 
-      <div id="ai-video-container" style="width:100%;max-width:320px">
-
-        <!-- Estado: subir foto -->
-        <div id="ai-state-ask" style="text-align:center">
-          <div style="width:88px;height:88px;border-radius:50%;background:rgba(21,184,110,.12);border:2px solid rgba(21,184,110,.3);display:flex;align-items:center;justify-content:center;margin:0 auto 14px;font-size:40px">🤳</div>
-          <p class="ai-hint">Sube una foto clara de tu rostro y la IA detectará tu género automáticamente.<br/><strong style="color:rgba(255,255,255,.6)">No almacenamos la imagen.</strong></p>
-          <button class="btn-main" onclick="document.getElementById('ai-file-input').click()" style="width:100%;max-width:280px;margin-bottom:10px">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
-            Subir mi foto
-          </button>
-          <button onclick="skipToBodyType()" style="background:none;border:none;color:rgba(255,255,255,.4);font-size:12px;cursor:pointer;text-decoration:underline">Saltar este paso</button>
-        </div>
-
-        <!-- Estado: procesando -->
-        <div id="ai-state-processing" style="display:none;text-align:center">
-          <!-- Preview de la foto subida -->
-          <div id="ai-photo-preview" style="width:100px;height:100px;border-radius:50%;overflow:hidden;border:3px solid var(--green);margin:0 auto 16px;display:none">
-            <img id="ai-preview-img" style="width:100%;height:100%;object-fit:cover"/>
-          </div>
-          <div style="width:56px;height:56px;border:3px solid rgba(21,184,110,.2);border-top-color:var(--green);border-radius:50%;animation:spin-ai 0.8s linear infinite;margin:0 auto 14px"></div>
-          <p style="color:rgba(255,255,255,.7);font-size:14px" id="ai-processing-msg">Analizando imagen...</p>
-        </div>
-
-        <!-- Estado: resultado -->
-        <div id="ai-state-result" style="display:none;width:100%;align-items:center;flex-direction:column">
-          <!-- Preview foto pequeña -->
-          <div id="ai-result-preview" style="width:72px;height:72px;border-radius:50%;overflow:hidden;border:3px solid var(--green);margin:0 auto 10px;display:none">
-            <img id="ai-result-img" style="width:100%;height:100%;object-fit:cover"/>
-          </div>
-          <div style="font-size:36px;margin-bottom:6px" id="ai-gender-emoji">👤</div>
-          <div class="ai-result-box" style="width:100%;max-width:280px">
-            <p class="ai-gender-label" id="ai-gender-text">—</p>
-            <p class="ai-confidence" id="ai-confidence-text">Confianza: —</p>
-            <div class="ai-confirm-btns">
-              <button class="ai-btn-confirm" onclick="confirmGender()" id="btn-confirm-gender">✓ Correcto</button>
-              <button class="ai-btn-change" onclick="toggleGender()" id="btn-toggle-gender">Cambiar</button>
-            </div>
-          </div>
-        </div>
-
-        <!-- Estado: sin detección / manual -->
-        <div id="ai-state-manual" style="display:none;width:100%;align-items:center;flex-direction:column">
-          <p style="font-size:13px;color:rgba(255,255,255,.5);margin-bottom:6px">No se detectó rostro en la foto.</p>
-          <p class="screen-sub" style="margin-bottom:14px">Selecciona tu género:</p>
-          <div style="display:flex;gap:12px;margin-bottom:16px;width:100%">
-            <button class="body-card" onclick="selectGenderManual('female',this)" style="flex:1">
-              <span class="body-card-icon">👩</span>
-              <p class="body-card-name">Femenino</p>
-            </button>
-            <button class="body-card" onclick="selectGenderManual('male',this)" style="flex:1">
-              <span class="body-card-icon">👨</span>
-              <p class="body-card-name">Masculino</p>
-            </button>
-          </div>
-          <button class="btn-main" onclick="confirmGender()" style="width:100%;max-width:280px;opacity:.4;pointer-events:none" id="btn-manual-confirm">
-            Continuar
-          </button>
-          <button onclick="_setAIState('ask')" style="background:none;border:none;color:rgba(255,255,255,.4);font-size:12px;cursor:pointer;text-decoration:underline;margin-top:10px">Intentar con otra foto</button>
-        </div>
-
+    <!-- Complexión -->
+    <p class="screen-sub" style="margin-bottom:12px">¿Cómo describes tu complexión?</p>
+    <div class="body-cards" style="margin-bottom:20px">
+      <div class="body-card" data-body="ectomorfo" onclick="selectBodyType(this)">
+        <span class="body-card-icon">🦴</span>
+        <p class="body-card-name">Delgado</p>
+        <p class="body-card-desc">Metabolismo rápido</p>
+      </div>
+      <div class="body-card" data-body="mesomorfo" onclick="selectBodyType(this)">
+        <span class="body-card-icon">💪</span>
+        <p class="body-card-name">Atlético</p>
+        <p class="body-card-desc">Musculatura definida</p>
+      </div>
+      <div class="body-card" data-body="endomorfo" onclick="selectBodyType(this)">
+        <span class="body-card-icon">🍎</span>
+        <p class="body-card-name">Corpulento</p>
+        <p class="body-card-desc">Tendencia a más volumen</p>
       </div>
     </div>
 
-    <!-- Sub-paso 2: tipo corporal -->
-    <div id="ai-body-step" style="display:none;flex-direction:column;align-items:center;width:100%">
-      <p style="font-size:12px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--green);margin-bottom:8px">Último paso</p>
-      <h2 class="screen-title" style="margin-bottom:4px">Tu complexión</h2>
-      <p class="screen-sub" style="margin-bottom:16px">¿Cómo describes tu tipo de cuerpo?</p>
-
-      <div class="body-cards">
-        <div class="body-card" data-body="ectomorfo" onclick="selectBodyType(this)">
-          <span class="body-card-icon">🦴</span>
-          <p class="body-card-name">Delgado</p>
-          <p class="body-card-desc">Metabolismo rápido, cuesta ganar masa</p>
-        </div>
-        <div class="body-card" data-body="mesomorfo" onclick="selectBodyType(this)">
-          <span class="body-card-icon">💪</span>
-          <p class="body-card-name">Atlético</p>
-          <p class="body-card-desc">Musculatura definida, fácil ganar y perder</p>
-        </div>
-        <div class="body-card" data-body="endomorfo" onclick="selectBodyType(this)">
-          <span class="body-card-icon">🍎</span>
-          <p class="body-card-name">Corpulento</p>
-          <p class="body-card-desc">Tendencia a acumular grasa, más volumen</p>
-        </div>
-      </div>
-
-      <button class="btn-main" id="btn-body-continue" onclick="buildPlan()"
-              style="max-width:360px;width:100%;opacity:.4;pointer-events:none">
-        Ver mi plan personalizado
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-      </button>
-    </div>
-
+    <button class="btn-main" id="btn-body-continue" onclick="buildPlan()"
+            style="max-width:360px;width:100%;opacity:.4;pointer-events:none">
+      Ver mi plan personalizado
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+    </button>
+    <button onclick="buildPlan()" style="background:none;border:none;color:rgba(255,255,255,.35);font-size:12px;cursor:pointer;text-decoration:underline;margin-top:10px">Saltar foto y continuar</button>
   </div>
 
   <!-- ═══════════════════════════════════════
@@ -803,9 +743,7 @@
   let selectedGoal  = null;
   let selectedLevel = null;
   let currentScreen = _registerMode ? 0 : 1;
-  let detectedGender   = null;  // 'male' | 'female' | null
   let selectedBodyType = null;  // 'ectomorfo' | 'mesomorfo' | 'endomorfo'
-  let modelsLoaded  = false;
 
   /* ─── Particle background (subtle) ─── */
   (function initParticles() {
@@ -988,154 +926,37 @@
     goTo(2);
   }
 
-  /* ─── AI Photo upload functions ─── */
-  let _photoUrl = null;
+  /* ─── Foto de perfil ─── */
+  let _avatarDataUrl = null;
 
-  function _setAIState(id) {
-    ['ask','processing','result','manual'].forEach(s => {
-      const el = document.getElementById('ai-state-' + s);
-      if (el) el.style.display = (s === id) ? 'flex' : 'none';
-    });
-    // Reset file input so same file can be re-selected
-    if (id === 'ask') {
-      const fi = document.getElementById('ai-file-input');
-      if (fi) fi.value = '';
-    }
-  }
-
-  async function analyzeUploadedPhoto(input) {
+  /* ─── Subir foto de perfil ─── */
+  async function uploadAvatar(input) {
     const file = input.files[0];
     if (!file) return;
 
-    if (_photoUrl) URL.revokeObjectURL(_photoUrl);
-    _photoUrl = URL.createObjectURL(file);
-
-    // ── FIX 1: set onload BEFORE src (evita race condition con blob URLs) ──
+    const url = URL.createObjectURL(file);
     const img = new Image();
-    await new Promise((res, rej) => {
-      img.onload = res;
-      img.onerror = rej;
-      img.src = _photoUrl;
-    });
+    await new Promise((res, rej) => { img.onload = res; img.onerror = rej; img.src = url; });
 
-    // ── FIX 2: redimensionar a canvas ≤ 800px (fotos móvil pueden ser 12MP+) ──
-    const MAX = 800;
-    let W = img.naturalWidth  || img.width;
-    let H = img.naturalHeight || img.height;
-    if (W > MAX || H > MAX) {
-      if (W >= H) { H = Math.round(H * MAX / W); W = MAX; }
-      else        { W = Math.round(W * MAX / H); H = MAX; }
-    }
-    const canvas = document.createElement('canvas');
-    canvas.width = W; canvas.height = H;
-    canvas.getContext('2d').drawImage(img, 0, 0, W, H);
+    // Recortar al cuadrado central y comprimir a 300×300 JPEG
+    const SIZE = 300;
+    const srcW = img.naturalWidth, srcH = img.naturalHeight;
+    const sq   = Math.min(srcW, srcH);
+    const sx   = (srcW - sq) / 2, sy = (srcH - sq) / 2;
+    const cv   = document.createElement('canvas');
+    cv.width   = cv.height = SIZE;
+    cv.getContext('2d').drawImage(img, sx, sy, sq, sq, 0, 0, SIZE, SIZE);
+    _avatarDataUrl = cv.toDataURL('image/jpeg', 0.75);
+    URL.revokeObjectURL(url);
 
-    // Show preview
-    const prev  = document.getElementById('ai-photo-preview');
-    const prevI = document.getElementById('ai-preview-img');
-    if (prev)  prev.style.display = 'block';
-    if (prevI) prevI.src = _photoUrl;
-
-    _setAIState('processing');
-
-    // Wait for models (max 10s)
-    if (!modelsLoaded) {
-      const msgEl = document.getElementById('ai-processing-msg');
-      if (msgEl) msgEl.textContent = 'Cargando modelo IA...';
-      for (let i = 0; i < 100 && !modelsLoaded; i++) {
-        await new Promise(r => setTimeout(r, 100));
-      }
-      if (!modelsLoaded) { _setAIState('manual'); return; }
-    }
-
-    const msgs = ['Analizando imagen...','Detectando rasgos faciales...','Calibrando modelo IA...','Casi listo...'];
-    let mi = 0;
-    const msgEl = document.getElementById('ai-processing-msg');
-    const msgInt = setInterval(() => {
-      if (msgEl && mi < msgs.length) msgEl.textContent = msgs[mi++];
-    }, 700);
-
-    try {
-      await new Promise(r => setTimeout(r, 400));
-
-      // ── FIX 3: pasar canvas (no img), scoreThreshold bajo, dos tamaños de input ──
-      let result = await faceapi
-        .detectSingleFace(canvas, new faceapi.TinyFaceDetectorOptions({ inputSize: 416, scoreThreshold: 0.2 }))
-        .withAgeAndGender();
-
-      // Si no detecta con 416, reintentar con 224 (más rápido, diferente escala)
-      if (!result) {
-        result = await faceapi
-          .detectSingleFace(canvas, new faceapi.TinyFaceDetectorOptions({ inputSize: 224, scoreThreshold: 0.15 }))
-          .withAgeAndGender();
-      }
-
-      clearInterval(msgInt);
-
-      // ── FIX 4: umbral bajado a 0.55 ──
-      if (result && result.genderProbability >= 0.55) {
-        const rPrev  = document.getElementById('ai-result-preview');
-        const rPrevI = document.getElementById('ai-result-img');
-        if (rPrev)  rPrev.style.display = 'block';
-        if (rPrevI) rPrevI.src = _photoUrl;
-        showGenderResult(result.gender, Math.round(result.genderProbability * 100));
-      } else {
-        // No detectó rostro — mostrar mensaje claro y opción de reintentar
-        const msgElF = document.getElementById('ai-processing-msg');
-        if (msgElF) msgElF.textContent = 'No se detectó rostro con claridad';
-        await new Promise(r => setTimeout(r, 800));
-        _setAIState('manual');
-      }
-    } catch(e) {
-      clearInterval(msgInt);
-      _setAIState('manual');
-    }
-  }
-
-  function showGenderResult(gender, pct) {
-    detectedGender = gender;
-    const isFemale = gender === 'female';
-    document.getElementById('ai-gender-emoji').textContent = isFemale ? '👩' : '👨';
-    document.getElementById('ai-gender-text').textContent = isFemale ? 'Femenino' : 'Masculino';
-    document.getElementById('ai-confidence-text').textContent = `Confianza IA: ${pct}%`;
-    document.getElementById('btn-toggle-gender').textContent = isFemale ? 'Es Masculino' : 'Es Femenino';
-    _setAIState('result');
-  }
-
-  function toggleGender() {
-    detectedGender = detectedGender === 'female' ? 'male' : 'female';
-    const isFemale = detectedGender === 'female';
-    document.getElementById('ai-gender-emoji').textContent = isFemale ? '👩' : '👨';
-    document.getElementById('ai-gender-text').textContent = isFemale ? 'Femenino' : 'Masculino';
-    document.getElementById('ai-confidence-text').textContent = 'Seleccionado manualmente';
-    document.getElementById('btn-toggle-gender').textContent = isFemale ? 'Es Masculino' : 'Es Femenino';
-  }
-
-  function confirmGender() {
-    // Move to body type sub-step
-    document.getElementById('ai-camera-step').style.display = 'none';
-    const bodyStep = document.getElementById('ai-body-step');
-    bodyStep.style.display = 'flex';
-    bodyStep.style.flexDirection = 'column';
-    bodyStep.style.alignItems = 'center';
-  }
-
-  function skipToBodyType() {
-    stopCamera();
-    detectedGender = null;
-    document.getElementById('ai-camera-step').style.display = 'none';
-    const bodyStep = document.getElementById('ai-body-step');
-    bodyStep.style.display = 'flex';
-    bodyStep.style.flexDirection = 'column';
-    bodyStep.style.alignItems = 'center';
-  }
-
-  function selectGenderManual(gender, el) {
-    document.querySelectorAll('#ai-state-manual .body-card').forEach(c => c.classList.remove('selected'));
-    el.classList.add('selected');
-    detectedGender = gender;
-    const btn = document.getElementById('btn-manual-confirm');
-    if (btn) { btn.style.opacity = '1'; btn.style.pointerEvents = 'auto'; }
+    // Mostrar preview
+    document.getElementById('avatar-placeholder').style.display = 'none';
+    const avatarImg = document.getElementById('avatar-img');
+    avatarImg.src     = _avatarDataUrl;
+    avatarImg.style.display = 'block';
+    document.getElementById('avatar-circle').style.border = '3px solid var(--green)';
+    document.getElementById('avatar-status').textContent = '✅ Foto guardada';
+    document.getElementById('avatar-status').style.color = 'var(--green)';
   }
 
   /* ─── Body type selection ─── */
@@ -1194,7 +1015,7 @@
 
     // Calcular TDEE personalizado si hay datos reales
     const rd = window._regData;
-    const sex = detectedGender || (rd?.sex) || null;
+    const sex = (rd?.sex) || null;
     let realKcal = g.kcal; // fallback demo
     let realMacros = null;
     if (rd && rd.weight && rd.height && rd.age && sex && selectedLevel) {
@@ -1314,9 +1135,7 @@
       if (rd) { userBase.age = rd.age; userBase.height = rd.height; userBase.weight = rd.weight; }
     }
 
-    const genderFinal = detectedGender === 'female' ? 'Femenino'
-                      : detectedGender === 'male'   ? 'Masculino'
-                      : null;
+    const genderFinal = null; // género viene del formulario (screen 0)
 
     const finalObjective = selectedGoal === 'salud' ? 'Salud'
                          : selectedGoal === 'estetica' ? 'Estética' : 'Rendimiento';
@@ -1335,6 +1154,8 @@
     }));
     localStorage.setItem('pf_active_demo', p.demoType);
     localStorage.setItem('pf_fair_goal', selectedGoal);
+    // Guardar avatar si el usuario subió foto
+    if (_avatarDataUrl) localStorage.setItem('pf_avatar', _avatarDataUrl);
 
     /* Brief enter animation */
     const btn = document.getElementById('btn-enter');

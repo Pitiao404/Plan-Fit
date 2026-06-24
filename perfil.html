@@ -293,8 +293,20 @@
   });
 
   function initProfile(u) {
-    // Initials & name
-    document.getElementById('prof-initials').textContent = u.initials || '?';
+    // Avatar — foto de perfil o iniciales
+    const avatar = localStorage.getItem('pf_avatar');
+    const profInit = document.getElementById('prof-initials');
+    if (avatar && profInit) {
+      profInit.textContent = '';
+      profInit.style.padding = '0';
+      profInit.style.overflow = 'hidden';
+      const img = document.createElement('img');
+      img.src = avatar;
+      img.style.cssText = 'width:100%;height:100%;object-fit:cover;border-radius:50%';
+      profInit.appendChild(img);
+    } else if (profInit) {
+      profInit.textContent = u.initials || '?';
+    }
     document.getElementById('prof-name').textContent     = u.name     || '—';
     document.getElementById('prof-subtitle').textContent =
       `${u.objective ? 'Objetivo: ' + u.objective + ' · ' : ''}Miembro desde ${u.memberSince || '2025'}`;

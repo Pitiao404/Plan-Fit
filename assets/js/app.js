@@ -82,6 +82,7 @@ function _sidebarUserHTML() {
   const name      = u ? u.name      : 'Usuario';
   const plan      = u ? (u.plan || 'Básico') : '';
   const roleLabel = plan.toLowerCase().includes('premium') ? 'Miembro Premium' : (plan || 'Miembro');
+  const avatar    = localStorage.getItem('pf_avatar');
 
   // Demo badge
   const demoType = localStorage.getItem('pf_active_demo') || 'activo';
@@ -93,8 +94,12 @@ function _sidebarUserHTML() {
       DEMO · ${demoLabels[demoType]}
     </a>` : '';
 
+  const avatarHTML = avatar
+    ? `<div class="sidebar-avatar" style="padding:0;overflow:hidden" aria-hidden="true"><img src="${avatar}" style="width:100%;height:100%;object-fit:cover;border-radius:50%" alt=""/></div>`
+    : `<div class="sidebar-avatar" aria-hidden="true">${initials}</div>`;
+
   return `
-    <div class="sidebar-avatar" aria-hidden="true">${initials}</div>
+    ${avatarHTML}
     <div class="sidebar-user-info">
       <p class="sidebar-user-name">${name}</p>
       <p class="sidebar-user-role">${roleLabel}</p>
@@ -255,7 +260,7 @@ function renderMobileHeader(title) {
         Plan·<span style="color:var(--verde-vital)">Fit</span>
       </span>
     </div>
-    <div class="sidebar-avatar" style="width:32px;height:32px;font-size:11px;cursor:pointer" onclick="location.href='perfil.html'">${(getDisplayUser()||{}).initials||'?'}</div>
+    ${(()=>{ const av=localStorage.getItem('pf_avatar'); return av ? `<div class="sidebar-avatar" style="width:32px;height:32px;padding:0;overflow:hidden;cursor:pointer" onclick="location.href='perfil.html'"><img src="${av}" style="width:100%;height:100%;object-fit:cover;border-radius:50%" alt=""/></div>` : `<div class="sidebar-avatar" style="width:32px;height:32px;font-size:11px;cursor:pointer" onclick="location.href='perfil.html'">${(getDisplayUser()||{}).initials||'?'}</div>`; })()}
   `;
 }
 
